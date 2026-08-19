@@ -38,7 +38,7 @@ export function ProductModal({
   const containerRef = useRef<HTMLDivElement>(null)
 
   // 3. Effect hooks
-  
+
   // SSR safety mount effect
   useEffect(() => {
     setMounted(true)
@@ -92,7 +92,18 @@ export function ProductModal({
 
   const handleLightboxNext = () => {
     if (lightboxIndex === null || isSlideAnimating || allImages.length === 0) return
+
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
     const nextIdx = (lightboxIndex + 1) % allImages.length
+
+    if (prefersReduced) {
+      setLightboxIndex(nextIdx)
+      return
+    }
+
     setOutgoingIndex(lightboxIndex)
     setSlideDirection('next')
     setIsSlideAnimating(true)
@@ -106,7 +117,18 @@ export function ProductModal({
 
   const handleLightboxPrev = () => {
     if (lightboxIndex === null || isSlideAnimating || allImages.length === 0) return
+
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
     const prevIdx = (lightboxIndex - 1 + allImages.length) % allImages.length
+
+    if (prefersReduced) {
+      setLightboxIndex(prevIdx)
+      return
+    }
+
     setOutgoingIndex(lightboxIndex)
     setSlideDirection('prev')
     setIsSlideAnimating(true)
@@ -399,7 +421,7 @@ export function ProductModal({
         </div>
       </div>
 
-      {/* Full-Viewport Full-Bleed Lightbox Viewport */}
+      {/* Full-Viewport Full-Bleed Lightbox Viewport matching IDEALREFERENCE.mp4 */}
       {lightboxIndex !== null && (
         <div
           className="modal-lightbox-overlay"
@@ -412,14 +434,31 @@ export function ProductModal({
             width: '100vw',
             height: '100vh',
             zIndex: 999999,
-            backgroundColor: '#FFFFFF',
-            color: '#111111',
-            display: 'flex',
-            flexDirection: 'column',
+            backgroundColor: '#000000',
+            color: '#FFFFFF',
+            overflow: 'hidden',
           }}
         >
-          {/* Top sticky header bar */}
-          <div className="product-modal-topbar" style={{ zIndex: 10, background: '#FFFFFF' }}>
+          {/* Top sticky header bar visually overlapping the sliding image track */}
+          <div
+            className="product-modal-topbar"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 30,
+              background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 100%)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              borderBottom: 'none',
+              minHeight: '60px',
+              padding: '1rem var(--gutter)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <a
               href="#top"
               className="nav__logo"
@@ -442,7 +481,7 @@ export function ProductModal({
                   width: 'auto',
                   objectFit: 'contain',
                   display: 'block',
-                  filter: 'none',
+                  filter: 'brightness(0) invert(1)',
                 }}
               />
             </a>
@@ -450,6 +489,11 @@ export function ProductModal({
               onClick={() => setLightboxIndex(null)}
               className="product-modal-close-btn"
               aria-label="Close lightbox"
+              style={{
+                color: '#FFFFFF',
+                borderColor: 'rgba(255, 255, 255, 0.4)',
+                background: 'rgba(0, 0, 0, 0.25)',
+              }}
             >
               CLOSE ✕
             </button>
@@ -459,12 +503,12 @@ export function ProductModal({
           <div
             className="lightbox-main-viewport"
             style={{
-              flex: 1,
-              position: 'relative',
-              width: '100%',
-              height: 'calc(100vh - 60px)',
+              position: 'absolute',
+              inset: 0,
+              width: '100vw',
+              height: '100vh',
               overflow: 'hidden',
-              backgroundColor: '#f4f4f4',
+              backgroundColor: '#0a0a0a',
             }}
             onClick={() => setLightboxIndex(null)}
           >
@@ -527,7 +571,7 @@ export function ProductModal({
                 onClick={handleLightboxPrev}
                 style={{
                   pointerEvents: 'auto',
-                  background: '#FFFFFF',
+                  background: 'rgba(255, 255, 255, 0.95)',
                   color: '#111111',
                   border: '1px solid var(--hairline)',
                   padding: '0.65rem 1.4rem',
@@ -536,7 +580,7 @@ export function ProductModal({
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
                   cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(0,0,0,0.14)',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
                 }}
               >
                 ‹ PREV
@@ -545,7 +589,7 @@ export function ProductModal({
                 onClick={handleLightboxNext}
                 style={{
                   pointerEvents: 'auto',
-                  background: '#FFFFFF',
+                  background: 'rgba(255, 255, 255, 0.95)',
                   color: '#111111',
                   border: '1px solid var(--hairline)',
                   padding: '0.65rem 1.4rem',
@@ -554,7 +598,7 @@ export function ProductModal({
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
                   cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(0,0,0,0.14)',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
                 }}
               >
                 NEXT ›
@@ -568,14 +612,14 @@ export function ProductModal({
                 position: 'absolute',
                 bottom: '2rem',
                 right: 'var(--gutter)',
-                background: '#FFFFFF',
+                background: 'rgba(255, 255, 255, 0.95)',
                 color: '#111111',
                 padding: '0.45rem 1rem',
                 fontSize: '0.78rem',
                 fontWeight: 800,
                 letterSpacing: '0.1em',
                 border: '1px solid var(--hairline)',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.14)',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
                 zIndex: 20,
               }}
             >

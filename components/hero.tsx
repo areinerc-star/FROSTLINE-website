@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 
 const SLIDES = [
   '/images/hero.png',
@@ -14,26 +14,101 @@ interface HeroProps {
 
 export function Hero({ onShopNowClick }: HeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [prevSlide, setPrevSlide] = useState<number | null>(null)
+  const [direction, setDirection] = useState<'next' | 'prev'>('next')
+  const [isAnimating, setIsAnimating] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+  const animTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  const goToSlide = useCallback(
+    (targetIndex: number) => {
+      if (targetIndex === currentSlide || isAnimating) return
+
+      const prefersReduced =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      if (prefersReduced) {
+        setCurrentSlide(targetIndex)
+        return
+      }
+
+      const isNext =
+        targetIndex > currentSlide ||
+        (currentSlide === SLIDES.length - 1 && targetIndex === 0)
+
+      setPrevSlide(currentSlide)
+      setDirection(isNext ? 'next' : 'prev')
+      setCurrentSlide(targetIndex)
+      setIsAnimating(true)
+
+      if (animTimerRef.current) clearTimeout(animTimerRef.current)
+      animTimerRef.current = setTimeout(() => {
+        setIsAnimating(false)
+        setPrevSlide(null)
+      }, 650)
+    },
+    [currentSlide, isAnimating]
+  )
 
   useEffect(() => {
     setIsMounted(true)
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % SLIDES.length)
+      setCurrentSlide((prev) => {
+        const next = (prev + 1) % SLIDES.length
+        const prefersReduced =
+          typeof window !== 'undefined' &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+        if (!prefersReduced) {
+          setPrevSlide(prev)
+          setDirection('next')
+          setIsAnimating(true)
+          if (animTimerRef.current) clearTimeout(animTimerRef.current)
+          animTimerRef.current = setTimeout(() => {
+            setIsAnimating(false)
+            setPrevSlide(null)
+          }, 650)
+        }
+        return next
+      })
     }, 5000)
-    return () => clearInterval(timer)
+
+    return () => {
+      clearInterval(timer)
+      if (animTimerRef.current) clearTimeout(animTimerRef.current)
+    }
   }, [])
 
   return (
     <section className="hero" aria-label="Featured collection">
       <div className="hero__slides" id="heroSlides">
-        {SLIDES.map((src, index) => (
-          <div
-            key={src}
-            className={`hero__slide ${index === currentSlide ? 'is-active' : ''}`}
-            style={{ backgroundImage: `url('${src}')` }}
-          />
-        ))}
+        {SLIDES.map((src, index) => {
+          const isActive = index === currentSlide
+          const isPrev = index === prevSlide && isAnimating
+
+          let transformClass = ''
+          if (isActive) {
+            transformClass = isAnimating
+              ? direction === 'next'
+                ? 'slide-in-from-bottom'
+                : 'slide-in-from-top'
+              : 'slide-active'
+          } else if (isPrev) {
+            transformClass =
+              direction === 'next' ? 'slide-out-to-top' : 'slide-out-to-bottom'
+          } else {
+            transformClass = 'slide-hidden'
+          }
+
+          return (
+            <div
+              key={src}
+              className={`hero__slide ${transformClass}`}
+              style={{ backgroundImage: `url('${src}')` }}
+            />
+          )
+        })}
       </div>
 
       <div className="hero__index" id="heroIndex" role="tablist" aria-label="Hero slides">
@@ -41,7 +116,7 @@ export function Hero({ onShopNowClick }: HeroProps) {
           <button
             key={index}
             className={index === currentSlide ? 'is-active' : ''}
-            onClick={() => setCurrentSlide(index)}
+            onClick={() => goToSlide(index)}
             aria-label={`Slide ${index + 1}`}
           >
             {String(index + 1).padStart(2, '0')}
