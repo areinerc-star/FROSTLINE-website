@@ -221,6 +221,26 @@ body {
   to { transform: translateY(100%); }
 }
 
+@keyframes lightboxSlideOutUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes lightboxSlideOutDown {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes lightboxSlideInUp {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes lightboxSlideInDown {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero__slide {
     animation: none !important;

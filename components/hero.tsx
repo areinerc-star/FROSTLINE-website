@@ -17,7 +17,6 @@ export function Hero({ onShopNowClick }: HeroProps) {
   const [prevSlide, setPrevSlide] = useState<number | null>(null)
   const [direction, setDirection] = useState<'next' | 'prev'>('next')
   const [isAnimating, setIsAnimating] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
   const animTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const goToSlide = useCallback(
@@ -52,7 +51,6 @@ export function Hero({ onShopNowClick }: HeroProps) {
   )
 
   useEffect(() => {
-    setIsMounted(true)
     const timer = setInterval(() => {
       setCurrentSlide((prev) => {
         const next = (prev + 1) % SLIDES.length
@@ -83,32 +81,27 @@ export function Hero({ onShopNowClick }: HeroProps) {
   return (
     <section className="hero" aria-label="Featured collection">
       <div className="hero__slides" id="heroSlides">
-        {SLIDES.map((src, index) => {
-          const isActive = index === currentSlide
-          const isPrev = index === prevSlide && isAnimating
+        {/* Render outgoing slide if animating */}
+        {isAnimating && prevSlide !== null && (
+          <div
+            key={`outgoing-${prevSlide}-${currentSlide}`}
+            className={`hero__slide ${direction === 'next' ? 'slide-out-to-top' : 'slide-out-to-bottom'}`}
+            style={{ backgroundImage: `url('${SLIDES[prevSlide]}')`, zIndex: 1 }}
+          />
+        )}
 
-          let transformClass = ''
-          if (isActive) {
-            transformClass = isAnimating
+        {/* Render active slide */}
+        <div
+          key={`active-${currentSlide}-${isAnimating ? 'anim' : 'idle'}`}
+          className={`hero__slide ${
+            isAnimating
               ? direction === 'next'
                 ? 'slide-in-from-bottom'
                 : 'slide-in-from-top'
               : 'slide-active'
-          } else if (isPrev) {
-            transformClass =
-              direction === 'next' ? 'slide-out-to-top' : 'slide-out-to-bottom'
-          } else {
-            transformClass = 'slide-hidden'
-          }
-
-          return (
-            <div
-              key={src}
-              className={`hero__slide ${transformClass}`}
-              style={{ backgroundImage: `url('${src}')` }}
-            />
-          )
-        })}
+          }`}
+          style={{ backgroundImage: `url('${SLIDES[currentSlide]}')`, zIndex: 2 }}
+        />
       </div>
 
       <div className="hero__index" id="heroIndex" role="tablist" aria-label="Hero slides">
