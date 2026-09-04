@@ -266,8 +266,8 @@ export function FeaturedCarousel({ onAddToCart }: FeaturedCarouselProps) {
                       loading="lazy"
                       style={{
                         transform: isHoveredOrActive
-                          ? `scale(1.15) translate3d(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px, 0)`
-                          : 'scale(1.05) translate3d(0, 0, 0)',
+                          ? `scale(1.02) translate3d(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px, 0)`
+                          : 'scale(1.00) translate3d(0, 0, 0)',
                       }}
                     />
 
@@ -348,7 +348,9 @@ export function FeaturedCarousel({ onAddToCart }: FeaturedCarouselProps) {
             height: 100%;
             object-fit: cover;
             opacity: 1;
-            transition: opacity 350ms ease-in-out;
+            transform: scale(1);
+            transition: opacity 450ms cubic-bezier(0.4, 0, 0.2, 1), transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, opacity;
           }
 
           .product-tile__lifestyle-img {
@@ -358,7 +360,7 @@ export function FeaturedCarousel({ onAddToCart }: FeaturedCarouselProps) {
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 350ms ease-in-out, transform 300ms ease-out;
+            transition: opacity 450ms cubic-bezier(0.4, 0, 0.2, 1), transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
             will-change: transform, opacity;
           }
 

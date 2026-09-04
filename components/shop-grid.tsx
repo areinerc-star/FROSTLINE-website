@@ -279,8 +279,8 @@ export function ShopGrid({ onAddToCart, onClose, cartCount = 0, onOpenCart }: Sh
                     loading="lazy"
                     style={{
                       transform: isHovered
-                        ? `scale(1.15) translate3d(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px, 0)`
-                        : 'scale(1.05) translate3d(0, 0, 0)',
+                        ? `scale(1.02) translate3d(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px, 0)`
+                        : 'scale(1.00) translate3d(0, 0, 0)',
                     }}
                   />
 
@@ -436,7 +436,9 @@ export function ShopGrid({ onAddToCart, onClose, cartCount = 0, onOpenCart }: Sh
             height: 100%;
             object-fit: cover;
             opacity: 1;
-            transition: opacity 350ms ease-in-out;
+            transform: scale(1);
+            transition: opacity 450ms cubic-bezier(0.4, 0, 0.2, 1), transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, opacity;
           }
 
           /* Lifestyle photo (crossfades in on hover) */
@@ -447,7 +449,7 @@ export function ShopGrid({ onAddToCart, onClose, cartCount = 0, onOpenCart }: Sh
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 350ms ease-in-out, transform 300ms ease-out;
+            transition: opacity 450ms cubic-bezier(0.4, 0, 0.2, 1), transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
             will-change: transform, opacity;
           }
 
