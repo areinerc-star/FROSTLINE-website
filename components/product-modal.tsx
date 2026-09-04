@@ -1023,7 +1023,9 @@ export function ProductModal({
           height: 100%;
           object-fit: cover;
           opacity: 1;
-          transition: opacity 350ms ease;
+          transform: scale(1);
+          transition: opacity 450ms cubic-bezier(0.4, 0, 0.2, 1), transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
+          will-change: transform, opacity;
         }
 
         .complete-look-lifestyle-img {
@@ -1033,8 +1035,9 @@ export function ProductModal({
           height: 100%;
           object-fit: cover;
           opacity: 0;
-          transition: opacity 350ms ease, transform 350ms ease;
-          transform: scale(1.04);
+          transform: scale(1);
+          transition: opacity 450ms cubic-bezier(0.4, 0, 0.2, 1), transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
+          will-change: transform, opacity;
         }
 
         .complete-look-tile:hover .complete-look-flat-img {
@@ -1043,7 +1046,7 @@ export function ProductModal({
 
         .complete-look-tile:hover .complete-look-lifestyle-img {
           opacity: 1;
-          transform: scale(1);
+          transform: scale(1.02);
         }
 
         .complete-look-sku-overlay {
