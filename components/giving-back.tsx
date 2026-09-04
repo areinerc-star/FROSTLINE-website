@@ -1,29 +1,4 @@
-const PARTNERS = [
-  {
-    title: 'Fairways to Africa',
-    description:
-      'Bespoke golf travel. Like our clients, we are golfers — young-at-heart, seeking unique experiences whilst playing the sport we love around the world.',
-    delay: 0,
-  },
-  {
-    title: 'StartWell Foundation',
-    description:
-      'A passionate team making a measurable difference in the fight against malnutrition — designing, producing, and delivering nutrient-rich meals to vulnerable communities.',
-    delay: 1,
-  },
-  {
-    title: '242',
-    description:
-      "The world moves fast, but we believe there's something powerful about slowing down. A moment to connect, made with care: coffee & connections.",
-    delay: 2,
-  },
-  {
-    title: 'Running Late Club',
-    description:
-      'A community where Everyday Athletes can find a place to belong. We cater to all paces and levels, providing the accountability and inspiration to reach your goals.',
-    delay: 3,
-  },
-]
+import Image from 'next/image'
 
 export function GivingBack() {
   return (
@@ -31,35 +6,40 @@ export function GivingBack() {
       <div className="giving__intro reveal">
         <h2>Giving Back</h2>
         <p>
-          We never set out to be just a golf brand. Odd Ritual is as much about culture as it is about
-          the game — and part of that is showing up for the communities we belong to. From day one, we've
-          believed in using the platform we're building to give back: supporting local initiatives,
-          collaborating with purpose-led partners, and investing in the kind of change that outlives a
-          single round of golf.
+          Frostline was never just about gear. It's about who's wearing it — the runners chasing a PR before the sun's even up, the ones who show up when it's hard, the community holding each other accountable one mile at a time. That's why we stand behind PR Project. Not as a sponsor watching from the sidelines. As part of the run.
         </p>
-        <span className="giving__tag">Our Greater Community</span>
+        <span className="giving__tag">Our Community</span>
       </div>
 
-      <div className="partners">
-        {PARTNERS.map((partner) => (
-          <article
-            key={partner.title}
-            className="partner reveal"
-            data-delay={partner.delay}
+      <div className="partner-card-wrapper reveal" style={{ marginTop: 'clamp(2.5rem, 5vw, 4rem)' }}>
+        <div className="partner-card">
+          <div className="partner-card__mark-wrap">
+            <Image
+              src="/b_w_PR-PROJECT-Logo_transparent.png"
+              alt="PR Project logo"
+              width={100}
+              height={100}
+              className="partner-card__mark"
+              style={{ width: 'auto', height: 'auto', maxHeight: '72px', objectFit: 'contain' }}
+            />
+          </div>
+          <div className="partner-card__body">
+            <h4>PR Project</h4>
+            <p>
+              A run club built on personal records and personal growth. Every mile logged, every PR earned, every runner welcomed — this is where the Frostline community trains, races, and keeps each other honest.
+            </p>
+          </div>
+          <a
+            href="https://pr-project-community-website-br96.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="partner-card__link"
           >
-            <span className="partner__visit">Visit Website</span>
-            <h4>{partner.title}</h4>
-            <p>{partner.description}</p>
-            <a
-              href="#"
-              className="partner__arrow"
-              aria-label={`Visit ${partner.title}`}
-            >
-              →
-            </a>
-          </article>
-        ))}
+            Visit Website ↗
+          </a>
+        </div>
       </div>
     </section>
   )
 }
+
