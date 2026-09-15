@@ -18,4 +18,4 @@ export const PRODUCTS: Product[] = [
 ].map((p, id) => ({ ...p, id }))
 
 export const formatPrice = (n: number) =>
-  "R " + n.toLocaleString("en-ZA", { minimumFractionDigits: 2 })
+  "₱" + n.toLocaleString("en-PH", { minimumFractionDigits: 2 })

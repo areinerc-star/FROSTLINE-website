@@ -26,6 +26,7 @@ export function ProductModal({
 
   // 1. State hooks
   const [selectedSize, setSelectedSize] = useState('M')
+  const [selectedColor, setSelectedColor] = useState('Navy')
   const [activeAccordion, setActiveAccordion] = useState<'details' | 'care' | null>('details')
   const [mounted, setMounted] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
@@ -66,6 +67,8 @@ export function ProductModal({
   useEffect(() => {
     if (product) {
       setActiveProduct(product)
+      const colors = product.colors || ['Navy', 'Black', 'Burgundy', 'Khaki', 'Olive', 'Cream']
+      setSelectedColor(colors[0] || 'Navy')
       if (containerRef.current) {
         containerRef.current.scrollTop = 0
       }
@@ -76,19 +79,16 @@ export function ProductModal({
   const currentProduct = activeProduct
   const heroImage = currentProduct ? (currentProduct.lifestyleImg || currentProduct.flatImg) : ''
   const detailGridImages = currentProduct
-    ? [
-        currentProduct.flatImg,
-        currentProduct.lifestyleImg,
-        '/images/editorial-detail.png',
-        '/images/editorial-course.png',
-      ]
+    ? (currentProduct.detailImages && currentProduct.detailImages.length > 0
+        ? currentProduct.detailImages
+        : [currentProduct.flatImg, currentProduct.lifestyleImg].filter(Boolean))
     : []
-  const breakoutImage = '/images/editorial-course.png'
+  const breakoutImage = currentProduct ? (currentProduct.lifestyleImg || currentProduct.flatImg) : ''
   const allImages = [
     heroImage,
     ...detailGridImages,
     breakoutImage,
-  ]
+  ].filter(Boolean)
 
   const handleLightboxNext = () => {
     if (lightboxIndex === null || isSlideAnimating || allImages.length === 0) return
@@ -349,8 +349,24 @@ export function ProductModal({
 
                 <div className="product-modal-spacer" />
 
-                {/* Size Selector + Add to Cart pinned near bottom of right panel */}
+                {/* Color Selector + Size Selector + Add to Cart */}
                 <div className="product-modal-buy-section">
+                  <div className="product-modal-size-row" style={{ marginBottom: '1rem' }}>
+                    <span className="product-modal-size-label">COLOR:</span>
+                    <div className="product-modal-sizes" style={{ gap: '0.4rem', flexWrap: 'wrap' }}>
+                      {(activeProduct.colors || ['Navy', 'Black', 'Burgundy', 'Khaki', 'Olive', 'Cream']).map((col) => (
+                        <button
+                          key={col}
+                          className={`size-btn ${selectedColor === col ? 'is-selected' : ''}`}
+                          onClick={() => setSelectedColor(col)}
+                          style={{ minWidth: 'auto', paddingInline: '0.75rem', fontSize: '0.75rem' }}
+                        >
+                          {col}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <div className="product-modal-size-row">
                     <span className="product-modal-size-label">SIZE:</span>
                     <div className="product-modal-sizes">

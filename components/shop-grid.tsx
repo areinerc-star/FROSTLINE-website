@@ -8,6 +8,8 @@ import { Footer } from './footer'
 export interface GridProduct extends Product {
   flatImg: string
   lifestyleImg: string
+  detailImages?: string[]
+  colors?: string[]
 }
 
 export const GRID_PRODUCTS: GridProduct[] = [
@@ -241,7 +243,7 @@ export function ShopGrid({ onAddToCart, onClose, cartCount = 0, onOpenCart }: Sh
         <div className="shop-grid-subhead">
           <h1 className="shop-grid-subhead__title">ALL PRODUCTS</h1>
           <span className="shop-grid-subhead__meta">
-            COLLECTION 01 & 02 / ORGC © 2026 (38)
+            COLLECTION 01 & 02 / FROSTLINE © 2026 ({GRID_PRODUCTS.length})
           </span>
         </div>
 
