@@ -3,9 +3,9 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 
 const SLIDES = [
-  '/images/hero.png',
-  '/images/editorial-detail.png',
-  '/images/editorial-course.png',
+  '/images/hero-1.jpg',
+  '/images/hero-2.jpg',
+  '/images/hero-3.jpg',
 ]
 
 interface HeroProps {
