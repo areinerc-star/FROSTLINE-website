@@ -23,14 +23,20 @@ export const GRID_PRODUCTS: GridProduct[] = [
     lifestyleImg: '/images/hero.png',
   },
   {
-    id: 1,
-    name: 'ORGC Traditions Crewneck',
-    sku: 'OR_CRW_B',
-    price: 2100,
-    img: '/images/product-crewneck.png',
-    flatImg: '/images/product-crewneck.png',
-    lifestyleImg: '/images/editorial-detail.png',
-  },
+  id: 0,
+  name: "The Caddie Jacket",
+  sku: "FL_CAD_N",
+  price: 3200,
+  flatImg: "/images/jacket-main.jpg",
+  lifestyleImg: "/images/jacket-detail-1.jpg",
+  detailImages: [
+    "/images/jacket-main.jpg",
+    "/images/jacket-detail-1.jpg",
+    "/images/jacket-detail-2.jpg",
+    "/images/jacket-detail-3.jpg"
+  ],
+  colors: ["Navy", "Black", "Khaki"]
+},
   {
     id: 2,
     name: '1990s Heritage Polo',
