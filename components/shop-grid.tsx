@@ -23,20 +23,21 @@ export const GRID_PRODUCTS: GridProduct[] = [
     lifestyleImg: '/images/hero.png',
   },
   {
-  id: 0,
-  name: "The Caddie Jacket",
-  sku: "FL_CAD_N",
-  price: 3200,
-  flatImg: "/images/jacket-main.jpg",
-  lifestyleImg: "/images/jacket-detail-1.jpg",
+  id: PH-001,
+  name: "FROSTLINE PILIPINAS singlet",
+  sku: "FRL-PH-TNK",
+  price: 450,
+  flatImg: "/images/PILIPINAS blue.png",
+  lifestyleImg: "/images/PILIPINAS 1 — Front Hero.png",
   detailImages: [
-    "/images/jacket-main.jpg",
-    "/images/jacket-detail-1.jpg",
-    "/images/jacket-detail-2.jpg",
-    "/images/jacket-detail-3.jpg"
+    "/images/PILIPINAS 1 — Front Hero.png",
+    "/images/PILIPINAS 2 — Three-Quarter Angle.png",
+    "/images/PILIPINAS 3 — Close-Up Chest.png",
+    "/images/PILIPINAS 4 — Back View.png"
   ],
-  colors: ["Navy", "Black", "Khaki"]
-},
+  colors: ["Blue", "Black", "White",, "Red"]
+}
+,
   {
     id: 2,
     name: '1990s Heritage Polo',
