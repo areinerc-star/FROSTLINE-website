@@ -289,9 +289,9 @@ export function ShopGrid({ onAddToCart, onClose, cartCount = 0, onOpenCart }: Sh
                     loading="lazy"
                   />
 
-                  {/* Lifestyle / On-Model Photo with RAF Parallax Panning */}
+                  {/* Hover / On-Model Photo (Position 1: Front Hero / Position 2: Three-Quarter Angle) */}
                   <img
-                    src={product.lifestyleImg}
+                    src={product.lifestyleImg || (product.detailImages && product.detailImages[0]) || (product.detailImages && product.detailImages[1]) || product.flatImg}
                     alt={`${product.name} lifestyle`}
                     className="shop-tile__lifestyle-img"
                     loading="lazy"
