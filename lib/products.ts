@@ -7,6 +7,7 @@ export interface Product {
 }
 
 export const PRODUCTS: Product[] = [
+  { name: "FROSTLINE PILIPINAS singlet", sku: "FRL-PH-TNK", price: 450, img: "/images/PILIPINAS blue.png" },
   { name: "The Caddie Jacket [Navy]", sku: "OR_CAD_N", price: 3200, img: "/images/product-jacket.png" },
   { name: "ORGC Traditions Crewneck [Burgundy]", sku: "OR_CRW_B", price: 2100, img: "/images/product-crewneck.png" },
   { name: "1990s Heritage Polo", sku: "OR-HGP_B", price: 1850, img: "/images/product-polo.png" },
