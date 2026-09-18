@@ -77,17 +77,17 @@ export function ProductModal({
 
   // Derived values for image lists
   const currentProduct = activeProduct
-  const heroImage = currentProduct ? (currentProduct.lifestyleImg || currentProduct.flatImg) : ''
+  const heroImage = currentProduct ? (currentProduct.flatImg || currentProduct.lifestyleImg) : ''
   const detailGridImages = currentProduct
     ? (currentProduct.detailImages && currentProduct.detailImages.length > 0
         ? currentProduct.detailImages
-        : [currentProduct.flatImg, currentProduct.lifestyleImg].filter(Boolean))
+        : [currentProduct.lifestyleImg].filter(Boolean))
     : []
-  const breakoutImage = currentProduct ? (currentProduct.lifestyleImg || currentProduct.flatImg) : ''
+  const breakoutImage = currentProduct?.breakoutImg || null
   const allImages = [
     heroImage,
     ...detailGridImages,
-    breakoutImage,
+    ...(breakoutImage ? [breakoutImage] : []),
   ].filter(Boolean)
 
   const handleLightboxNext = () => {
@@ -391,14 +391,16 @@ export function ProductModal({
           </div>
 
           {/* SECTION 3: Full-Width Breakout Image (click opens lightbox) */}
-          <div
-            className="product-modal-breakout-section"
-            onClick={() => setLightboxIndex(allImages.length - 1)}
-            style={{ cursor: 'pointer' }}
-            title="Click to view full image lightbox"
-          >
-            <img src={breakoutImage} alt={`${activeProduct.name} lifestyle breakout`} className="product-modal-breakout-img" />
-          </div>
+          {breakoutImage && (
+            <div
+              className="product-modal-breakout-section"
+              onClick={() => setLightboxIndex(allImages.length - 1)}
+              style={{ cursor: 'pointer' }}
+              title="Click to view full image lightbox"
+            >
+              <img src={breakoutImage} alt={`${activeProduct.name} lifestyle breakout`} className="product-modal-breakout-img" />
+            </div>
+          )}
 
           {/* SECTION 4: "COMPLETE THE LOOK" 3-Column Recommendations */}
           <div className="product-modal-complete-look">
