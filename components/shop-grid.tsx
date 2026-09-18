@@ -20,7 +20,7 @@ export const GRID_PRODUCTS: GridProduct[] = [
     price: 450,
     img: '/images/PILIPINAS blue.png',
     flatImg: '/images/PILIPINAS blue.png',
-    lifestyleImg: '/images/PILIPINAS blue.png',
+    lifestyleImg: '/images/PILIPINAS 1 — Front Hero.png',
     detailImages: [
       '/images/PILIPINAS 1 — Front Hero.png',
       '/images/PILIPINAS 2 — Three-Quarter Angle.png',

@@ -743,16 +743,21 @@ export function ProductModal({
 
         .product-modal-hero-wrap {
           width: 100%;
-          height: calc(100vh - 60px);
-          max-height: calc(100vh - 60px);
-          background: #f4f4f4;
+          min-height: clamp(400px, 70vh, 750px);
+          background: #f7f8f9;
           overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem;
         }
 
         .product-modal-hero-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
+          max-width: 100%;
+          max-height: calc(100vh - 120px);
+          width: auto;
+          height: auto;
+          object-fit: contain;
           display: block;
         }
 
