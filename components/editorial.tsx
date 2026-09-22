@@ -13,7 +13,7 @@ export function Editorial() {
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
-          <span className="tile__label">The Details</span>
+          <span className="tile__label">Our Product</span>
         </div>
         <div className="tile reveal" data-delay="1">
           <img
@@ -22,7 +22,7 @@ export function Editorial() {
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
-          <span className="tile__label">On The Track</span>
+          <span className="tile__label">Behind FROSTLINE</span>
         </div>
         <div className="tile reveal" data-delay="2">
           <img
@@ -31,7 +31,7 @@ export function Editorial() {
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
-          <span className="tile__label">Off The Track</span>
+          <span className="tile__label">Our Community</span>
         </div>
       </div>
     </section>
