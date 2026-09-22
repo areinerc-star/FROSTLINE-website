@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Product, formatPrice } from '@/lib/products'
 import { ProductModal } from './product-modal'
-import { GridProduct } from './shop-grid'
+import { GridProduct, GRID_PRODUCTS } from './shop-grid'
 
 export interface CarouselProduct {
   id: number
@@ -185,11 +185,13 @@ export function FeaturedCarousel({ onAddToCart }: FeaturedCarouselProps) {
 
   const handleTileClick = (item: CarouselProduct) => {
     setActiveTileId(null)
-    const gridItem: GridProduct = {
+    const fullProduct = GRID_PRODUCTS.find((p) => p.id === item.id || p.sku === item.sku) || {
       ...item,
       img: item.flatImg,
+      detailImages: [item.lifestyleImg, item.lifestyleImg, item.lifestyleImg, item.lifestyleImg],
+      colors: ['Black', 'White', 'Red'],
     }
-    setSelectedProduct(gridItem)
+    setSelectedProduct(fullProduct)
     setIsModalOpen(true)
   }
 

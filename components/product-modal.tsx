@@ -66,9 +66,25 @@ export function ProductModal({
   // Sync active product when product prop updates
   useEffect(() => {
     if (product) {
-      setActiveProduct(product)
-      const colors = product.colors || ['Navy', 'Black', 'Burgundy', 'Khaki', 'Olive', 'Cream']
-      setSelectedColor(colors[0] || 'Navy')
+      const matched = GRID_PRODUCTS.find((p) => p.id === product.id || p.sku === product.sku)
+      const fullProduct: GridProduct = matched
+        ? {
+            ...matched,
+            ...product,
+            detailImages:
+              product.detailImages && product.detailImages.length > 0
+                ? product.detailImages
+                : matched.detailImages,
+            colors:
+              product.colors && product.colors.length > 0
+                ? product.colors
+                : matched.colors,
+          }
+        : product
+
+      setActiveProduct(fullProduct)
+      const colors = fullProduct.colors || ['Black', 'White', 'Red']
+      setSelectedColor(colors[0] || 'Black')
       if (containerRef.current) {
         containerRef.current.scrollTop = 0
       }
@@ -81,7 +97,12 @@ export function ProductModal({
   const detailGridImages = currentProduct
     ? (currentProduct.detailImages && currentProduct.detailImages.length > 0
         ? currentProduct.detailImages
-        : [currentProduct.lifestyleImg].filter(Boolean))
+        : [
+            currentProduct.lifestyleImg,
+            currentProduct.lifestyleImg,
+            currentProduct.lifestyleImg,
+            currentProduct.lifestyleImg,
+          ].filter(Boolean))
     : []
   const breakoutImage = currentProduct?.breakoutImg || null
   const allImages = [
