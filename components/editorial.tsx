@@ -1,304 +1,234 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useRef } from 'react'
 
 export function Editorial() {
-  const [isStoryOpen, setIsStoryOpen] = useState(false)
+  const [isStoryExpanded, setIsStoryExpanded] = useState(false)
+  const storyRef = useRef<HTMLDivElement>(null)
 
-  // Prevent background scroll when story modal is open
-  useEffect(() => {
-    if (isStoryOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isStoryOpen])
+  const toggleStory = () => {
+    setIsStoryExpanded((prev) => {
+      const nextState = !prev
+      if (nextState) {
+        setTimeout(() => {
+          if (storyRef.current) {
+            storyRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+          }
+        }, 150)
+      }
+      return nextState
+    })
+  }
 
   return (
-    <>
-      <section className="editorial" aria-label="Our products and community">
-        <div className="section-label reveal">
-          <p className="u-eyebrow">Our Products</p>
-          <p className="u-eyebrow">Our Community</p>
-        </div>
-        <div className="editorial__grid">
-          {/* Tile 1: OUR PRODUCT */}
-          <div
-            className="tile reveal"
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              const el = document.getElementById('products')
-              if (el) el.scrollIntoView({ behavior: 'smooth' })
-            }}
-          >
-            <img
-              src="/images/pilipinas-3.png"
-              alt="Close-up detail of FROSTLINE chest embroidery and technical fabric weave"
-              loading="lazy"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-            <span className="tile__label">Our Product</span>
-          </div>
+    <section className="editorial" aria-label="Our products and community">
+      <div className="section-label reveal">
+        <p className="u-eyebrow">Our Products</p>
+        <p className="u-eyebrow">Our Community</p>
+      </div>
 
-          {/* Tile 2: BEHIND FROSTLINE (with overlay buttons matching inspiration video) */}
-          <div
-            className="tile reveal"
-            data-delay="1"
-            style={{ cursor: 'pointer' }}
-            onClick={() => setIsStoryOpen(true)}
-          >
-            <img
-              src="/images/hero-1.jpg"
-              alt="FROSTLINE athlete training on the track in performance singlet"
-              loading="lazy"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '1.25rem',
-                left: '1.25rem',
-                right: '1.25rem',
-                zIndex: 3,
-                display: 'flex',
-                justify: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <span
-                style={{
-                  background: 'rgba(0, 0, 0, 0.75)',
-                  backdropFilter: 'blur(4px)',
-                  color: '#FFFFFF',
-                  padding: '0.4rem 0.75rem',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '2px',
-                }}
-              >
-                BEHIND FROSTLINE
-              </span>
-              <span
-                style={{
-                  background: '#FFFFFF',
-                  color: '#000000',
-                  padding: '0.4rem 0.75rem',
-                  fontSize: '0.75rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  borderRadius: '2px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.3rem',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                }}
-              >
-                READ MORE <span style={{ fontSize: '0.9rem' }}>→</span>
-              </span>
-            </div>
-          </div>
-
-          {/* Tile 3: OUR COMMUNITY */}
-          <div
-            className="tile reveal"
-            data-delay="2"
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              const el = document.getElementById('giving-back')
-              if (el) el.scrollIntoView({ behavior: 'smooth' })
-            }}
-          >
-            <img
-              src="/images/hero-2.jpg"
-              alt="FROSTLINE athletic apparel styled for daily lifestyle off the track"
-              loading="lazy"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-            <span className="tile__label">Our Community</span>
-          </div>
-        </div>
-      </section>
-
-      {/* BEHIND FROSTLINE STORY MODAL (Matching video inspiration) */}
-      {isStoryOpen && (
+      <div className="editorial__grid">
+        {/* Tile 1: OUR PRODUCT */}
         <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 9999,
-            background: 'rgba(0, 0, 0, 0.95)',
-            backdropFilter: 'blur(12px)',
-            color: '#FFFFFF',
-            overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
+          className="tile reveal"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            const el = document.getElementById('products')
+            if (el) el.scrollIntoView({ behavior: 'smooth' })
           }}
         >
-          {/* Modal Header */}
+          <img
+            src="/images/pilipinas-3.png"
+            alt="Close-up detail of FROSTLINE chest embroidery and technical fabric weave"
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+          <span className="tile__label">Our Product</span>
+        </div>
+
+        {/* Tile 2: BEHIND FROSTLINE (with video-exact overlay tags) */}
+        <div
+          className="tile reveal"
+          data-delay="1"
+          style={{ cursor: 'pointer' }}
+          onClick={toggleStory}
+        >
+          <img
+            src="/images/hero-1.jpg"
+            alt="FROSTLINE athlete training on the track in performance singlet"
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
           <div
             style={{
+              position: 'absolute',
+              bottom: '1.25rem',
+              left: '1.25rem',
+              right: '1.25rem',
+              zIndex: 3,
               display: 'flex',
               justify: 'space-between',
               alignItems: 'center',
-              padding: '1.5rem 2rem',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <img
-                src="/FROSTLINEwhiteLOGOonly.png"
-                alt="FROSTLINE Logo"
-                style={{ height: '36px', width: 'auto', objectFit: 'contain' }}
-              />
-              <span
-                style={{
-                  fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
-                  fontSize: '1rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                BEHIND FROSTLINE
-              </span>
-            </div>
-            <button
-              onClick={() => setIsStoryOpen(false)}
+            <span
               style={{
-                background: 'transparent',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
+                background: 'rgba(0, 0, 0, 0.75)',
+                backdropFilter: 'blur(4px)',
                 color: '#FFFFFF',
-                padding: '0.5rem 1.25rem',
-                fontSize: '0.8rem',
+                padding: '0.4rem 0.75rem',
+                fontSize: '0.75rem',
                 fontWeight: 700,
                 letterSpacing: '0.1em',
-                cursor: 'pointer',
+                textTransform: 'uppercase',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
                 borderRadius: '2px',
               }}
             >
-              CLOSE ✕
-            </button>
+              ABOUT US
+            </span>
+            <span
+              style={{
+                background: '#FFFFFF',
+                color: '#000000',
+                padding: '0.4rem 0.75rem',
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                borderRadius: '2px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              {isStoryExpanded ? 'CLOSE ✕' : 'READ MORE →'}
+            </span>
+          </div>
+        </div>
+
+        {/* Tile 3: OUR COMMUNITY */}
+        <div
+          className="tile reveal"
+          data-delay="2"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            const el = document.getElementById('giving-back')
+            if (el) el.scrollIntoView({ behavior: 'smooth' })
+          }}
+        >
+          <img
+            src="/images/hero-2.jpg"
+            alt="FROSTLINE athletic apparel styled for daily lifestyle off the track"
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+          <span className="tile__label">Our Community</span>
+        </div>
+      </div>
+
+      {/* BEHIND FROSTLINE IN-PAGE SLIDE-DOWN EXPANDABLE STORY BANNER (Video Exact Replication) */}
+      <div
+        ref={storyRef}
+        style={{
+          maxHeight: isStoryExpanded ? '1000px' : '0px',
+          opacity: isStoryExpanded ? 1 : 0,
+          overflow: 'hidden',
+          transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
+          marginTop: isStoryExpanded ? '2rem' : '0px',
+          background: '#050505',
+          border: isStoryExpanded ? '1px solid rgba(255, 255, 255, 0.12)' : 'none',
+          borderRadius: '4px',
+        }}
+      >
+        <div
+          style={{
+            padding: 'clamp(2.5rem, 5vw, 4.5rem) clamp(1.5rem, 4vw, 3.5rem)',
+            transform: isStoryExpanded ? 'translateY(0)' : 'translateY(-20px)',
+            transition: 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 'clamp(2rem, 4vw, 4rem)',
+            alignItems: 'start',
+          }}
+        >
+          {/* Column 1: Logo Mark & Icon */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <img
+              src="/FROSTLINEwhiteLOGOonly.png"
+              alt="FROSTLINE Mark"
+              style={{ width: '90px', height: 'auto', objectFit: 'contain' }}
+            />
+            <p
+              style={{
+                fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                letterSpacing: '0.15em',
+                color: 'rgba(255, 255, 255, 0.5)',
+                textTransform: 'uppercase',
+              }}
+            >
+              // BEHIND FROSTLINE
+            </p>
           </div>
 
-          {/* Modal Story Content */}
-          <div
-            style={{
-              flex: 1,
-              maxWidth: '1200px',
-              margin: '0 auto',
-              width: '100%',
-              padding: 'clamp(2rem, 5vw, 4rem) 2rem',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: '3rem',
-              alignItems: 'start',
-            }}
-          >
-            {/* Left Column: Visual Headline & Image */}
-            <div>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-headline, "Antonio", "Anton", sans-serif)',
-                  fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-                  fontWeight: 800,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.02em',
-                  lineHeight: 1.1,
-                  marginBottom: '2rem',
-                  color: '#FFFFFF',
-                }}
-              >
-                CRAFTED FOR DREAMERS.<br />BUILT FOR BELIEVERS.
-              </h2>
-              <div style={{ aspectRatio: '4/3', borderRadius: '4px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <img
-                  src="/images/hero-1.jpg"
-                  alt="FROSTLINE Athlete"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
-            </div>
+          {/* Column 2: Main Headline Statement */}
+          <div>
+            <h3
+              style={{
+                fontFamily: 'var(--font-headline, "Antonio", "Anton", sans-serif)',
+                fontSize: 'clamp(1.6rem, 3.2vw, 2.75rem)',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '0.02em',
+                lineHeight: 1.15,
+                color: '#FFFFFF',
+              }}
+            >
+              CRAFTED FOR DREAMERS.<br />BUILT FOR BELIEVERS.
+            </h3>
+          </div>
 
-            {/* Right Column: Complete Story & Manifesto */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Column 3: Narrative & Signature Closer */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <p
+              style={{
+                fontFamily: 'var(--font-body, "Times New Roman", serif)',
+                fontSize: '1.1rem',
+                lineHeight: 1.65,
+                color: '#D0D0D0',
+                margin: 0,
+              }}
+            >
+              Born from the relentless chase of the personal record, rooted in faith, discipline, and the quiet hours before sunrise. For us, athletic apparel isn't just gear—it's a commitment to show up, trust the process, and walk your own path.
+            </p>
+            <div
+              style={{
+                borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+                paddingTop: '1rem',
+                marginTop: '0.5rem',
+              }}
+            >
               <p
                 style={{
                   fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.15em',
-                  color: 'rgba(255, 255, 255, 0.6)',
+                  fontSize: '1.15rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.1em',
+                  color: '#FFFFFF',
                   textTransform: 'uppercase',
+                  margin: 0,
                 }}
               >
-                // THE STORY OF FROSTLINE
+                WEAR YOUR CONFIDENCE.
               </p>
-
-              <p
-                style={{
-                  fontFamily: 'var(--font-body, "Times New Roman", serif)',
-                  fontSize: '1.2rem',
-                  lineHeight: 1.7,
-                  color: '#E0E0E0',
-                }}
-              >
-                FROSTLINE was never just about gear. It’s about who’s wearing it—the runners chasing a PR before the sun’s even up, the ones who show up when it’s hard, and the community holding each other accountable one mile at a time.
-              </p>
-
-              <p
-                style={{
-                  fontFamily: 'var(--font-body, "Times New Roman", serif)',
-                  fontSize: '1.2rem',
-                  lineHeight: 1.7,
-                  color: '#E0E0E0',
-                }}
-              >
-                Rooted in faith, discipline, and personal-record culture, every singlet, speed suit, and tee is engineered to honor the grind. No shortcuts, no empty hype—just relentless focus on the path ahead.
-              </p>
-
-              <div
-                style={{
-                  marginTop: '1rem',
-                  paddingTop: '1.5rem',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.15)',
-                }}
-              >
-                <p
-                  style={{
-                    fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
-                    fontSize: '1rem',
-                    fontWeight: 800,
-                    letterSpacing: '0.12em',
-                    color: '#FFFFFF',
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  KEEP THE FAITH. KEEP THE GRIND. KEEP GOING.
-                </p>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
-                    fontSize: '1.4rem',
-                    fontWeight: 800,
-                    letterSpacing: '0.1em',
-                    color: '#FFFFFF',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  WEAR YOUR CONFIDENCE.
-                </p>
-              </div>
             </div>
           </div>
         </div>
-      )}
-    </>
+      </div>
+    </section>
   )
 }
