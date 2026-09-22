@@ -1,6 +1,6 @@
 export function Editorial() {
   return (
-    <section className="editorial" aria-label="Our products">
+    <section className="editorial" aria-label="Our products and community">
       <div className="section-label reveal">
         <p className="u-eyebrow">Our Products</p>
         <p className="u-eyebrow">Our Community</p>
@@ -8,27 +8,30 @@ export function Editorial() {
       <div className="editorial__grid">
         <div className="tile reveal">
           <img
-            src="/images/editorial-detail.png"
-            alt="Detail of a signet ring resting on a corduroy jacket"
+            src="/images/pilipinas-3.png"
+            alt="Close-up detail of FROSTLINE chest embroidery and technical fabric weave"
             loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
           <span className="tile__label">The Details</span>
         </div>
         <div className="tile reveal" data-delay="1">
           <img
-            src="/images/editorial-course.png"
-            alt="Golf course green at dusk with a flag pin"
+            src="/images/hero-1.jpg"
+            alt="FROSTLINE athlete training on the track in performance singlet"
             loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
-          <span className="tile__label">On The Course</span>
+          <span className="tile__label">On The Track</span>
         </div>
         <div className="tile reveal" data-delay="2">
           <img
-            src="/images/hero.png"
-            alt="Two men in Odd Ritual apparel in a studio setting"
+            src="/images/hero-2.jpg"
+            alt="FROSTLINE athletic apparel styled for daily lifestyle off the track"
             loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
-          <span className="tile__label">Off The Course</span>
+          <span className="tile__label">Off The Track</span>
         </div>
       </div>
     </section>
