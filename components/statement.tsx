@@ -3,17 +3,14 @@ export function Statement() {
     <section className="statement" aria-label="About Frostline" style={{ position: 'relative', overflow: 'hidden' }}>
       {/* Scaling Translucent Brand Mark Watermark behind text */}
       <div
-        className="reveal"
+        className="statement__watermark reveal"
         style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
-          transform: 'translate(-50%, -50%)',
           width: 'clamp(320px, 55vw, 650px)',
-          opacity: 0.05,
           pointerEvents: 'none',
           zIndex: 1,
-          transition: 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease',
         }}
       >
         <img

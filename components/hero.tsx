@@ -17,7 +17,29 @@ export function Hero({ onShopNowClick }: HeroProps) {
   const [prevSlide, setPrevSlide] = useState<number | null>(null)
   const [direction, setDirection] = useState<'next' | 'prev'>('next')
   const [isAnimating, setIsAnimating] = useState(false)
+  const [parallaxY, setParallaxY] = useState(0)
   const animTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const heroRef = useRef<HTMLElement>(null)
+
+  // Scroll handler for 1.35x foreground parallax rate over pinned background
+  useEffect(() => {
+    let handleScroll: () => void
+
+    if (typeof window !== 'undefined') {
+      handleScroll = () => {
+        if (!heroRef.current) return
+        const scrollY = window.scrollY
+        const heroHeight = heroRef.current.offsetHeight
+        if (scrollY <= heroHeight) {
+          // Foreground moves faster (1.35x rate) while pinned background stays anchored
+          setParallaxY(scrollY * 0.35)
+        }
+      }
+
+      window.addEventListener('scroll', handleScroll, { passive: true })
+      return () => window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   const goToSlide = useCallback(
     (targetIndex: number) => {
@@ -79,8 +101,18 @@ export function Hero({ onShopNowClick }: HeroProps) {
   }, [])
 
   return (
-    <section className="hero" aria-label="Featured collection">
-      <div className="hero__slides" id="heroSlides">
+    <section ref={heroRef} className="hero" aria-label="Featured collection" style={{ position: 'relative' }}>
+      {/* Sticky pinned background slide viewport */}
+      <div
+        className="hero__slides"
+        id="heroSlides"
+        style={{
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          zIndex: 1,
+        }}
+      >
         {/* Render outgoing slide if animating */}
         {isAnimating && prevSlide !== null && (
           <div
@@ -104,7 +136,7 @@ export function Hero({ onShopNowClick }: HeroProps) {
         />
       </div>
 
-      <div className="hero__index" id="heroIndex" role="tablist" aria-label="Hero slides">
+      <div className="hero__index" id="heroIndex" role="tablist" aria-label="Hero slides" style={{ zIndex: 3 }}>
         {SLIDES.map((_, index) => (
           <button
             key={index}
@@ -117,11 +149,26 @@ export function Hero({ onShopNowClick }: HeroProps) {
         ))}
       </div>
 
-      <div className="hero__scroll" aria-hidden="true" suppressHydrationWarning>
-        Scroll <span suppressHydrationWarning />
+      {/* Continuous Rotating Scroll Indicator Badge */}
+      <div className="hero__scroll" aria-hidden="true" suppressHydrationWarning style={{ zIndex: 3 }}>
+        <div className="scroll-indicator-badge">
+          <img
+            src="/FROSTLINEwhiteLOGOonly.png"
+            alt=""
+            style={{ width: '22px', height: '22px', objectFit: 'contain' }}
+          />
+        </div>
       </div>
 
-      <div className="hero__caption">
+      {/* Foreground caption layer moving at 1.35x parallax rate */}
+      <div
+        className="hero__caption"
+        style={{
+          zIndex: 3,
+          transform: `translate3d(0, -${parallaxY}px, 0)`,
+          willChange: 'transform',
+        }}
+      >
         <a className="hero__cta" href="#products" onClick={onShopNowClick}>
           <span>Shop Now</span>
           <span>Shop Now</span>
