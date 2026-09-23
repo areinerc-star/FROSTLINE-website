@@ -101,15 +101,14 @@ export function Hero({ onShopNowClick }: HeroProps) {
   }, [])
 
   return (
-    <section ref={heroRef} className="hero" aria-label="Featured collection" style={{ position: 'relative' }}>
-      {/* Sticky pinned background slide viewport */}
+    <section ref={heroRef} className="hero" aria-label="Featured collection" style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+      {/* Background slide viewport covering 100% of hero */}
       <div
         className="hero__slides"
         id="heroSlides"
         style={{
-          position: 'sticky',
-          top: 0,
-          height: '100vh',
+          position: 'absolute',
+          inset: 0,
           zIndex: 1,
         }}
       >
@@ -160,10 +159,14 @@ export function Hero({ onShopNowClick }: HeroProps) {
         </div>
       </div>
 
-      {/* Foreground caption layer moving at 1.35x parallax rate */}
+      {/* Foreground caption layer overlayed inside the hero photo frame */}
       <div
         className="hero__caption"
         style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
           zIndex: 3,
           transform: `translate3d(0, -${parallaxY}px, 0)`,
           willChange: 'transform',

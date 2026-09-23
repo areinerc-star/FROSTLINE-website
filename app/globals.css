@@ -157,8 +157,8 @@ body {
 
 /* Hero */
 .hero {
-  position: relative; min-height: 100svh;
-  background: var(--taupe);
+  position: relative; height: 100vh; min-height: 100vh;
+  background: #0a0a0a;
   overflow: hidden;
   display: flex; flex-direction: column; justify-content: flex-end;
 }
