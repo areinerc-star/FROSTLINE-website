@@ -21,6 +21,8 @@ const ASSETS = {
   logoMark: '/FROSTLINEwhiteLOGOonly.png',
   statementParagraph:
     "Born from the relentless chase of the personal record, rooted in faith, discipline, and the quiet hours before sunrise. For us, athletic apparel isn't just gear—it's a commitment to show up, trust the process, and walk your own path.",
+  ourStory:
+    "Sergio Tabornal started his journey at Far Eastern University FEU, facing a major turning point when an injury challenged his path. But every setback has a purpose, every hurdle a redirection. With a scholarship and a new chapter at Jose Rizal University JRU, that resilience turned into a championship run at NCAA Season 100. Even when paths change and chapters close under unexpected circumstances, there is no bitterness—only the steady belief that it is all part of a larger plan. The hardships we face don't define us; they reveal our capacity for growth, continued learning, and deeper meaning. It speaks to something deeply human: we are built through the grind, guided by faith, and shaped by every step of the journey.",
   headline: 'CRAFTED FOR DREAMERS.\nBUILT FOR BELIEVERS.',
 }
 
@@ -321,70 +323,20 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                   height: '83vh',
                 }}
               >
-                {/* Left: Frostline Mark & Label */}
+                {/* Left Column: Headline (CRAFTED FOR DREAMERS. BUILT FOR BELIEVERS.) */}
                 <div
                   style={{
                     position: 'absolute',
                     left: '8.5vw',
-                    top: '55vh',
-                    transform: 'translateY(-50%)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.8rem',
-                  }}
-                >
-                  <img
-                    src={ASSETS.logoMark}
-                    alt="Frostline Mark"
-                    style={{ width: '85px', height: 'auto', objectFit: 'contain' }}
-                  />
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      letterSpacing: '0.15em',
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    BEHIND FROSTLINE
-                  </span>
-                </div>
-
-                {/* Right: Headline & Ghost Text */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '49.8vw',
                     top: '52vh',
                     transform: 'translateY(-50%)',
-                    maxWidth: '41.2vw',
+                    maxWidth: '38vw',
                   }}
                 >
-                  <p
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      fontFamily: 'var(--font-body, "Times New Roman", serif)',
-                      fontSize: '9px',
-                      lineHeight: '1.5',
-                      color: 'rgba(255, 255, 255, 0.09)',
-                      pointerEvents: 'none',
-                      margin: 0,
-                      whiteSpace: 'normal',
-                      zIndex: 1,
-                    }}
-                  >
-                    {ASSETS.statementParagraph} {ASSETS.statementParagraph}
-                  </p>
-
                   <h2
                     style={{
-                      position: 'relative',
-                      zIndex: 2,
                       fontFamily: 'var(--font-headline, "Antonio", "Anton", sans-serif)',
-                      fontSize: 'clamp(1.2vw, 1.4vw, 2.2rem)',
+                      fontSize: 'clamp(1.3vw, 1.6vw, 2.5rem)',
                       fontWeight: 800,
                       textTransform: 'uppercase',
                       letterSpacing: '0.02em',
@@ -396,6 +348,43 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                   >
                     {ASSETS.headline}
                   </h2>
+                </div>
+
+                {/* Right Column: [ OUR STORY ] Paragraph Block */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '49.8vw',
+                    top: '52vh',
+                    transform: 'translateY(-50%)',
+                    maxWidth: '41.2vw',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-headline, "Antonio", "Anton", sans-serif)',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.15em',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      textTransform: 'uppercase',
+                      display: 'block',
+                      marginBottom: '0.75rem',
+                    }}
+                  >
+                    [ OUR STORY ]
+                  </span>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-body, "Times New Roman", serif)',
+                      fontSize: 'clamp(11px, 0.8vw, 13px)',
+                      lineHeight: 1.65,
+                      color: 'rgba(255, 255, 255, 0.92)',
+                      margin: 0,
+                    }}
+                  >
+                    {ASSETS.ourStory}
+                  </p>
                 </div>
               </div>
 
