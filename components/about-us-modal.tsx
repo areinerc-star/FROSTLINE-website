@@ -399,13 +399,17 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                 </div>
               </div>
 
-              {/* FULL-BLEED PHOTO SECTION (Full 100vw x 100vh, object-position center 25%, fully seen without any intertwining/overlap) */}
+              {/* FULL-BLEED PHOTO SECTION (Fully visible photo, no intertwining or overlapping veils) */}
               <div
                 style={{
                   position: 'relative',
                   width: '100vw',
-                  height: '100vh',
                   minHeight: '100vh',
+                  height: '100vh',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#000000',
                   overflow: 'hidden',
                 }}
               >
@@ -429,7 +433,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                     left: 0,
                     right: 0,
                     display: 'flex',
-                    justify: 'space-between',
+                    justifyContent: 'space-between',
                     padding: '0 4vw',
                     fontFamily: 'var(--font-body, "Times New Roman", serif)',
                     fontSize: '10px',
@@ -448,7 +452,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
               </div>
             </div>
 
-            {/* WHITE GRID SECTION */}
+            {/* WHITE GRID SECTION - POSITIONED CLEANLY BELOW THE HERO PHOTO */}
             <div
               style={{
                 position: 'relative',
@@ -457,6 +461,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                 minHeight: '220vh',
                 paddingTop: '6rem',
                 paddingBottom: '8rem',
+                zIndex: 1,
               }}
             >
               <div
@@ -540,21 +545,15 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                 </div>
               </div>
 
-              {/* Inverted Black Frostline Chevron Mark on Seam (~49.5vw) */}
+              {/* Inverted Black Frostline Chevron Mark (Static placement below content) */}
               <div
                 style={{
-                  position: 'sticky',
-                  bottom: '3vh',
-                  left: '49.5vw',
-                  width: '200px',
-                  height: '9vh',
-                  zIndex: 30,
+                  position: 'relative',
+                  marginTop: '6rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   pointerEvents: 'none',
-                  transform: `translateY(${Math.max(0, (1 - scrollProgress * 1.8) * 100)}px)`,
-                  transition: 'transform 300ms ease-out',
                 }}
               >
                 <img
@@ -562,8 +561,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                   alt="Frostline Chevron Mark"
                   style={{
                     width: 'auto',
-                    height: '100%',
-                    maxHeight: '9vh',
+                    height: '60px',
                     objectFit: 'contain',
                     filter: 'brightness(0)',
                   }}
