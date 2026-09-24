@@ -310,17 +310,15 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
             {/* HERO SECTION CONTAINER */}
             <div
               style={{
-                minHeight: '170vh',
                 position: 'relative',
                 background: '#000000',
               }}
             >
-              {/* Black Zone (76vh) */}
+              {/* Black Zone (83vh) */}
               <div
                 style={{
                   position: 'relative',
-                  height: '76vh',
-                  paddingTop: '12vh',
+                  height: '83vh',
                 }}
               >
                 {/* Left: Frostline Mark & Label */}
@@ -401,24 +399,25 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                 </div>
               </div>
 
-              {/* Peeking Hero Photo (24vh initially, expands to 100vh on scroll) */}
+              {/* FULL SIZE FULL-BLEED PHOTO (100vw x 100dvh, object-position center 25%, peeks 17vh bottom, expands to 100dvh on scroll) */}
               <div
                 style={{
                   position: 'relative',
-                  width: '100%',
-                  height: `${24 + scrollProgress * 76}vh`,
-                  minHeight: '220px',
+                  width: '100vw',
+                  height: `${17 + scrollProgress * 83}vh`,
+                  minHeight: '17vh',
                   overflow: 'hidden',
                   transition: 'height 100ms ease-out',
                 }}
               >
                 <img
                   src={ASSETS.imgHero}
-                  alt="Frostline Hero"
+                  alt="Frostline Hero Athlete"
                   style={{
-                    width: '100%',
-                    height: '100%',
+                    width: '100vw',
+                    height: '100dvh',
                     objectFit: 'cover',
+                    objectPosition: 'center 25%',
                     display: 'block',
                   }}
                 />
