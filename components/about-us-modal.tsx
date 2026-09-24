@@ -7,17 +7,10 @@ interface AboutUsModalProps {
   onClose: () => void
 }
 
+const ABOUT_VIDEO_SRC = '/videos/about.mp4'
+
 const ASSETS = {
   imgHero: '/images/hero-1.jpg',
-  imgLeft: '/images/pilipinas-3.png',
-  imgRight: [
-    '/images/hero-2.jpg',
-    '/images/hero-3.jpg',
-    '/images/singlet-1.png',
-    '/images/tshirt-1.png',
-  ],
-  captionLeft: 'PHILIPPINES // 2026',
-  captionRight: 'FROSTLINE OFFICIAL',
   logoMark: '/FROSTLINEwhiteLOGOonly.png',
   statementParagraph:
     "Born from the relentless chase of the personal record, rooted in faith, discipline, and the quiet hours before sunrise. For us, athletic apparel isn't just gear—it's a commitment to show up, trust the process, and walk your own path.",
@@ -31,10 +24,12 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
   const [isClosing, setIsClosing] = useState(false)
   const [closeWipeActive, setCloseWipeActive] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [isVideoError, setIsVideoError] = useState(false)
 
   const modalRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const previousActiveElementRef = useRef<HTMLElement | null>(null)
   const timerRefs = useRef<NodeJS.Timeout[]>([])
 
@@ -43,7 +38,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
     timerRefs.current = []
   }
 
-  // Handle open sequence
+  // Handle video play on open and pause/reset on close
   useEffect(() => {
     if (isOpen) {
       previousActiveElementRef.current = document.activeElement as HTMLElement
@@ -52,6 +47,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
       setCloseWipeActive(false)
       setScrollProgress(0)
       setPhase('curtain-open')
+      setIsVideoError(false)
 
       if (scrollContainerRef.current) {
         scrollContainerRef.current.scrollTop = 0
@@ -59,11 +55,18 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
 
       clearAllTimers()
 
-      // Timeline:
-      // 0.0s - 0.7s: Curtain wipe top-to-bottom
-      // 0.7s - 2.2s: Statement phase
-      // 2.2s - 3.0s: Hero reveal phase
-      // 3.0s+: Unlocked for scrolling
+      // Play video if available and reduced motion not preferred
+      const prefersReduced =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      if (videoRef.current && !prefersReduced) {
+        videoRef.current.currentTime = 0
+        videoRef.current.play().catch(() => {
+          // If video missing/unplayable, fallback to solid #111 gracefully
+          setIsVideoError(true)
+        })
+      }
 
       const t1 = setTimeout(() => {
         setPhase('statement')
@@ -85,6 +88,10 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
 
       return () => clearAllTimers()
     } else {
+      if (videoRef.current) {
+        videoRef.current.pause()
+        videoRef.current.currentTime = 0
+      }
       document.body.style.overflow = ''
       setPhase('curtain-open')
       setIsClosing(false)
@@ -98,6 +105,11 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
     if (isClosing) return
     setIsClosing(true)
     setCloseWipeActive(true)
+
+    if (videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+    }
 
     clearAllTimers()
 
@@ -144,7 +156,6 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, handleClose])
 
-  // Scroll handler (only active when phase is 'unlocked')
   const handleScroll = () => {
     if (phase !== 'unlocked' || !scrollContainerRef.current) return
     const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current
@@ -158,10 +169,6 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
   if (!isOpen && !isClosing) return null
 
   const isScrollable = phase === 'unlocked' && !isClosing
-  const activeImageIndex = Math.min(
-    Math.floor(scrollProgress * ASSETS.imgRight.length * 1.5),
-    ASSETS.imgRight.length - 1
-  )
   const isWhiteSectionActive = scrollProgress > 0.55
 
   return (
@@ -173,12 +180,12 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
       style={{
         position: 'fixed',
         inset: 0,
-        // zIndex 90 places modal directly below header (.nav has zIndex 100 in globals.css)
+        // zIndex 90 stays directly below header (.nav has zIndex 100 in globals.css)
         zIndex: 90,
         backgroundColor: '#000000',
       }}
     >
-      {/* 1. OPENING TOP-TO-BOTTOM CURTAIN WIPE LAYER (z-index 95) */}
+      {/* 1. CURTAIN WIPE LAYER */}
       <div
         style={{
           position: 'fixed',
@@ -197,7 +204,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
         }}
       />
 
-      {/* 2. CLOSING BOTTOM-TO-TOP CURTAIN WIPE LAYER (z-index 96) */}
+      {/* REVERSE CLOSE WIPE LAYER (Upward 0.5s) */}
       <div
         style={{
           position: 'fixed',
@@ -213,7 +220,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
         }}
       />
 
-      {/* FIXED CLOSE PILL BUTTON (z-index 99) */}
+      {/* FIXED CLOSE PILL BUTTON */}
       <button
         ref={closeBtnRef}
         onClick={handleClose}
@@ -243,7 +250,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
         ABOUT US | CLOSE ×
       </button>
 
-      {/* MODAL MAIN CONTENT & SCROLL CONTAINER (z-index 92) */}
+      {/* MAIN SCROLL CONTAINER */}
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
@@ -258,7 +265,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
           background: '#000000',
         }}
       >
-        {/* STATEMENT PHASE SCREEN (Visible during 'statement' phase) */}
+        {/* STATEMENT PHASE SCREEN */}
         {phase === 'statement' && (
           <div
             style={{
@@ -304,26 +311,24 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
           </div>
         )}
 
-        {/* HERO REVEAL & MAIN SCROLL CONTENT (Visible during 'hero-intro' & 'unlocked') */}
+        {/* HERO REVEAL & MAIN SCROLL CONTENT */}
         {(phase === 'hero-intro' || phase === 'unlocked') && (
           <>
             {/* HERO SECTION CONTAINER */}
             <div
               style={{
-                minHeight: '170vh',
                 position: 'relative',
                 background: '#000000',
               }}
             >
-              {/* Black Zone (76vh) */}
+              {/* Black Zone 83vh */}
               <div
                 style={{
                   position: 'relative',
-                  height: '76vh',
-                  paddingTop: '12vh',
+                  height: '83vh',
                 }}
               >
-                {/* Left: Frostline Mark & Label */}
+                {/* Left: 2x Bigger Hero Chevron Mark (~180px wide) */}
                 <div
                   style={{
                     position: 'absolute',
@@ -332,13 +337,14 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                     transform: 'translateY(-50%)',
                     display: 'flex',
                     flexDirection: 'column',
+                    alignItems: 'center',
                     gap: '0.8rem',
                   }}
                 >
                   <img
                     src={ASSETS.logoMark}
                     alt="Frostline Mark"
-                    style={{ width: '85px', height: 'auto', objectFit: 'contain' }}
+                    style={{ width: '180px', height: 'auto', objectFit: 'contain' }}
                   />
                   <span
                     style={{
@@ -348,6 +354,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                       letterSpacing: '0.15em',
                       color: 'rgba(255, 255, 255, 0.5)',
                       textTransform: 'uppercase',
+                      textAlign: 'center',
                     }}
                   >
                     BEHIND FROSTLINE
@@ -401,63 +408,60 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                 </div>
               </div>
 
-              {/* Peeking Hero Photo (24vh initially, expands to 100vh on scroll) */}
+              {/* 1. FULL-BLEED PHOTO (100vw × 100dvh, object-fit cover, object-position center 25%, peeks 17vh bottom, expands on scroll with NO black spacer) */}
               <div
                 style={{
                   position: 'relative',
-                  width: '100%',
-                  height: `${24 + scrollProgress * 76}vh`,
-                  minHeight: '220px',
+                  width: '100vw',
+                  height: `${17 + scrollProgress * 83}vh`,
+                  minHeight: '17vh',
                   overflow: 'hidden',
                   transition: 'height 100ms ease-out',
                 }}
               >
                 <img
                   src={ASSETS.imgHero}
-                  alt="Frostline Hero"
+                  alt="Frostline Hero Athlete"
                   style={{
-                    width: '100%',
-                    height: '100%',
+                    width: '100vw',
+                    height: '100dvh',
                     objectFit: 'cover',
+                    objectPosition: 'center 25%',
                     display: 'block',
                   }}
                 />
 
-                {/* Micro-Captions on Vertical Midline (44vh) */}
+                {/* CENTER CAPTION ON PHOTO MIDLINE (~44vh) */}
                 <div
                   style={{
                     position: 'absolute',
                     top: '44vh',
                     left: 0,
                     right: 0,
-                    display: 'flex',
-                    justify: 'space-between',
-                    padding: '0 4vw',
+                    textAlign: 'center',
                     fontFamily: 'var(--font-body, "Times New Roman", serif)',
                     fontSize: '10px',
                     fontWeight: 600,
-                    letterSpacing: '0.15em',
+                    letterSpacing: '0.18em',
                     textTransform: 'uppercase',
                     color: '#FFFFFF',
-                    textShadow: '0 2px 6px rgba(0,0,0,0.7)',
+                    textShadow: '0 2px 6px rgba(0,0,0,0.8)',
                     zIndex: 10,
                   }}
                 >
-                  <span>{ASSETS.captionLeft}</span>
-                  <span>WEAR YOUR CONFIDENCE.</span>
-                  <span>{ASSETS.captionRight}</span>
+                  WEAR YOUR CONFIDENCE.
                 </div>
               </div>
             </div>
 
-            {/* WHITE GRID SECTION */}
+            {/* WHITE GRID SECTION (Starts EXACTLY at photo's bottom edge) */}
             <div
               style={{
                 position: 'relative',
                 background: '#FFFFFF',
                 color: '#000000',
                 minHeight: '220vh',
-                paddingTop: '6rem',
+                paddingTop: '4rem',
                 paddingBottom: '8rem',
               }}
             >
@@ -471,92 +475,73 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                   position: 'relative',
                 }}
               >
-                {/* Left Column: Grayscale Square Image (Pinned) */}
+                {/* 2. LEFT VIDEO SLOT (Pinned, aspect ratio var(--about-video-aspect, 1 / 1), fallback #111) */}
                 <div style={{ position: 'relative' }}>
                   <div
                     style={{
                       position: 'sticky',
                       top: '2rem',
                       width: '41.3vw',
-                      aspectRatio: '1 / 1',
+                      aspectRatio: 'var(--about-video-aspect, 1 / 1)',
                       overflow: 'hidden',
                       borderRadius: '2px',
-                      border: '1px solid rgba(0, 0, 0, 0.08)',
+                      background: '#111111',
                     }}
                   >
-                    <img
-                      src={ASSETS.imgLeft}
-                      alt="Frostline Detail"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        filter: 'grayscale(100%)',
-                      }}
-                    />
+                    {!isVideoError ? (
+                      <video
+                        ref={videoRef}
+                        src={ABOUT_VIDEO_SRC}
+                        muted
+                        autoPlay
+                        loop
+                        playsInline
+                        preload="auto"
+                        onError={() => setIsVideoError(true)}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          display: 'block',
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          background: '#111111',
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
 
-                {/* Right Column: Landscape Images with Clipping */}
+                {/* 3. RIGHT COLUMN (EMPTY WHITE, Preserving Scroll Distance & Video Pin Duration) */}
                 <div
                   style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '6rem',
+                    position: 'relative',
                     width: '41.3vw',
+                    minHeight: '140vh',
                   }}
-                >
-                  {ASSETS.imgRight.map((imgSrc, index) => {
-                    const isCurrent = index === activeImageIndex
-                    return (
-                      <div
-                        key={index}
-                        style={{
-                          position: 'relative',
-                          width: '100%',
-                          aspectRatio: '3 / 2',
-                          overflow: 'hidden',
-                          borderRadius: '2px',
-                          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.06)',
-                          transition: 'all 500ms cubic-bezier(0.16, 1, 0.3, 1)',
-                          clipPath: isCurrent
-                            ? 'inset(0 0 0 0)'
-                            : index < activeImageIndex
-                            ? 'inset(0 0 75% 0)'
-                            : 'inset(0 0 0 0)',
-                          opacity: isCurrent ? 1 : index < activeImageIndex ? 0.35 : 0.85,
-                        }}
-                      >
-                        <img
-                          src={imgSrc}
-                          alt={`Frostline Feature ${index + 1}`}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                          }}
-                        />
-                      </div>
-                    )
-                  })}
-                </div>
+                />
               </div>
 
-              {/* Inverted Black Frostline Chevron Mark on Seam (~49.5vw) */}
+              {/* 4. PINNED BLACK CHEVRON ICON: ~26dvh tall (~230px), centered on seam (~49.5vw), pinned bottom with ~3vh margin */}
               <div
                 style={{
                   position: 'sticky',
                   bottom: '3vh',
                   left: '49.5vw',
-                  width: '200px',
-                  height: '9vh',
+                  transform: 'translateX(-50%)',
+                  height: '26dvh',
+                  maxHeight: '26dvh',
+                  width: 'auto',
                   zIndex: 30,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   pointerEvents: 'none',
-                  transform: `translateY(${Math.max(0, (1 - scrollProgress * 1.8) * 100)}px)`,
-                  transition: 'transform 300ms ease-out',
                 }}
               >
                 <img
@@ -565,7 +550,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                   style={{
                     width: 'auto',
                     height: '100%',
-                    maxHeight: '9vh',
+                    maxHeight: '26dvh',
                     objectFit: 'contain',
                     filter: 'brightness(0)',
                   }}
