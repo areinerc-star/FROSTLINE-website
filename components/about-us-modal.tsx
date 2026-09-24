@@ -10,12 +10,7 @@ interface AboutUsModalProps {
 const ASSETS = {
   imgHero: '/images/hero-1.jpg',
   imgLeft: '/images/pilipinas-3.png',
-  imgRight: [
-    '/images/hero-2.jpg',
-    '/images/hero-3.jpg',
-    '/images/singlet-1.png',
-    '/images/tshirt-1.png',
-  ],
+  videoAboutUs: '/videos/about-us-vid.mp4',
   captionLeft: 'PHILIPPINES // 2026',
   captionRight: 'FROSTLINE OFFICIAL',
   logoMark: '/FROSTLINEwhiteLOGOonly.png',
@@ -447,7 +442,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                 position: 'relative',
                 background: '#FFFFFF',
                 color: '#000000',
-                minHeight: '220vh',
+                minHeight: '100vh',
                 paddingTop: '6rem',
                 paddingBottom: '8rem',
                 zIndex: 1,
@@ -489,48 +484,35 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                   </div>
                 </div>
 
-                {/* Right Column: Landscape Images with Clipping */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '6rem',
-                    width: '41.3vw',
-                  }}
-                >
-                  {ASSETS.imgRight.map((imgSrc, index) => {
-                    const isCurrent = index === activeImageIndex
-                    return (
-                      <div
-                        key={index}
-                        style={{
-                          position: 'relative',
-                          width: '100%',
-                          aspectRatio: '3 / 2',
-                          overflow: 'hidden',
-                          borderRadius: '2px',
-                          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.06)',
-                          transition: 'all 500ms cubic-bezier(0.16, 1, 0.3, 1)',
-                          clipPath: isCurrent
-                            ? 'inset(0 0 0 0)'
-                            : index < activeImageIndex
-                            ? 'inset(0 0 75% 0)'
-                            : 'inset(0 0 0 0)',
-                          opacity: isCurrent ? 1 : index < activeImageIndex ? 0.35 : 0.85,
-                        }}
-                      >
-                        <img
-                          src={imgSrc}
-                          alt={`Frostline Feature ${index + 1}`}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                          }}
-                        />
-                      </div>
-                    )
-                  })}
+                {/* Right Column: About Us Video */}
+                <div style={{ position: 'relative' }}>
+                  <div
+                    style={{
+                      position: 'sticky',
+                      top: '2rem',
+                      width: '41.3vw',
+                      overflow: 'hidden',
+                      borderRadius: '2px',
+                      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
+                      backgroundColor: '#000000',
+                    }}
+                  >
+                    <video
+                      src={ASSETS.videoAboutUs}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      controls
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        maxHeight: '80vh',
+                        objectFit: 'cover',
+                        display: 'block',
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
 
