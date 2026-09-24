@@ -16,86 +16,105 @@ const ASSETS = {
     '/images/singlet-1.png',
     '/images/tshirt-1.png',
   ],
+  captionLeft: 'PHILIPPINES // 2026',
+  captionRight: 'FROSTLINE OFFICIAL',
   logoMark: '/FROSTLINEwhiteLOGOonly.png',
   statementParagraph:
     "Born from the relentless chase of the personal record, rooted in faith, discipline, and the quiet hours before sunrise. For us, athletic apparel isn't just gear—it's a commitment to show up, trust the process, and walk your own path.",
   headline: 'CRAFTED FOR DREAMERS.\nBUILT FOR BELIEVERS.',
 }
 
+type ModalPhase = 'curtain-open' | 'statement' | 'hero-intro' | 'unlocked'
+
 export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
-  const [mounted, setMounted] = useState(false)
+  const [phase, setPhase] = useState<ModalPhase>('curtain-open')
   const [isClosing, setIsClosing] = useState(false)
+  const [closeWipeActive, setCloseWipeActive] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [isScrollLocked, setIsScrollLocked] = useState(true)
 
   const modalRef = useRef<HTMLDivElement>(null)
-  const curtainRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const closeBtnRef = useRef<HTMLButtonElement>(null)
   const previousActiveElementRef = useRef<HTMLElement | null>(null)
+  const timerRefs = useRef<NodeJS.Timeout[]>([])
 
-  // Pure CSS Animation Trigger & Forced Paint Reflow
+  const clearAllTimers = () => {
+    timerRefs.current.forEach((t) => clearTimeout(t))
+    timerRefs.current = []
+  }
+
+  // Handle open sequence
   useEffect(() => {
     if (isOpen) {
       previousActiveElementRef.current = document.activeElement as HTMLElement
       document.body.style.overflow = 'hidden'
       setIsClosing(false)
-      setIsScrollLocked(true)
+      setCloseWipeActive(false)
       setScrollProgress(0)
+      setPhase('curtain-open')
 
       if (scrollContainerRef.current) {
         scrollContainerRef.current.scrollTop = 0
       }
 
-      // Forced synchronous layout reflow for curtain paint
-      if (curtainRef.current) {
-        curtainRef.current.style.transition = 'none'
-        curtainRef.current.style.clipPath = 'inset(0 0 100% 0)'
-        void curtainRef.current.offsetHeight
-        curtainRef.current.style.transition = 'clip-path 700ms cubic-bezier(0.76, 0, 0.24, 1)'
-        curtainRef.current.style.clipPath = 'inset(0 0 0 0)'
-      }
+      clearAllTimers()
 
-      setMounted(true)
+      // Timeline:
+      // 0.0s - 0.7s: Curtain wipe top-to-bottom
+      // 0.7s - 2.2s: Statement phase
+      // 2.2s - 3.0s: Hero reveal phase
+      // 3.0s+: Unlocked for scrolling
 
-      // Single auto-release scroll timer at 2.9s
-      const scrollTimer = setTimeout(() => {
-        setIsScrollLocked(false)
-      }, 2900)
+      const t1 = setTimeout(() => {
+        setPhase('statement')
+      }, 700)
 
-      const focusTimer = setTimeout(() => {
+      const t2 = setTimeout(() => {
+        setPhase('hero-intro')
+      }, 2200)
+
+      const t3 = setTimeout(() => {
+        setPhase('unlocked')
+      }, 3000)
+
+      const tFocus = setTimeout(() => {
         closeBtnRef.current?.focus()
       }, 400)
 
-      return () => {
-        clearTimeout(scrollTimer)
-        clearTimeout(focusTimer)
-      }
+      timerRefs.current = [t1, t2, t3, tFocus]
+
+      return () => clearAllTimers()
     } else {
       document.body.style.overflow = ''
-      setMounted(false)
+      setPhase('curtain-open')
       setIsClosing(false)
-      setIsScrollLocked(false)
+      setCloseWipeActive(false)
       setScrollProgress(0)
     }
   }, [isOpen])
 
-  // Dedicated Upward Reverse Close Wipe (0.5s)
+  // Dedicated reverse close handler
   const handleClose = useCallback(() => {
     if (isClosing) return
     setIsClosing(true)
+    setCloseWipeActive(true)
 
-    setTimeout(() => {
+    clearAllTimers()
+
+    const tClose = setTimeout(() => {
       onClose()
       setIsClosing(false)
-      setMounted(false)
+      setCloseWipeActive(false)
+      setPhase('curtain-open')
       if (previousActiveElementRef.current) {
         previousActiveElementRef.current.focus()
       }
     }, 500)
+
+    timerRefs.current.push(tClose)
   }, [isClosing, onClose])
 
-  // Esc key & Focus Trap
+  // Esc key & focus trap
   useEffect(() => {
     if (!isOpen) return
 
@@ -125,8 +144,9 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, handleClose])
 
+  // Scroll handler (only active when phase is 'unlocked')
   const handleScroll = () => {
-    if (isScrollLocked || !scrollContainerRef.current) return
+    if (phase !== 'unlocked' || !scrollContainerRef.current) return
     const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current
     const totalScroll = scrollHeight - clientHeight
     if (totalScroll > 0) {
@@ -137,11 +157,12 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
 
   if (!isOpen && !isClosing) return null
 
+  const isScrollable = phase === 'unlocked' && !isClosing
   const activeImageIndex = Math.min(
-    Math.floor(scrollProgress * ASSETS.imgRight.length * 1.3),
+    Math.floor(scrollProgress * ASSETS.imgRight.length * 1.5),
     ASSETS.imgRight.length - 1
   )
-  const isWhiteSectionActive = scrollProgress > 0.45
+  const isWhiteSectionActive = scrollProgress > 0.55
 
   return (
     <div
@@ -149,175 +170,113 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
       role="dialog"
       aria-modal="true"
       aria-label="About Us Modal"
-      className={mounted ? 'about-modal is-open' : 'about-modal'}
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: '100dvh',
-        width: '100vw',
-        zIndex: 90, // Placed directly beneath header (.nav zIndex 100 in globals.css)
-        background: 'transparent',
+        inset: 0,
+        // zIndex 90 places modal directly below header (.nav has zIndex 100 in globals.css)
+        zIndex: 90,
+        backgroundColor: '#000000',
       }}
     >
-      {/* 50% DIMMED OVERLAY OVER HOME PAGE */}
+      {/* 1. OPENING TOP-TO-BOTTOM CURTAIN WIPE LAYER (z-index 95) */}
       <div
         style={{
           position: 'fixed',
-          inset: 0,
-          zIndex: 91,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* 0.0 - 0.7s CURTAIN WIPE LAYER */}
-      <div
-        ref={curtainRef}
-        style={{
-          position: 'fixed',
-          inset: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
           zIndex: 95,
           backgroundColor: '#000000',
-          clipPath: 'inset(0 0 100% 0)',
+          clipPath:
+            phase === 'curtain-open'
+              ? 'inset(0 0 0 0)'
+              : 'inset(0 0 100% 0)',
+          transition: 'clip-path 700ms cubic-bezier(0.76, 0, 0.24, 1)',
           pointerEvents: 'none',
         }}
       />
 
-      {/* REVERSE CLOSE WIPE LAYER (Upward 0.5s) */}
+      {/* 2. CLOSING BOTTOM-TO-TOP CURTAIN WIPE LAYER (z-index 96) */}
       <div
         style={{
           position: 'fixed',
-          inset: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
           zIndex: 96,
           backgroundColor: '#000000',
-          transform: isClosing ? 'translateY(0)' : 'translateY(100%)',
+          transform: closeWipeActive ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 500ms cubic-bezier(0.76, 0, 0.24, 1)',
           pointerEvents: 'none',
         }}
       />
 
-      {/* ABOUT US | CLOSE × PILL BUTTON (Bottom-Left fixed with 16px+ safe margin) */}
+      {/* FIXED CLOSE PILL BUTTON (z-index 99) */}
       <button
         ref={closeBtnRef}
         onClick={handleClose}
         aria-label="Close About Us Modal"
         style={{
           position: 'fixed',
-          bottom: '1.5rem',
-          left: '1.5rem',
+          bottom: '1.25rem',
+          left: '1.25rem',
           zIndex: 99,
           background: isWhiteSectionActive ? 'rgba(0, 0, 0, 0.85)' : 'rgba(0, 0, 0, 0.75)',
           backdropFilter: 'blur(4px)',
           color: '#FFFFFF',
-          padding: '0.45rem 0.9rem',
+          padding: '0.4rem 0.85rem',
           fontSize: '0.75rem',
           fontWeight: 700,
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
           border: isWhiteSectionActive
-            ? '1px solid rgba(0, 0, 0, 0.4)'
-            : '1px solid rgba(255, 255, 255, 0.3)',
+            ? '1px solid rgba(255, 255, 255, 0.4)'
+            : '1px solid rgba(255, 255, 255, 0.2)',
           borderRadius: '2px',
           cursor: 'pointer',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.35)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
           transition: 'all 300ms ease',
         }}
       >
         ABOUT US | CLOSE ×
       </button>
 
-      {/* MAIN SCROLL CONTAINER */}
+      {/* MODAL MAIN CONTENT & SCROLL CONTAINER (z-index 92) */}
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
         style={{
           position: 'relative',
           width: '100vw',
-          height: '100dvh',
-          overflowY: isScrollLocked ? 'hidden' : 'auto',
+          height: '100vh',
+          overflowY: isScrollable ? 'auto' : 'hidden',
           overflowX: 'hidden',
           zIndex: 92,
           color: '#FFFFFF',
           background: '#000000',
         }}
       >
-        {/* STATEMENT BLOCK: 0.75s -> 2.15s (Fade In, Hold, Fade Out on Same Row) */}
-        <div
-          className="modal-statement-block"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-            alignItems: 'center',
-            pointerEvents: 'none',
-            zIndex: 94,
-          }}
-        >
+        {/* STATEMENT PHASE SCREEN (Visible during 'statement' phase) */}
+        {phase === 'statement' && (
           <div
             style={{
-              position: 'absolute',
-              left: '49.8vw',
-              right: '9vw',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
               display: 'flex',
-              alignItems: 'baseline',
-              gap: '1.2rem',
-              maxWidth: '41.2vw',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              paddingRight: '9vw',
+              pointerEvents: 'none',
+              zIndex: 93,
+              animation: 'statementFadeIn 600ms ease forwards',
             }}
           >
-            <span
-              style={{
-                fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                letterSpacing: '0.15em',
-                color: 'rgba(255, 255, 255, 0.5)',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              [ BEHIND FROSTLINE ]
-            </span>
-            <p
-              style={{
-                fontFamily: 'var(--font-body, "Times New Roman", serif)',
-                fontSize: '11px',
-                lineHeight: '1.6',
-                color: '#FFFFFF',
-                margin: 0,
-              }}
-            >
-              {ASSETS.statementParagraph}
-            </p>
-          </div>
-        </div>
-
-        {/* HERO REVEAL & MAIN CONTENT (VISIBLE BY DEFAULT - FAIL SAFE) */}
-        <div className="modal-hero-wrapper" style={{ position: 'relative', background: '#000000' }}>
-          {/* BLACK ZONE 83vh */}
-          <div style={{ position: 'relative', height: '83vh' }}>
-            {/* Left: Frostline Mark & Label (~8.5vw left, ~55vh vertical center) */}
-            <div
-              className="modal-logo-mark"
-              style={{
-                position: 'absolute',
-                left: '8.5vw',
-                top: '55vh',
-                transform: 'translateY(-50%)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.8rem',
-              }}
-            >
-              <img
-                src={ASSETS.logoMark}
-                alt="Frostline Mark"
-                style={{ width: '85px', height: 'auto', objectFit: 'contain' }}
-              />
+            <div style={{ maxWidth: '420px', display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
               <span
                 style={{
                   fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
@@ -325,251 +284,302 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                   fontWeight: 700,
                   letterSpacing: '0.15em',
                   color: 'rgba(255, 255, 255, 0.5)',
-                  textTransform: 'uppercase',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                BEHIND FROSTLINE
+                [ BEHIND FROSTLINE ]
               </span>
-            </div>
-
-            {/* Right: Headline & Ghost Text (~49.8vw left, ~52vh vertical center) */}
-            <div
-              className="modal-headline-block"
-              style={{
-                position: 'absolute',
-                left: '49.8vw',
-                top: '52vh',
-                transform: 'translateY(-50%)',
-                width: '41.2vw',
-                maxWidth: '41.2vw',
-              }}
-            >
-              {/* Ghost text at 8-10% opacity */}
               <p
                 style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
                   fontFamily: 'var(--font-body, "Times New Roman", serif)',
-                  fontSize: '9px',
-                  lineHeight: '1.5',
-                  color: 'rgba(255, 255, 255, 0.09)',
-                  pointerEvents: 'none',
-                  margin: 0,
-                  zIndex: 1,
-                }}
-              >
-                {ASSETS.statementParagraph} {ASSETS.statementParagraph}
-              </p>
-
-              <h2
-                style={{
-                  position: 'relative',
-                  zIndex: 2,
-                  fontFamily: 'var(--font-headline, "Antonio", "Anton", sans-serif)',
-                  fontSize: 'clamp(1.2vw, 1.4vw, 2.2rem)',
-                  fontWeight: 800,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.02em',
-                  lineHeight: 1.15,
+                  fontSize: '11.5px',
+                  lineHeight: 1.65,
                   color: '#FFFFFF',
                   margin: 0,
-                  whiteSpace: 'pre-line',
                 }}
               >
-                {ASSETS.headline}
-              </h2>
+                {ASSETS.statementParagraph}
+              </p>
             </div>
           </div>
+        )}
 
-          {/* FULL-BLEED PHOTO BLOCK (Peeks 17vh initially, expands 100vh on scroll with NO black spacer) */}
-          <div
-            style={{
-              position: 'relative',
-              width: '100vw',
-              height: '100vh',
-              minHeight: '100vh',
-              overflow: 'hidden',
-            }}
-          >
-            <img
-              src={ASSETS.imgHero}
-              alt="Frostline Hero"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                display: 'block',
-              }}
-            />
-
-            {/* CENTER CAPTION ON PHOTO MIDLINE (~44vh) */}
+        {/* HERO REVEAL & MAIN SCROLL CONTENT (Visible during 'hero-intro' & 'unlocked') */}
+        {(phase === 'hero-intro' || phase === 'unlocked') && (
+          <>
+            {/* HERO SECTION CONTAINER */}
             <div
               style={{
-                position: 'absolute',
-                top: '44vh',
-                left: 0,
-                right: 0,
-                textAlign: 'center',
-                fontFamily: 'var(--font-body, "Times New Roman", serif)',
-                fontSize: '10px',
-                fontWeight: 600,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: '#FFFFFF',
-                textShadow: '0 2px 6px rgba(0,0,0,0.8)',
-                zIndex: 10,
-              }}
-            >
-              WEAR YOUR CONFIDENCE.
-            </div>
-          </div>
-        </div>
-
-        {/* WHITE GRID SECTION (Starts EXACTLY at photo's bottom edge) */}
-        <div
-          style={{
-            position: 'relative',
-            background: '#FFFFFF',
-            color: '#000000',
-            minHeight: '200vh',
-            paddingTop: '4rem',
-            paddingBottom: '8rem',
-          }}
-        >
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '41.3vw 41.3vw',
-              columnGap: '0.4vw',
-              paddingLeft: '8.3vw',
-              paddingRight: '8.8vw',
-              position: 'relative',
-            }}
-          >
-            {/* Left Column (8.3vw to 49.5vw): Grayscale Square Image (Pinned) */}
-            <div style={{ position: 'relative' }}>
-              <div
-                style={{
-                  position: 'sticky',
-                  top: '2rem',
-                  width: '41.3vw',
-                  aspectRatio: '1 / 1',
-                  overflow: 'hidden',
-                  borderRadius: '2px',
-                  border: '1px solid rgba(0, 0, 0, 0.08)',
-                }}
-              >
-                <img
-                  src={ASSETS.imgLeft}
-                  alt="Frostline Detail"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    filter: 'grayscale(100%)',
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Right Column (49.9vw to 91.2vw): Full Opaque 3:2 Landscapes swapping in top-right slot */}
-            <div
-              style={{
+                minHeight: '170vh',
                 position: 'relative',
-                width: '41.3vw',
-                minHeight: '140vh',
+                background: '#000000',
               }}
             >
+              {/* Black Zone (76vh) */}
               <div
                 style={{
-                  position: 'sticky',
-                  top: '2rem',
-                  width: '41.3vw',
-                  aspectRatio: '3 / 2',
+                  position: 'relative',
+                  height: '76vh',
+                  paddingTop: '12vh',
+                }}
+              >
+                {/* Left: Frostline Mark & Label */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '8.5vw',
+                    top: '55vh',
+                    transform: 'translateY(-50%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.8rem',
+                  }}
+                >
+                  <img
+                    src={ASSETS.logoMark}
+                    alt="Frostline Mark"
+                    style={{ width: '85px', height: 'auto', objectFit: 'contain' }}
+                  />
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.15em',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    BEHIND FROSTLINE
+                  </span>
+                </div>
+
+                {/* Right: Headline & Ghost Text */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '49.8vw',
+                    top: '52vh',
+                    transform: 'translateY(-50%)',
+                    maxWidth: '41.2vw',
+                  }}
+                >
+                  <p
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      fontFamily: 'var(--font-body, "Times New Roman", serif)',
+                      fontSize: '9px',
+                      lineHeight: '1.5',
+                      color: 'rgba(255, 255, 255, 0.09)',
+                      pointerEvents: 'none',
+                      margin: 0,
+                      whiteSpace: 'normal',
+                      zIndex: 1,
+                    }}
+                  >
+                    {ASSETS.statementParagraph} {ASSETS.statementParagraph}
+                  </p>
+
+                  <h2
+                    style={{
+                      position: 'relative',
+                      zIndex: 2,
+                      fontFamily: 'var(--font-headline, "Antonio", "Anton", sans-serif)',
+                      fontSize: 'clamp(1.2vw, 1.4vw, 2.2rem)',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.02em',
+                      lineHeight: 1.15,
+                      color: '#FFFFFF',
+                      margin: 0,
+                      whiteSpace: 'pre-line',
+                    }}
+                  >
+                    {ASSETS.headline}
+                  </h2>
+                </div>
+              </div>
+
+              {/* Peeking Hero Photo (24vh initially, expands to 100vh on scroll) */}
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: `${24 + scrollProgress * 76}vh`,
+                  minHeight: '220px',
                   overflow: 'hidden',
-                  borderRadius: '2px',
-                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
+                  transition: 'height 100ms ease-out',
                 }}
               >
                 <img
-                  src={ASSETS.imgRight[activeImageIndex]}
-                  alt={`Frostline Feature ${activeImageIndex + 1}`}
+                  src={ASSETS.imgHero}
+                  alt="Frostline Hero"
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
                     display: 'block',
-                    opacity: 1,
+                  }}
+                />
+
+                {/* Micro-Captions on Vertical Midline (44vh) */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '44vh',
+                    left: 0,
+                    right: 0,
+                    display: 'flex',
+                    justify: 'space-between',
+                    padding: '0 4vw',
+                    fontFamily: 'var(--font-body, "Times New Roman", serif)',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                    color: '#FFFFFF',
+                    textShadow: '0 2px 6px rgba(0,0,0,0.7)',
+                    zIndex: 10,
+                  }}
+                >
+                  <span>{ASSETS.captionLeft}</span>
+                  <span>WEAR YOUR CONFIDENCE.</span>
+                  <span>{ASSETS.captionRight}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* WHITE GRID SECTION */}
+            <div
+              style={{
+                position: 'relative',
+                background: '#FFFFFF',
+                color: '#000000',
+                minHeight: '220vh',
+                paddingTop: '6rem',
+                paddingBottom: '8rem',
+              }}
+            >
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '41.3vw 41.3vw',
+                  columnGap: '0.4vw',
+                  paddingLeft: '8.3vw',
+                  paddingRight: '8.8vw',
+                  position: 'relative',
+                }}
+              >
+                {/* Left Column: Grayscale Square Image (Pinned) */}
+                <div style={{ position: 'relative' }}>
+                  <div
+                    style={{
+                      position: 'sticky',
+                      top: '2rem',
+                      width: '41.3vw',
+                      aspectRatio: '1 / 1',
+                      overflow: 'hidden',
+                      borderRadius: '2px',
+                      border: '1px solid rgba(0, 0, 0, 0.08)',
+                    }}
+                  >
+                    <img
+                      src={ASSETS.imgLeft}
+                      alt="Frostline Detail"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        filter: 'grayscale(100%)',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Right Column: Landscape Images with Clipping */}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '6rem',
+                    width: '41.3vw',
+                  }}
+                >
+                  {ASSETS.imgRight.map((imgSrc, index) => {
+                    const isCurrent = index === activeImageIndex
+                    return (
+                      <div
+                        key={index}
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          aspectRatio: '3 / 2',
+                          overflow: 'hidden',
+                          borderRadius: '2px',
+                          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.06)',
+                          transition: 'all 500ms cubic-bezier(0.16, 1, 0.3, 1)',
+                          clipPath: isCurrent
+                            ? 'inset(0 0 0 0)'
+                            : index < activeImageIndex
+                            ? 'inset(0 0 75% 0)'
+                            : 'inset(0 0 0 0)',
+                          opacity: isCurrent ? 1 : index < activeImageIndex ? 0.35 : 0.85,
+                        }}
+                      >
+                        <img
+                          src={imgSrc}
+                          alt={`Frostline Feature ${index + 1}`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                          }}
+                        />
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Inverted Black Frostline Chevron Mark on Seam (~49.5vw) */}
+              <div
+                style={{
+                  position: 'sticky',
+                  bottom: '3vh',
+                  left: '49.5vw',
+                  width: '200px',
+                  height: '9vh',
+                  zIndex: 30,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  pointerEvents: 'none',
+                  transform: `translateY(${Math.max(0, (1 - scrollProgress * 1.8) * 100)}px)`,
+                  transition: 'transform 300ms ease-out',
+                }}
+              >
+                <img
+                  src={ASSETS.logoMark}
+                  alt="Frostline Chevron Mark"
+                  style={{
+                    width: 'auto',
+                    height: '100%',
+                    maxHeight: '9vh',
+                    objectFit: 'contain',
+                    filter: 'brightness(0)',
                   }}
                 />
               </div>
             </div>
-          </div>
-
-          {/* ICON: Centered on Seam (~49.5vw), starts ~200px wide from below, ends pinned at ~9vh tall */}
-          <div
-            style={{
-              position: 'sticky',
-              bottom: '3vh',
-              left: '49.5vw',
-              transform: 'translateX(-50%)',
-              width: '200px',
-              height: '9vh',
-              zIndex: 30,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'none',
-            }}
-          >
-            <img
-              src={ASSETS.logoMark}
-              alt="Frostline Chevron Mark"
-              style={{
-                width: 'auto',
-                height: '100%',
-                maxHeight: '9vh',
-                objectFit: 'contain',
-                filter: 'brightness(0)',
-              }}
-            />
-          </div>
-        </div>
+          </>
+        )}
       </div>
 
-      {/* FAIL-SAFE PURE CSS KEYFRAMES (Visible by default, animated on .is-open) */}
       <style jsx global>{`
-        /* Base / Default States (Visible by default - Fail Safe) */
-        .modal-statement-block {
-          opacity: 0;
-        }
-        .modal-hero-wrapper {
-          opacity: 1;
-        }
-
-        /* Intro Sequence Animations when .is-open is active */
-        .about-modal.is-open .modal-statement-block {
-          animation: statementSequence 1.4s ease 0.75s backwards;
-        }
-        .about-modal.is-open .modal-logo-mark {
-          animation: heroRiseIn 700ms cubic-bezier(0.16, 1, 0.3, 1) 2.15s backwards;
-        }
-        .about-modal.is-open .modal-headline-block {
-          animation: heroRiseIn 700ms cubic-bezier(0.16, 1, 0.3, 1) 2.23s backwards;
-        }
-
-        @keyframes statementSequence {
-          0% { opacity: 0; transform: translateY(6px); }
-          20% { opacity: 1; transform: translateY(0); }
-          80% { opacity: 1; transform: translateY(0); }
-          100% { opacity: 0; transform: translateY(-6px); }
-        }
-
-        @keyframes heroRiseIn {
-          0% { opacity: 0; transform: translateY(12px); }
-          100% { opacity: 1; transform: translateY(0); }
+        @keyframes statementFadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>
