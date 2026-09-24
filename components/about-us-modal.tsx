@@ -155,10 +155,6 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
   if (!isOpen && !isClosing) return null
 
   const isScrollable = phase === 'unlocked' && !isClosing
-  const activeImageIndex = Math.min(
-    Math.floor(scrollProgress * ASSETS.imgRight.length * 1.5),
-    ASSETS.imgRight.length - 1
-  )
   const isWhiteSectionActive = scrollProgress > 0.55
 
   return (
