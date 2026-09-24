@@ -1,12 +1,15 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { AboutUsModal } from './about-us-modal'
 
 export function Editorial() {
   const [isStoryExpanded, setIsStoryExpanded] = useState(false)
+  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
   const storyRef = useRef<HTMLDivElement>(null)
 
   const toggleStory = () => {
+    setIsAboutModalOpen(true)
     setIsStoryExpanded((prev) => {
       const nextState = !prev
       if (nextState) {
@@ -171,7 +174,7 @@ export function Editorial() {
                 textTransform: 'uppercase',
               }}
             >
-              // BEHIND FROSTLINE
+              BEHIND FROSTLINE
             </p>
           </div>
 
@@ -229,6 +232,11 @@ export function Editorial() {
           </div>
         </div>
       </div>
+
+      <AboutUsModal
+        isOpen={isAboutModalOpen}
+        onClose={() => setIsAboutModalOpen(false)}
+      />
     </section>
   )
 }
