@@ -399,15 +399,14 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                 </div>
               </div>
 
-              {/* FULL SIZE FULL-BLEED PHOTO (100vw x 100dvh, object-position center 25%, peeks 17vh bottom, expands to 100dvh on scroll) */}
+              {/* FULL-BLEED PHOTO SECTION (Full 100vw x 100vh, object-position center 25%, fully seen without any intertwining/overlap) */}
               <div
                 style={{
                   position: 'relative',
                   width: '100vw',
-                  height: `${17 + scrollProgress * 83}vh`,
-                  minHeight: '17vh',
+                  height: '100vh',
+                  minHeight: '100vh',
                   overflow: 'hidden',
-                  transition: 'height 100ms ease-out',
                 }}
               >
                 <img
@@ -415,7 +414,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                   alt="Frostline Hero Athlete"
                   style={{
                     width: '100vw',
-                    height: '100dvh',
+                    height: '100%',
                     objectFit: 'cover',
                     objectPosition: 'center 25%',
                     display: 'block',
@@ -435,7 +434,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                     fontFamily: 'var(--font-body, "Times New Roman", serif)',
                     fontSize: '10px',
                     fontWeight: 600,
-                    letterSpacing: '0.15em',
+                    letterSpacing: '0.18em',
                     textTransform: 'uppercase',
                     color: '#FFFFFF',
                     textShadow: '0 2px 6px rgba(0,0,0,0.7)',
