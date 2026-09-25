@@ -263,53 +263,51 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
         }}
       >
         {/* STATEMENT PHASE SCREEN (0.75s - 2.15s: Fades in 0.75-1.05s, holds to 1.75s, fades out 1.75-2.15s) */}
-        {(phase === 'statement-in' || phase === 'statement-out') && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              paddingRight: '9vw',
-              pointerEvents: phase === 'statement-out' ? 'none' : 'auto',
-              zIndex: 93,
-              animation:
-                phase === 'statement-in'
-                  ? 'statementFadeIn 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards'
-                  : 'statementFadeOut 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
-            }}
-          >
-            <div style={{ maxWidth: '420px', display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
-              <span
-                style={{
-                  fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.15em',
-                  color: 'rgba(255, 255, 255, 0.5)',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                [ BEHIND FROSTLINE ]
-              </span>
-              <p
-                style={{
-                  fontFamily: 'var(--font-body, "Times New Roman", serif)',
-                  fontSize: '11.5px',
-                  lineHeight: 1.65,
-                  color: '#FFFFFF',
-                  margin: 0,
-                }}
-              >
-                {ASSETS.statementParagraph}
-              </p>
-            </div>
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: (phase === 'curtain-open' || phase === 'hero-intro' || phase === 'unlocked') ? 'none' : 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            paddingRight: '9vw',
+            pointerEvents: phase === 'statement-in' ? 'auto' : 'none',
+            zIndex: 93,
+            opacity: phase === 'statement-in' ? 1 : 0,
+            visibility: phase === 'statement-in' ? 'visible' : 'hidden',
+            transform: phase === 'statement-in' ? 'translateY(0)' : 'translateY(-8px)',
+            transition: 'opacity 400ms cubic-bezier(0.16, 1, 0.3, 1), transform 400ms cubic-bezier(0.16, 1, 0.3, 1), visibility 400ms step-end',
+          }}
+        >
+          <div style={{ maxWidth: '420px', display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
+            <span
+              style={{
+                fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                letterSpacing: '0.15em',
+                color: 'rgba(255, 255, 255, 0.5)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              [ BEHIND FROSTLINE ]
+            </span>
+            <p
+              style={{
+                fontFamily: 'var(--font-body, "Times New Roman", serif)',
+                fontSize: '11.5px',
+                lineHeight: 1.65,
+                color: '#FFFFFF',
+                margin: 0,
+              }}
+            >
+              {ASSETS.statementParagraph}
+            </p>
           </div>
-        )}
+        </div>
 
         {/* HERO REVEAL & MAIN SCROLL CONTENT (Visible starting at 2.15s) */}
         {(phase === 'hero-intro' || phase === 'unlocked') && (
