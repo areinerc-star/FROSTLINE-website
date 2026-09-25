@@ -21,7 +21,7 @@ const ASSETS = {
   headline: 'CRAFTED FOR DREAMERS.\nBUILT FOR BELIEVERS.',
 }
 
-type ModalPhase = 'curtain-open' | 'statement-in' | 'statement-out' | 'hero-intro' | 'unlocked'
+type ModalPhase = 'curtain-open' | 'unlocked'
 
 export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
   const [phase, setPhase] = useState<ModalPhase>('curtain-open')
@@ -40,7 +40,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
     timerRefs.current = []
   }
 
-  // Handle open sequence
+  // Handle open sequence: curtain wipe (0-0.7s) -> opens directly to Hero (targetoutcome.png)
   useEffect(() => {
     if (isOpen) {
       previousActiveElementRef.current = document.activeElement as HTMLElement
@@ -56,40 +56,17 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
 
       clearAllTimers()
 
-      // Absolute Timeline from click (0.0s):
       // 0.0s - 0.7s: Curtain wipe top-to-bottom
-      // 0.75s - 1.05s: Statement fades in (300ms)
-      // 1.05s - 1.75s: Statement holds visible
-      // 1.75s - 2.15s: Statement fades out completely (400ms, opacity -> 0)
-      // 2.15s - 2.9s: Hero reveal (12px rise, 0.08s stagger)
-      // 2.9s+: Unlocked for scrolling
-      // 4.0s: Single fail-open safety fallback
-
+      // 0.7s+: Open directly to target Hero outcome (targetoutcome.png)
       const t1 = setTimeout(() => {
-        setPhase('statement-in')
-      }, 750)
-
-      const t2 = setTimeout(() => {
-        setPhase('statement-out')
-      }, 1750)
-
-      const t3 = setTimeout(() => {
-        setPhase('hero-intro')
-      }, 2150)
-
-      const t4 = setTimeout(() => {
         setPhase('unlocked')
-      }, 2900)
-
-      const tFailSafe = setTimeout(() => {
-        setPhase('unlocked')
-      }, 4000)
+      }, 700)
 
       const tFocus = setTimeout(() => {
         closeBtnRef.current?.focus()
       }, 400)
 
-      timerRefs.current = [t1, t2, t3, t4, tFailSafe, tFocus]
+      timerRefs.current = [t1, tFocus]
 
       return () => clearAllTimers()
     } else {
@@ -262,63 +239,13 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
           background: '#000000',
         }}
       >
-        {/* STATEMENT PHASE SCREEN (0.75s - 2.15s: Fades in 0.75-1.05s, holds to 1.75s, fades out 1.75-2.15s) */}
+        {/* HERO SECTION CONTAINER (Directly reveals target outcome targetoutcome.png) */}
         <div
           style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: (phase === 'curtain-open' || phase === 'hero-intro' || phase === 'unlocked') ? 'none' : 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            paddingRight: '9vw',
-            pointerEvents: phase === 'statement-in' ? 'auto' : 'none',
-            zIndex: 93,
-            opacity: phase === 'statement-in' ? 1 : 0,
-            visibility: phase === 'statement-in' ? 'visible' : 'hidden',
-            transform: phase === 'statement-in' ? 'translateY(0)' : 'translateY(-8px)',
-            transition: 'opacity 400ms cubic-bezier(0.16, 1, 0.3, 1), transform 400ms cubic-bezier(0.16, 1, 0.3, 1), visibility 400ms step-end',
+            position: 'relative',
+            background: '#000000',
           }}
         >
-          <div style={{ maxWidth: '420px', display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
-            <span
-              style={{
-                fontFamily: 'var(--font-headline, "Antonio", sans-serif)',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                letterSpacing: '0.15em',
-                color: 'rgba(255, 255, 255, 0.5)',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              [ BEHIND FROSTLINE ]
-            </span>
-            <p
-              style={{
-                fontFamily: 'var(--font-body, "Times New Roman", serif)',
-                fontSize: '11.5px',
-                lineHeight: 1.65,
-                color: '#FFFFFF',
-                margin: 0,
-              }}
-            >
-              {ASSETS.statementParagraph}
-            </p>
-          </div>
-        </div>
-
-        {/* HERO REVEAL & MAIN SCROLL CONTENT (Visible starting at 2.15s) */}
-        {(phase === 'hero-intro' || phase === 'unlocked') && (
-          <>
-            {/* HERO SECTION CONTAINER */}
-            <div
-              style={{
-                position: 'relative',
-                background: '#000000',
-              }}
-            >
               {/* Black Zone (83vh) */}
               <div
                 style={{
@@ -553,10 +480,8 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                     filter: 'brightness(0)',
                   }}
                 />
-              </div>
             </div>
-          </>
-        )}
+          </div>
       </div>
 
       <style jsx global>{`
