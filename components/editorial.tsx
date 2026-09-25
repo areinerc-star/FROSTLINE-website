@@ -18,11 +18,13 @@ export function Editorial() {
       </div>
 
       <div className="editorial__grid">
-        {/* Tile 1: OUR PRODUCT */}
-        <div
+        {/* Tile 1: OUR PRODUCT (Routes to store #products) */}
+        <a
+          href="#products"
           className="tile reveal"
-          style={{ cursor: 'pointer' }}
-          onClick={() => {
+          style={{ cursor: 'pointer', display: 'block', textDecoration: 'none' }}
+          onClick={(e) => {
+            e.preventDefault()
             const el = document.getElementById('products')
             if (el) el.scrollIntoView({ behavior: 'smooth' })
           }}
@@ -34,14 +36,22 @@ export function Editorial() {
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
           <span className="tile__label">Our Product</span>
-        </div>
+        </a>
 
-        {/* Tile 2: BEHIND FROSTLINE (with video-exact overlay tags) */}
+        {/* Tile 2: ABOUT US (Plain label, triggers About Us modal) */}
         <div
           className="tile reveal"
           data-delay="1"
+          role="button"
+          tabIndex={0}
           style={{ cursor: 'pointer' }}
           onClick={toggleStory}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              toggleStory()
+            }
+          }}
         >
           <img
             src="/images/about-us_thumbnail.jpg"
@@ -49,65 +59,31 @@ export function Editorial() {
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
-          <div
+          <span
             style={{
               position: 'absolute',
               bottom: '1.25rem',
               left: '1.25rem',
-              right: '1.25rem',
               zIndex: 3,
-              display: 'flex',
-              justify: 'space-between',
-              alignItems: 'center',
+              color: '#FFFFFF',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
             }}
           >
-            <span
-              style={{
-                background: 'rgba(0, 0, 0, 0.75)',
-                backdropFilter: 'blur(4px)',
-                color: '#FFFFFF',
-                padding: '0.4rem 0.75rem',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                borderRadius: '2px',
-              }}
-            >
-              ABOUT US
-            </span>
-            <span
-              style={{
-                background: '#FFFFFF',
-                color: '#000000',
-                padding: '0.4rem 0.75rem',
-                fontSize: '0.75rem',
-                fontWeight: 800,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                borderRadius: '2px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.3rem',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              {isAboutModalOpen ? 'CLOSE ✕' : 'READ MORE →'}
-            </span>
-          </div>
+            ABOUT US
+          </span>
         </div>
 
-        {/* Tile 3: OUR COMMUNITY */}
-        <div
+        {/* Tile 3: OUR COMMUNITY (Routes to Instagram in new tab) */}
+        <a
+          href="https://www.instagram.com/frostline_est.2025/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="tile reveal"
           data-delay="2"
-          style={{ cursor: 'pointer' }}
-          onClick={() => {
-            const el = document.getElementById('giving-back')
-            if (el) el.scrollIntoView({ behavior: 'smooth' })
-          }}
+          style={{ cursor: 'pointer', display: 'block', textDecoration: 'none' }}
         >
           <img
             src="/images/our-community_thumbnail.jpg"
@@ -116,7 +92,7 @@ export function Editorial() {
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
           <span className="tile__label">Our Community</span>
-        </div>
+        </a>
       </div>
 
       <AboutUsModal
