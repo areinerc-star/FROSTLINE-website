@@ -28,7 +28,7 @@ export function Editorial() {
           }}
         >
           <img
-            src="/images/pilipinas-3.png"
+            src="/images/our-product_thumbnail.jpg"
             alt="Close-up detail of FROSTLINE chest embroidery and technical fabric weave"
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -44,7 +44,7 @@ export function Editorial() {
           onClick={toggleStory}
         >
           <img
-            src="/images/hero-1.jpg"
+            src="/images/about-us_thumbnail.jpg"
             alt="FROSTLINE athlete training on the track in performance singlet"
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -110,7 +110,7 @@ export function Editorial() {
           }}
         >
           <img
-            src="/images/hero-2.jpg"
+            src="/images/our-community_thumbnail.jpg"
             alt="FROSTLINE athletic apparel styled for daily lifestyle off the track"
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}

@@ -8,8 +8,8 @@ interface AboutUsModalProps {
 }
 
 const ASSETS = {
-  imgHero: '/images/hero-1.jpg',
-  imgLeft: '/images/pilipinas-3.png',
+  imgHero: '/images/about-us_imgHero.jpg',
+  imgLeft: '/images/about-us-imgLeft.jpg',
   videoAboutUs: '/videos/about-us-vid.mp4',
   captionLeft: 'PHILIPPINES // 2026',
   captionRight: 'FROSTLINE OFFICIAL',
