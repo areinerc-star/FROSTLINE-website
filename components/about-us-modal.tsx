@@ -21,7 +21,7 @@ const ASSETS = {
   headline: 'CRAFTED FOR DREAMERS.\nBUILT FOR BELIEVERS.',
 }
 
-type ModalPhase = 'curtain-open' | 'statement' | 'hero-intro' | 'unlocked'
+type ModalPhase = 'curtain-open' | 'statement-in' | 'statement-out' | 'hero-intro' | 'unlocked'
 
 export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
   const [phase, setPhase] = useState<ModalPhase>('curtain-open')
@@ -56,29 +56,40 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
 
       clearAllTimers()
 
-      // Timeline:
+      // Absolute Timeline from click (0.0s):
       // 0.0s - 0.7s: Curtain wipe top-to-bottom
-      // 0.7s - 2.2s: Statement phase
-      // 2.2s - 3.0s: Hero reveal phase
-      // 3.0s+: Unlocked for scrolling
+      // 0.75s - 1.05s: Statement fades in (300ms)
+      // 1.05s - 1.75s: Statement holds visible
+      // 1.75s - 2.15s: Statement fades out completely (400ms, opacity -> 0)
+      // 2.15s - 2.9s: Hero reveal (12px rise, 0.08s stagger)
+      // 2.9s+: Unlocked for scrolling
+      // 4.0s: Single fail-open safety fallback
 
       const t1 = setTimeout(() => {
-        setPhase('statement')
-      }, 700)
+        setPhase('statement-in')
+      }, 750)
 
       const t2 = setTimeout(() => {
-        setPhase('hero-intro')
-      }, 2200)
+        setPhase('statement-out')
+      }, 1750)
 
       const t3 = setTimeout(() => {
+        setPhase('hero-intro')
+      }, 2150)
+
+      const t4 = setTimeout(() => {
         setPhase('unlocked')
-      }, 3000)
+      }, 2900)
+
+      const tFailSafe = setTimeout(() => {
+        setPhase('unlocked')
+      }, 4000)
 
       const tFocus = setTimeout(() => {
         closeBtnRef.current?.focus()
       }, 400)
 
-      timerRefs.current = [t1, t2, t3, tFocus]
+      timerRefs.current = [t1, t2, t3, t4, tFailSafe, tFocus]
 
       return () => clearAllTimers()
     } else {
@@ -251,8 +262,8 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
           background: '#000000',
         }}
       >
-        {/* STATEMENT PHASE SCREEN (Visible during 'statement' phase) */}
-        {phase === 'statement' && (
+        {/* STATEMENT PHASE SCREEN (0.75s - 2.15s: Fades in 0.75-1.05s, holds to 1.75s, fades out 1.75-2.15s) */}
+        {(phase === 'statement-in' || phase === 'statement-out') && (
           <div
             style={{
               position: 'fixed',
@@ -264,9 +275,12 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
               alignItems: 'center',
               justifyContent: 'flex-end',
               paddingRight: '9vw',
-              pointerEvents: 'none',
+              pointerEvents: phase === 'statement-out' ? 'none' : 'auto',
               zIndex: 93,
-              animation: 'statementFadeIn 600ms ease forwards',
+              animation:
+                phase === 'statement-in'
+                  ? 'statementFadeIn 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards'
+                  : 'statementFadeOut 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
             }}
           >
             <div style={{ maxWidth: '420px', display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
@@ -297,7 +311,7 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
           </div>
         )}
 
-        {/* HERO REVEAL & MAIN SCROLL CONTENT (Visible during 'hero-intro' & 'unlocked') */}
+        {/* HERO REVEAL & MAIN SCROLL CONTENT (Visible starting at 2.15s) */}
         {(phase === 'hero-intro' || phase === 'unlocked') && (
           <>
             {/* HERO SECTION CONTAINER */}
@@ -322,6 +336,10 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                     top: '52vh',
                     transform: 'translateY(-50%)',
                     maxWidth: '38vw',
+                    animation:
+                      phase === 'hero-intro'
+                        ? 'heroRiseIn 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards'
+                        : 'none',
                   }}
                 >
                   <h2
@@ -349,6 +367,10 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
                     top: '52vh',
                     transform: 'translateY(-50%)',
                     maxWidth: '41.2vw',
+                    animation:
+                      phase === 'hero-intro'
+                        ? 'heroRiseIn 600ms cubic-bezier(0.16, 1, 0.3, 1) 80ms forwards'
+                        : 'none',
                   }}
                 >
                   <span
@@ -542,6 +564,14 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
       <style jsx global>{`
         @keyframes statementFadeIn {
           from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes statementFadeOut {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(-8px); }
+        }
+        @keyframes heroRiseIn {
+          from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
