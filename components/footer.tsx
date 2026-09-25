@@ -20,9 +20,7 @@ export function Footer() {
             />
           </div>
           <p className="footer__tagline">
-            Odd Ritual Golf Club
-            <br />
-            A Modern Expression of Heritage
+            Wear Your Confidence
           </p>
         </div>
 
