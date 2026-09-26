@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Nav } from '@/components/nav'
 import { Hero } from '@/components/hero'
 import { Statement } from '@/components/statement'
@@ -11,6 +11,7 @@ import { GivingBack } from '@/components/giving-back'
 import { Footer } from '@/components/footer'
 import { CartDrawer } from '@/components/cart-drawer'
 import { CheckoutModal } from '@/components/checkout-modal'
+import { AccountModal, UserProfile, OrderRecord } from '@/components/account-modal'
 import { ScrollObserver } from '@/components/scroll-observer'
 import { Product } from '@/lib/products'
 
@@ -18,7 +19,50 @@ export default function Page() {
   const [cart, setCart] = useState<Product[]>([])
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const [isAccountOpen, setIsAccountOpen] = useState(false)
   const [isCurtainOpen, setIsCurtainOpen] = useState(false)
+
+  // Account & Order tracking state
+  const [user, setUser] = useState<UserProfile | null>(null)
+  const [orders, setOrders] = useState<OrderRecord[]>([])
+
+  // Load saved user session & order history from localStorage
+  useEffect(() => {
+    try {
+      const savedUser = localStorage.getItem('frostline_user')
+      if (savedUser) setUser(JSON.parse(savedUser))
+
+      const savedOrders = localStorage.getItem('frostline_orders')
+      if (savedOrders) setOrders(JSON.parse(savedOrders))
+    } catch (e) {
+      console.error(e)
+    }
+  }, [])
+
+  const handleLogin = (newUser: UserProfile) => {
+    setUser(newUser)
+    localStorage.setItem('frostline_user', JSON.stringify(newUser))
+  }
+
+  const handleLogout = () => {
+    setUser(null)
+    localStorage.removeItem('frostline_user')
+  }
+
+  const handleSaveAddress = (addressData: { address: string; city: string; postalCode: string }) => {
+    if (!user) return
+    const updatedUser = { ...user, ...addressData }
+    setUser(updatedUser)
+    localStorage.setItem('frostline_user', JSON.stringify(updatedUser))
+  }
+
+  const handleRecordOrder = (newOrder: OrderRecord) => {
+    setOrders((prev) => {
+      const updated = [newOrder, ...prev]
+      localStorage.setItem('frostline_orders', JSON.stringify(updated))
+      return updated
+    })
+  }
 
   const handleAddToCart = (product: Product) => {
     setCart((prev) => [...prev, product])
@@ -45,6 +89,8 @@ export default function Page() {
         cartCount={cart.length}
         onOpenCart={() => setIsDrawerOpen(true)}
         onShopNowClick={handleShopNowClick}
+        user={user}
+        onOpenAccount={() => setIsAccountOpen(true)}
       />
       <main id="top">
         <Hero onShopNowClick={handleShopNowClick} />
@@ -65,6 +111,18 @@ export default function Page() {
         onClose={() => setIsCheckoutOpen(false)}
         cart={cart}
         onSuccess={handlePaymentSuccess}
+        user={user}
+        onRecordOrder={handleRecordOrder}
+        onOpenAccount={() => setIsAccountOpen(true)}
+      />
+      <AccountModal
+        isOpen={isAccountOpen}
+        onClose={() => setIsAccountOpen(false)}
+        user={user}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+        orders={orders}
+        onSaveAddress={handleSaveAddress}
       />
       <ScrollObserver />
 

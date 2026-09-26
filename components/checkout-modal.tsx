@@ -1,16 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Product, formatPrice } from '@/lib/products'
+import { UserProfile, OrderRecord } from './account-modal'
 
 interface CheckoutModalProps {
   isOpen: boolean
   onClose: () => void
   cart: Product[]
   onSuccess: () => void
+  user?: UserProfile | null
+  onRecordOrder?: (order: OrderRecord) => void
+  onOpenAccount?: () => void
 }
 
-export function CheckoutModal({ isOpen, onClose, cart, onSuccess }: CheckoutModalProps) {
+export function CheckoutModal({
+  isOpen,
+  onClose,
+  cart,
+  onSuccess,
+  user,
+  onRecordOrder,
+  onOpenAccount,
+}: CheckoutModalProps) {
   const [step, setStep] = useState<'checkout' | 'processing' | 'success'>('checkout')
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'gcash'>('card')
   const [receiptName, setReceiptName] = useState<string>('')
@@ -26,6 +38,20 @@ export function CheckoutModal({ isOpen, onClose, cart, onSuccess }: CheckoutModa
     referenceNumber: '',
   })
   const [orderId, setOrderId] = useState<string>('')
+
+  // Auto-fill logged-in user profile details
+  useEffect(() => {
+    if (user && isOpen) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || user.name || '',
+        email: prev.email || user.email || '',
+        address: prev.address || user.address || '',
+        city: prev.city || user.city || '',
+        postalCode: prev.postalCode || user.postalCode || '',
+      }))
+    }
+  }, [user, isOpen])
 
   if (!isOpen) return null
 
@@ -59,6 +85,18 @@ export function CheckoutModal({ isOpen, onClose, cart, onSuccess }: CheckoutModa
       const generatedId = 'FRL-' + Math.floor(100000 + Math.random() * 900000)
       setOrderId(generatedId)
       setStep('success')
+
+      // Record order history
+      if (onRecordOrder) {
+        onRecordOrder({
+          id: generatedId,
+          date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          items: cart.map((c) => ({ name: c.name, price: c.price })),
+          total,
+          paymentMethod: paymentMethod === 'card' ? 'Credit / Debit Card' : paymentMethod === 'bank' ? 'Bank Transfer' : 'GCash',
+          status: 'Processing',
+        })
+      }
     }, 2000)
   }
 
@@ -209,6 +247,66 @@ export function CheckoutModal({ isOpen, onClose, cart, onSuccess }: CheckoutModa
                 Shipping to: {formData.address || 'Standard Delivery Address'}, {formData.city}
               </div>
             </div>
+
+            {!user && onOpenAccount && (
+              <div
+                style={{
+                  margin: '1.5rem 0',
+                  padding: '1rem',
+                  background: '#F8FAFC',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                }}
+              >
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E293B' }}>
+                  Want 1-Click Order Tracking & Instant Future Checkout?
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleFinish()
+                    onOpenAccount()
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    background: '#FFFFFF',
+                    color: '#3C4043',
+                    border: '1px solid #DADCE0',
+                    padding: '0.6rem 1.25rem',
+                    borderRadius: '4px',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.26 21.3 7.36 24 12 24z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.2.01 10.04.01 12s.45 3.8 1.27 5.42l4-3.15z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.7 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                    />
+                  </svg>
+                  Save Order to Google Account
+                </button>
+              </div>
+            )}
 
             <button
               onClick={handleFinish}

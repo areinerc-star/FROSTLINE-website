@@ -2,13 +2,17 @@
 
 import { useEffect, useState } from 'react'
 
+import { UserProfile } from './account-modal'
+
 interface NavProps {
   cartCount: number
   onOpenCart: () => void
   onShopNowClick?: (e: React.MouseEvent) => void
+  user?: UserProfile | null
+  onOpenAccount?: () => void
 }
 
-export function Nav({ cartCount, onOpenCart, onShopNowClick }: NavProps) {
+export function Nav({ cartCount, onOpenCart, onShopNowClick, user, onOpenAccount }: NavProps) {
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
@@ -30,10 +34,19 @@ export function Nav({ cartCount, onOpenCart, onShopNowClick }: NavProps) {
           style={{ height: '44px', maxHeight: '44px', minHeight: '44px', width: 'auto', objectFit: 'contain', display: 'block' }}
         />
       </a>
-      <nav className="nav__right" aria-label="Primary">
+      <nav className="nav__right" aria-label="Primary" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
         <a className="nav__link nav__shop" href="#products" onClick={onShopNowClick}>
           Shop Now
         </a>
+        {onOpenAccount && (
+          <button
+            className="nav__link"
+            onClick={onOpenAccount}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', background: 'none', border: 'none', cursor: 'pointer' }}
+          >
+            <span>{user ? `Account (${user.name.split(' ')[0]})` : 'Account'}</span>
+          </button>
+        )}
         <button
           className="nav__link"
           id="cartToggle"
