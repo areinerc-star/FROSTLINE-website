@@ -12,6 +12,7 @@ import { Footer } from '@/components/footer'
 import { CartDrawer } from '@/components/cart-drawer'
 import { CheckoutModal } from '@/components/checkout-modal'
 import { AccountModal, UserProfile, OrderRecord } from '@/components/account-modal'
+import { AdminDashboard, AdminOrderRecord } from '@/components/admin-dashboard'
 import { ScrollObserver } from '@/components/scroll-observer'
 import { Product } from '@/lib/products'
 
@@ -20,11 +21,12 @@ export default function Page() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [isAccountOpen, setIsAccountOpen] = useState(false)
+  const [isAdminOpen, setIsAdminOpen] = useState(false)
   const [isCurtainOpen, setIsCurtainOpen] = useState(false)
 
   // Account & Order tracking state
   const [user, setUser] = useState<UserProfile | null>(null)
-  const [orders, setOrders] = useState<OrderRecord[]>([])
+  const [orders, setOrders] = useState<AdminOrderRecord[]>([])
 
   // Load saved user session & order history from localStorage
   useEffect(() => {
@@ -57,8 +59,24 @@ export default function Page() {
   }
 
   const handleRecordOrder = (newOrder: OrderRecord) => {
+    const adminRecord: AdminOrderRecord = {
+      ...newOrder,
+      customerName: user?.name || 'Customer',
+      customerEmail: user?.email || 'customer@gmail.com',
+      address: user?.address || 'Delivery Address',
+      city: user?.city || 'Manila',
+    }
+
     setOrders((prev) => {
-      const updated = [newOrder, ...prev]
+      const updated = [adminRecord, ...prev]
+      localStorage.setItem('frostline_orders', JSON.stringify(updated))
+      return updated
+    })
+  }
+
+  const handleUpdateOrderStatus = (orderId: string, newStatus: OrderRecord['status']) => {
+    setOrders((prev) => {
+      const updated = prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
       localStorage.setItem('frostline_orders', JSON.stringify(updated))
       return updated
     })
@@ -99,7 +117,7 @@ export default function Page() {
         <Editorial />
         <GivingBack />
       </main>
-      <Footer />
+      <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
       <CartDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
@@ -123,6 +141,12 @@ export default function Page() {
         onLogout={handleLogout}
         orders={orders}
         onSaveAddress={handleSaveAddress}
+      />
+      <AdminDashboard
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
+        orders={orders}
+        onUpdateOrderStatus={handleUpdateOrderStatus}
       />
       <ScrollObserver />
 

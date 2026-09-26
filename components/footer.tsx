@@ -1,6 +1,8 @@
-'use client'
+interface FooterProps {
+  onOpenAdmin?: () => void
+}
 
-export function Footer() {
+export function Footer({ onOpenAdmin }: FooterProps) {
   return (
     <footer className="footer">
       <div className="footer__top">
@@ -53,7 +55,25 @@ export function Footer() {
 
       <div className="footer__bottom">
         <p>All Rights Reserved _ ORGC©2025</p>
-        <a href="#">Recreation Build</a>
+        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+          {onOpenAdmin && (
+            <button
+              onClick={onOpenAdmin}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--muted)',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+              }}
+            >
+              ⚡ Merchant Admin Dashboard
+            </button>
+          )}
+          <a href="#">Recreation Build</a>
+        </div>
       </div>
     </footer>
   )

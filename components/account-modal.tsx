@@ -365,8 +365,8 @@ export function AccountModal({
                           style={{
                             padding: '2px 8px',
                             borderRadius: '3px',
-                            background: '#E6F4EA',
-                            color: '#137333',
+                            background: ord.status === 'Delivered' ? '#D1FAE5' : ord.status === 'Preparing Shipment' ? '#DBEAFE' : '#FEF3C7',
+                            color: ord.status === 'Delivered' ? '#065F46' : ord.status === 'Preparing Shipment' ? '#1E40AF' : '#92400E',
                             fontSize: '0.7rem',
                             fontWeight: 700,
                           }}
@@ -374,6 +374,20 @@ export function AccountModal({
                           {ord.status}
                         </span>
                       </div>
+
+                      {/* Visual Status Stepper */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#F8FAFC', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid var(--hairline)', fontSize: '0.68rem', margin: '0.2rem 0' }}>
+                        <div style={{ color: '#059669', fontWeight: 700 }}>
+                          ✓ 1. Payment Verified
+                        </div>
+                        <div style={{ color: ord.status === 'Preparing Shipment' || ord.status === 'Delivered' ? '#059669' : 'var(--muted)', fontWeight: 700 }}>
+                          {ord.status === 'Preparing Shipment' || ord.status === 'Delivered' ? '✓' : '○'} 2. Preparing
+                        </div>
+                        <div style={{ color: ord.status === 'Delivered' ? '#059669' : 'var(--muted)', fontWeight: 700 }}>
+                          {ord.status === 'Delivered' ? '✓' : '○'} 3. Arrived
+                        </div>
+                      </div>
+
                       <div style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>
                         Date: {ord.date} • Paid via {ord.paymentMethod}
                       </div>
