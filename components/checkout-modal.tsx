@@ -676,24 +676,54 @@ export function CheckoutModal({
                     />
                   </div>
 
-                  <a
-                    href="gcash://"
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+                      if (isMobile) {
+                        try {
+                          // Try deep link attempt in invisible iframe to prevent ERR_UNKNOWN_URL_SCHEME
+                          const iframe = document.createElement('iframe')
+                          iframe.style.display = 'none'
+                          iframe.src = 'gcash://'
+                          document.body.appendChild(iframe)
+                          
+                          setTimeout(() => {
+                            try { document.body.removeChild(iframe) } catch (_) {}
+                            if (!document.hidden) {
+                              window.open('https://www.gcash.com', '_blank', 'noopener,noreferrer')
+                            }
+                          }, 1200)
+                        } catch (err) {
+                          window.open('https://www.gcash.com', '_blank', 'noopener,noreferrer')
+                        }
+                      } else {
+                        // Desktop PC -> Open GCash official portal directly in new tab
+                        window.open('https://www.gcash.com', '_blank', 'noopener,noreferrer')
+                      }
+                    }}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.4rem',
                       background: '#005CE6',
                       color: '#ffffff',
-                      padding: '0.5rem 1.2rem',
+                      padding: '0.55rem 1.25rem',
                       fontSize: '0.75rem',
                       fontWeight: 700,
                       borderRadius: '4px',
-                      textDecoration: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
                       letterSpacing: '0.05em',
+                      boxShadow: '0 2px 6px rgba(0, 92, 230, 0.25)',
                     }}
                   >
-                    Open GCash App directly <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-                  </a>
+                    Open GCash / Proceed to Payment <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                  </button>
+                  <span style={{ fontSize: '0.68rem', color: 'var(--muted)', marginTop: '-0.3rem' }}>
+                    (Opens GCash app on mobile or GCash portal on PC)
+                  </span>
 
                   <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.6rem', textAlign: 'left' }}>
                     <input
