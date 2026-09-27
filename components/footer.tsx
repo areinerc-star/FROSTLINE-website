@@ -67,9 +67,13 @@ export function Footer({ onOpenAdmin }: FooterProps) {
                 cursor: 'pointer',
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
               }}
             >
-              ⚡ Merchant Admin Dashboard
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF2E00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              Merchant Admin Dashboard
             </button>
           )}
           <a href="#">Recreation Build</a>
