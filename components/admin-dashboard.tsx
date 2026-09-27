@@ -31,14 +31,14 @@ export function AdminDashboard({
   if (!isOpen) return null
 
   const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0)
-  const pendingCount = orders.filter((o) => o.status === 'Processing' || o.status === 'Payment Pending' as any).length
+  const pendingCount = orders.filter((o) => o.status === 'Processing' || o.status === ('Payment Pending' as any)).length
 
   const handleStatusChange = (order: AdminOrderRecord, nextStatus: OrderRecord['status']) => {
     onUpdateOrderStatus(order.id, nextStatus)
 
     // Trigger simulated email notification popover
     setEmailNotification(
-      `📧 EMAIL SENT to ${order.customerEmail}:\n\n"Subject: Order #${order.id} Status Update\nDear ${order.customerName}, your Frostline order status has been updated to: ${nextStatus.toUpperCase()}."`
+      `📧 EMAIL SENT to ${order.customerEmail}:\n\n"Subject: Order #${order.id} Status Update\nDear ${order.customerName}, your FROSTLINE order status has been updated to: ${nextStatus.toUpperCase()}."`
     )
 
     setTimeout(() => {
@@ -57,12 +57,13 @@ export function AdminDashboard({
         position: 'fixed',
         inset: 0,
         zIndex: 400,
-        background: 'rgba(0, 0, 0, 0.75)',
-        backdropFilter: 'blur(8px)',
+        background: 'rgba(0, 0, 0, 0.85)',
+        backdropFilter: 'blur(10px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '1rem',
+        fontFamily: 'inherit',
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
@@ -73,20 +74,20 @@ export function AdminDashboard({
         <div
           style={{
             position: 'fixed',
-            top: '20px',
-            right: '20px',
+            top: '24px',
+            right: '24px',
             zIndex: 500,
-            background: '#111827',
-            color: '#10B981',
-            border: '1px solid #10B981',
-            padding: '1rem 1.25rem',
-            borderRadius: '6px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-            maxWidth: '380px',
+            background: '#111111',
+            color: '#FFFFFF',
+            border: '1px solid #FF2E00',
+            padding: '1.2rem 1.5rem',
+            borderRadius: '4px',
+            boxShadow: '0 12px 32px rgba(255, 46, 0, 0.25)',
+            maxWidth: '400px',
             whiteSpace: 'pre-line',
-            fontSize: '0.8rem',
+            fontSize: '0.82rem',
             fontWeight: 600,
-            animation: 'fadeIn 0.3s ease',
+            lineHeight: 1.5,
           }}
         >
           {emailNotification}
@@ -95,14 +96,14 @@ export function AdminDashboard({
 
       <div
         style={{
-          background: '#0F172A',
-          color: '#F8FAFC',
-          width: 'min(920px, 95vw)',
+          background: '#0A0A0A',
+          color: '#FFFFFF',
+          width: 'min(960px, 95vw)',
           maxHeight: '90vh',
           overflowY: 'auto',
-          borderRadius: '8px',
-          border: '1px solid #334155',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+          borderRadius: '4px',
+          border: '1px solid #262626',
+          boxShadow: '0 30px 60px rgba(0, 0, 0, 0.8)',
           padding: 'clamp(1.5rem, 4vw, 2.5rem)',
           position: 'relative',
         }}
@@ -118,7 +119,8 @@ export function AdminDashboard({
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            color: '#94A3B8',
+            color: '#888888',
+            transition: 'color 0.2s',
           }}
           aria-label="Close admin dashboard"
         >
@@ -126,52 +128,68 @@ export function AdminDashboard({
         </button>
 
         {/* Dashboard Header */}
-        <div style={{ borderBottom: '1px solid #334155', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
-          <div style={{ fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#38BDF8', fontWeight: 700 }}>
-            FROSTLINE MERCHANT ADMIN CONTROL
+        <div style={{ borderBottom: '1px solid #262626', paddingBottom: '1.25rem', marginBottom: '1.75rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <img
+            src="/FROSTLINEwhiteLOGOonly.png"
+            alt="Frostline Icon"
+            style={{ height: '36px', width: 'auto', objectFit: 'contain' }}
+          />
+          <div>
+            <div style={{ fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#FF2E00', fontWeight: 800 }}>
+              FROSTLINE MERCHANT ADMIN CONTROL
+            </div>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.01em', textTransform: 'uppercase', marginTop: '0.15rem', color: '#FFFFFF' }}>
+              TRANSACTIONS & PAYMENT VERIFICATION
+            </h2>
           </div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '0.2rem' }}>
-            Transactions & Payment Verification Dashboard
-          </h2>
         </div>
 
         {/* Analytics Summary Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
           <div style={cardStyle}>
-            <div style={cardLabelStyle}>Total Orders</div>
+            <div style={cardLabelStyle}>TOTAL ORDERS</div>
             <div style={cardValueStyle}>{orders.length}</div>
           </div>
           <div style={cardStyle}>
-            <div style={cardLabelStyle}>Total Revenue</div>
-            <div style={{ ...cardValueStyle, color: '#34D399' }}>₱{totalRevenue.toLocaleString()}</div>
+            <div style={cardLabelStyle}>TOTAL REVENUE</div>
+            <div style={{ ...cardValueStyle, color: '#FFFFFF' }}>₱{totalRevenue.toLocaleString()}</div>
           </div>
           <div style={cardStyle}>
-            <div style={cardLabelStyle}>Pending Verification</div>
-            <div style={{ ...cardValueStyle, color: '#FBBF24' }}>{pendingCount}</div>
+            <div style={cardLabelStyle}>PENDING VERIFICATION</div>
+            <div style={{ ...cardValueStyle, color: '#FF2E00' }}>{pendingCount}</div>
           </div>
         </div>
 
         {/* Filter Controls */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: 600 }}>Customer Transactions ({filteredOrders.length})</h3>
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
-            {['all', 'Processing', 'Preparing Shipment', 'Delivered'].map((st) => (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <h3 style={{ fontSize: '0.9rem', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            CUSTOMER TRANSACTIONS ({filteredOrders.length})
+          </h3>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            {[
+              { id: 'all', label: 'All' },
+              { id: 'Processing', label: 'Pending Payment' },
+              { id: 'Preparing Shipment', label: 'Preparing' },
+              { id: 'Delivered', label: 'Delivered' },
+            ].map((st) => (
               <button
-                key={st}
-                onClick={() => setFilterStatus(st)}
+                key={st.id}
+                onClick={() => setFilterStatus(st.id)}
                 style={{
-                  padding: '0.4rem 0.8rem',
-                  borderRadius: '4px',
-                  border: '1px solid #334155',
-                  background: filterStatus === st ? '#38BDF8' : '#1E293B',
-                  color: filterStatus === st ? '#0F172A' : '#94A3B8',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
+                  padding: '0.45rem 0.85rem',
+                  borderRadius: '2px',
+                  border: filterStatus === st.id ? '1px solid #FFFFFF' : '1px solid #262626',
+                  background: filterStatus === st.id ? '#FFFFFF' : '#141414',
+                  color: filterStatus === st.id ? '#000000' : '#888888',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
                   cursor: 'pointer',
-                  textTransform: 'capitalize',
+                  transition: 'all 0.2s',
                 }}
               >
-                {st}
+                {st.label}
               </button>
             ))}
           </div>
@@ -180,29 +198,29 @@ export function AdminDashboard({
         {/* Transactions Table / List */}
         <div style={{ display: 'grid', gap: '1rem' }}>
           {filteredOrders.length === 0 ? (
-            <div style={{ padding: '3rem 1rem', textAlign: 'center', color: '#64748B', border: '1px dashed #334155', borderRadius: '6px' }}>
-              No transactions matching filter. When customers place an order, it will appear here instantly!
+            <div style={{ padding: '3.5rem 1rem', textAlign: 'center', color: '#666666', border: '1px dashed #262626', borderRadius: '4px', fontSize: '0.85rem' }}>
+              No transactions found under this filter. When customers place an order, it will appear here in real time!
             </div>
           ) : (
             filteredOrders.map((ord) => (
               <div
                 key={ord.id}
                 style={{
-                  background: '#1E293B',
-                  border: '1px solid #334155',
-                  borderRadius: '6px',
-                  padding: '1.25rem',
+                  background: '#141414',
+                  border: '1px solid #262626',
+                  borderRadius: '4px',
+                  padding: '1.35rem',
                   display: 'grid',
-                  gap: '0.85rem',
+                  gap: '1rem',
                 }}
               >
                 {/* Order Top Bar */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
                   <div>
-                    <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#F8FAFC' }}>
-                      Order #{ord.id}
+                    <span style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '0.04em', color: '#FFFFFF' }}>
+                      ORDER #{ord.id}
                     </span>
-                    <span style={{ fontSize: '0.8rem', color: '#94A3B8', marginLeft: '0.75rem' }}>
+                    <span style={{ fontSize: '0.78rem', color: '#888888', marginLeft: '0.75rem' }}>
                       {ord.date}
                     </span>
                   </div>
@@ -210,22 +228,24 @@ export function AdminDashboard({
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span
                       style={{
-                        padding: '3px 10px',
-                        borderRadius: '4px',
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
+                        padding: '4px 12px',
+                        borderRadius: '2px',
+                        fontSize: '0.7rem',
+                        fontWeight: 800,
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
                         background:
                           ord.status === 'Delivered'
-                            ? '#064E3B'
+                            ? '#FFFFFF'
                             : ord.status === 'Preparing Shipment'
                             ? '#1E3A8A'
-                            : '#78350F',
+                            : '#FF2E00',
                         color:
                           ord.status === 'Delivered'
-                            ? '#34D399'
+                            ? '#000000'
                             : ord.status === 'Preparing Shipment'
-                            ? '#60A5FA'
-                            : '#FBBF24',
+                            ? '#FFFFFF'
+                            : '#FFFFFF',
                       }}
                     >
                       {ord.status}
@@ -233,64 +253,61 @@ export function AdminDashboard({
                   </div>
                 </div>
 
-                {/* Customer Details & Payment Info */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', background: '#0F172A', padding: '0.85rem', borderRadius: '4px', fontSize: '0.8rem' }}>
+                {/* Customer Details & Payment Info Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', background: '#0A0A0A', padding: '1rem', borderRadius: '4px', border: '1px solid #1F1F1F', fontSize: '0.82rem' }}>
                   <div>
-                    <div style={{ color: '#64748B', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 700 }}>Customer</div>
-                    <div style={{ fontWeight: 600, color: '#F8FAFC' }}>{ord.customerName || 'Guest Customer'}</div>
-                    <div style={{ color: '#94A3B8' }}>{ord.customerEmail || 'No email provided'}</div>
-                    <div style={{ color: '#94A3B8', marginTop: '0.2rem' }}>{ord.address}, {ord.city}</div>
+                    <div style={{ color: '#666666', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.2rem' }}>Customer</div>
+                    <div style={{ fontWeight: 700, color: '#FFFFFF' }}>{ord.customerName || 'Guest Customer'}</div>
+                    <div style={{ color: '#AAAAAA', fontSize: '0.78rem' }}>{ord.customerEmail || 'No email provided'}</div>
+                    <div style={{ color: '#888888', marginTop: '0.2rem', fontSize: '0.75rem' }}>{ord.address}, {ord.city}</div>
                   </div>
 
                   <div>
-                    <div style={{ color: '#64748B', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 700 }}>Payment Method</div>
-                    <div style={{ fontWeight: 600, color: '#38BDF8' }}>{ord.paymentMethod}</div>
+                    <div style={{ color: '#666666', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.2rem' }}>Payment Method</div>
+                    <div style={{ fontWeight: 700, color: '#FFFFFF' }}>{ord.paymentMethod}</div>
                     {ord.referenceNumber && (
-                      <div style={{ color: '#F8FAFC', fontFamily: 'monospace', marginTop: '0.2rem' }}>
+                      <div style={{ color: '#FF2E00', fontFamily: 'monospace', fontWeight: 700, marginTop: '0.2rem', fontSize: '0.8rem' }}>
                         Ref #: {ord.referenceNumber}
                       </div>
                     )}
                     {ord.receiptName && (
-                      <div style={{ color: '#34D399', fontSize: '0.75rem', marginTop: '0.2rem' }}>
+                      <div style={{ color: '#AAAAAA', fontSize: '0.75rem', marginTop: '0.2rem' }}>
                         Attached Proof: {ord.receiptName}
                       </div>
                     )}
                   </div>
 
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ color: '#64748B', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 700 }}>Total Amount</div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#34D399' }}>₱{ord.total.toLocaleString()}</div>
-                    <div style={{ color: '#94A3B8', fontSize: '0.75rem' }}>{ord.items.length} item(s)</div>
+                    <div style={{ color: '#666666', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.2rem' }}>Total Amount</div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#FFFFFF' }}>₱{ord.total.toLocaleString()}</div>
+                    <div style={{ color: '#888888', fontSize: '0.75rem' }}>{ord.items.length} item(s)</div>
                   </div>
                 </div>
 
                 {/* Status Advancement & Accept Action Bar */}
-                <div style={{ borderTop: '1px solid #334155', paddingTop: '0.85rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
-                  <div style={{ fontSize: '0.78rem', color: '#94A3B8' }}>
-                    Advance Status & Trigger Customer Email:
+                <div style={{ borderTop: '1px solid #262626', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.85rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#888888', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                    Update Status & Send Customer Email Alert:
                   </div>
 
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <button
                       onClick={() => handleStatusChange(ord, 'Processing')}
-                      disabled={ord.status === 'Processing'}
                       style={actionBtnStyle(ord.status === 'Processing')}
                     >
-                      1. Payment Verified
+                      1. Accept & Verify Payment
                     </button>
                     <button
                       onClick={() => handleStatusChange(ord, 'Preparing Shipment')}
-                      disabled={ord.status === 'Preparing Shipment'}
                       style={actionBtnStyle(ord.status === 'Preparing Shipment')}
                     >
-                      2. Preparing Order
+                      2. Mark Preparing
                     </button>
                     <button
                       onClick={() => handleStatusChange(ord, 'Delivered')}
-                      disabled={ord.status === 'Delivered'}
                       style={actionBtnStyle(ord.status === 'Delivered')}
                     >
-                      3. Shipped & Arrived
+                      3. Mark Shipped & Arrived
                     </button>
                   </div>
                 </div>
@@ -304,35 +321,38 @@ export function AdminDashboard({
 }
 
 const cardStyle: React.CSSProperties = {
-  background: '#1E293B',
-  border: '1px solid #334155',
-  padding: '1rem',
-  borderRadius: '6px',
+  background: '#141414',
+  border: '1px solid #262626',
+  padding: '1.25rem',
+  borderRadius: '4px',
 }
 
 const cardLabelStyle: React.CSSProperties = {
-  fontSize: '0.72rem',
-  letterSpacing: '0.08em',
+  fontSize: '0.68rem',
+  letterSpacing: '0.12em',
   textTransform: 'uppercase',
-  color: '#94A3B8',
-  fontWeight: 600,
+  color: '#888888',
+  fontWeight: 800,
 }
 
 const cardValueStyle: React.CSSProperties = {
-  fontSize: '1.5rem',
-  fontWeight: 800,
-  marginTop: '0.2rem',
-  color: '#F8FAFC',
+  fontSize: '1.6rem',
+  fontWeight: 900,
+  marginTop: '0.25rem',
+  color: '#FFFFFF',
+  letterSpacing: '-0.02em',
 }
 
 const actionBtnStyle = (isActive: boolean): React.CSSProperties => ({
-  padding: '0.4rem 0.75rem',
-  borderRadius: '4px',
-  border: isActive ? '1px solid #38BDF8' : '1px solid #334155',
-  background: isActive ? '#38BDF8' : '#0F172A',
-  color: isActive ? '#0F172A' : '#F8FAFC',
+  padding: '0.5rem 0.9rem',
+  borderRadius: '2px',
+  border: isActive ? '1px solid #FF2E00' : '1px solid #333333',
+  background: isActive ? '#FF2E00' : '#0A0A0A',
+  color: '#FFFFFF',
   fontSize: '0.72rem',
-  fontWeight: 700,
-  cursor: isActive ? 'default' : 'pointer',
-  opacity: isActive ? 0.7 : 1,
+  fontWeight: 800,
+  letterSpacing: '0.08em',
+  textTransform: 'uppercase',
+  cursor: 'pointer',
+  transition: 'all 0.2s',
 })

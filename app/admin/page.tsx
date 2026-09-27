@@ -28,12 +28,12 @@ export default function AdminPage() {
   }
 
   return (
-    <div style={{ background: '#090D16', minHeight: '100vh', color: '#FFFFFF', padding: '2rem' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link href="/" style={{ color: '#38BDF8', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 }}>
-          ← Back to FROSTLINE Website
+    <div style={{ background: '#0A0A0A', minHeight: '100vh', color: '#FFFFFF', padding: '2rem 1.5rem', fontFamily: 'var(--font-geist-sans), sans-serif' }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Link href="/" style={{ color: '#FFFFFF', textDecoration: 'none', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.4rem', opacity: 0.85, transition: 'opacity 0.2s' }}>
+          <span style={{ color: '#FF2E00' }}>←</span> RETURN TO FROSTLINE STORE
         </Link>
-        <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>FROSTLINE Merchant Portal</span>
+        <span style={{ fontSize: '0.7rem', color: '#888888', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>FROSTLINE MERCHANT PORTAL</span>
       </div>
 
       <AdminDashboard
