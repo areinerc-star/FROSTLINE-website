@@ -18,11 +18,15 @@ const instrumentSerif = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
-  title: 'Odd Ritual • A Modern Expression of Heritage',
+  title: 'FROSTLINE PH | Wear Your Confidence',
   description:
-    'Odd Ritual Golf Club — a modern expression of heritage. Born from a shared love of the game, rooted in authenticity and creativity.',
+    'FROSTLINE Official Philippines — High-performance athletic apparel & streetwear. Crafted for dreamers, built for believers.',
   icons: {
     icon: [
+      {
+        url: '/FROSTLINEwhiteLOGOonly.png',
+        type: 'image/png',
+      },
       {
         url: '/icon-light-32x32.png',
         media: '(prefers-color-scheme: light)',
@@ -31,12 +35,9 @@ export const metadata: Metadata = {
         url: '/icon-dark-32x32.png',
         media: '(prefers-color-scheme: dark)',
       },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
     ],
     apple: '/apple-icon.png',
+    shortcut: '/FROSTLINEwhiteLOGOonly.png',
   },
 }
 
