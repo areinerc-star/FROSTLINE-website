@@ -39,9 +39,15 @@ export function AccountModal({
   orders,
   onSaveAddress,
 }: AccountModalProps) {
+  const [emailInput, setEmailInput] = useState('')
+  const [passwordInput, setPasswordInput] = useState('')
   const [isGooglePrompt, setIsGooglePrompt] = useState(false)
   const [googleEmailInput, setGoogleEmailInput] = useState('')
   const [googleNameInput, setGoogleNameInput] = useState('')
+  const [activeTab, setActiveTab] = useState<'orders' | 'profile'>('orders')
+  const [address, setAddress] = useState(user?.address || '')
+  const [city, setCity] = useState(user?.city || '')
+  const [postalCode, setPostalCode] = useState(user?.postalCode || '')
 
   if (!isOpen) return null
 

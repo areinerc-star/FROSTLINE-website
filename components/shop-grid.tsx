@@ -10,6 +10,7 @@ export interface GridProduct extends Product {
   lifestyleImg: string
   detailImages?: string[]
   colors?: string[]
+  breakoutImg?: string
 }
 
 export const GRID_PRODUCTS: GridProduct[] = [

@@ -21,7 +21,7 @@ const ASSETS = {
   headline: 'CRAFTED FOR DREAMERS.\nBUILT FOR BELIEVERS.',
 }
 
-type ModalPhase = 'curtain-open' | 'unlocked'
+type ModalPhase = 'curtain-open' | 'hero-intro' | 'unlocked'
 
 export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
   const [phase, setPhase] = useState<ModalPhase>('curtain-open')
