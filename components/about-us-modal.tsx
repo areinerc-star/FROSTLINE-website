@@ -246,242 +246,129 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
             background: '#000000',
           }}
         >
-              {/* Black Zone (83vh) */}
+          {/* Black Zone: Headline & Our Story */}
+          <div className="about-us-hero-zone">
+            <div className="about-us-hero-grid">
+              {/* Left Column: Headline (CRAFTED FOR DREAMERS. BUILT FOR BELIEVERS.) */}
               <div
                 style={{
-                  position: 'relative',
-                  height: '83vh',
+                  animation:
+                    phase === 'hero-intro'
+                      ? 'heroRiseIn 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards'
+                      : 'none',
                 }}
               >
-                {/* Left Column: Headline (CRAFTED FOR DREAMERS. BUILT FOR BELIEVERS.) */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '8.5vw',
-                    top: '52vh',
-                    transform: 'translateY(-50%)',
-                    maxWidth: '38vw',
-                    animation:
-                      phase === 'hero-intro'
-                        ? 'heroRiseIn 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards'
-                        : 'none',
-                  }}
-                >
-                  <h2
-                    style={{
-                      fontFamily: 'var(--font-headline, "Antonio", "Anton", sans-serif)',
-                      fontSize: 'clamp(1.3vw, 1.6vw, 2.5rem)',
-                      fontWeight: 800,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.02em',
-                      lineHeight: 1.15,
-                      color: '#FFFFFF',
-                      margin: 0,
-                      whiteSpace: 'pre-line',
-                    }}
-                  >
-                    {ASSETS.headline}
-                  </h2>
-                </div>
-
-                {/* Right Column: [ OUR STORY ] Paragraph Block */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '49.8vw',
-                    top: '52vh',
-                    transform: 'translateY(-50%)',
-                    maxWidth: '41.2vw',
-                    animation:
-                      phase === 'hero-intro'
-                        ? 'heroRiseIn 600ms cubic-bezier(0.16, 1, 0.3, 1) 80ms forwards'
-                        : 'none',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-headline, "Antonio", "Anton", sans-serif)',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      letterSpacing: '0.15em',
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      textTransform: 'uppercase',
-                      display: 'block',
-                      marginBottom: '0.75rem',
-                    }}
-                  >
-                    [ OUR STORY ]
-                  </span>
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-body, "Times New Roman", serif)',
-                      fontSize: 'clamp(11px, 0.8vw, 13px)',
-                      lineHeight: 1.65,
-                      color: 'rgba(255, 255, 255, 0.92)',
-                      margin: 0,
-                    }}
-                  >
-                    {ASSETS.ourStory}
-                  </p>
-                </div>
+                <h2 className="about-us-headline">
+                  {ASSETS.headline}
+                </h2>
               </div>
 
-              {/* FULL-BLEED PHOTO SECTION (Fully visible photo, no intertwining or overlapping veils) */}
+              {/* Right Column: [ OUR STORY ] Paragraph Block */}
               <div
                 style={{
-                  position: 'relative',
-                  width: '100vw',
-                  minHeight: '100vh',
-                  height: '100vh',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#000000',
-                  overflow: 'hidden',
+                  animation:
+                    phase === 'hero-intro'
+                      ? 'heroRiseIn 600ms cubic-bezier(0.16, 1, 0.3, 1) 80ms forwards'
+                      : 'none',
                 }}
               >
+                <span className="about-us-story-label">
+                  [ OUR STORY ]
+                </span>
+                <p className="about-us-story-p">
+                  {ASSETS.ourStory}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* FULL-BLEED PHOTO SECTION */}
+          <div className="about-us-photo-zone">
+            <img
+              src={ASSETS.imgHero}
+              alt="Frostline Hero Athlete"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center 25%',
+                display: 'block',
+              }}
+            />
+
+            {/* Micro-Captions */}
+            <div className="about-us-photo-captions">
+              <span>{ASSETS.captionLeft}</span>
+              <span>WEAR YOUR CONFIDENCE.</span>
+              <span>{ASSETS.captionRight}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* WHITE GRID SECTION */}
+        <div className="about-us-white-section">
+          <div className="about-us-white-grid">
+            {/* Left Column: Grayscale Square Image */}
+            <div style={{ position: 'relative' }}>
+              <div className="about-us-left-img-wrapper">
                 <img
-                  src={ASSETS.imgHero}
-                  alt="Frostline Hero Athlete"
+                  src={ASSETS.imgLeft}
+                  alt="Frostline Detail"
                   style={{
-                    width: '100vw',
+                    width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'center 25%',
+                    filter: 'grayscale(100%)',
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Right Column: About Us Video */}
+            <div style={{ position: 'relative' }}>
+              <div className="about-us-video-wrapper">
+                <video
+                  src={ASSETS.videoAboutUs}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    maxHeight: '80vh',
+                    objectFit: 'cover',
                     display: 'block',
                   }}
                 />
-
-                {/* Micro-Captions on Vertical Midline (44vh) */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '44vh',
-                    left: 0,
-                    right: 0,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '0 4vw',
-                    fontFamily: 'var(--font-body, "Times New Roman", serif)',
-                    fontSize: '10px',
-                    fontWeight: 600,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    color: '#FFFFFF',
-                    textShadow: '0 2px 6px rgba(0,0,0,0.7)',
-                    zIndex: 10,
-                  }}
-                >
-                  <span>{ASSETS.captionLeft}</span>
-                  <span>WEAR YOUR CONFIDENCE.</span>
-                  <span>{ASSETS.captionRight}</span>
-                </div>
               </div>
-            </div>
-
-            {/* WHITE GRID SECTION - POSITIONED CLEANLY BELOW THE HERO PHOTO */}
-            <div
-              style={{
-                position: 'relative',
-                background: '#FFFFFF',
-                color: '#000000',
-                minHeight: '100vh',
-                paddingTop: '6rem',
-                paddingBottom: '8rem',
-                zIndex: 1,
-              }}
-            >
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '41.3vw 41.3vw',
-                  columnGap: '0.4vw',
-                  paddingLeft: '8.3vw',
-                  paddingRight: '8.8vw',
-                  position: 'relative',
-                }}
-              >
-                {/* Left Column: Grayscale Square Image (Pinned) */}
-                <div style={{ position: 'relative' }}>
-                  <div
-                    style={{
-                      position: 'sticky',
-                      top: '2rem',
-                      width: '41.3vw',
-                      aspectRatio: '1 / 1',
-                      overflow: 'hidden',
-                      borderRadius: '2px',
-                      border: '1px solid rgba(0, 0, 0, 0.08)',
-                    }}
-                  >
-                    <img
-                      src={ASSETS.imgLeft}
-                      alt="Frostline Detail"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        filter: 'grayscale(100%)',
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* Right Column: About Us Video */}
-                <div style={{ position: 'relative' }}>
-                  <div
-                    style={{
-                      position: 'sticky',
-                      top: '2rem',
-                      width: '41.3vw',
-                      overflow: 'hidden',
-                      borderRadius: '2px',
-                      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
-                      backgroundColor: '#000000',
-                    }}
-                  >
-                    <video
-                      src={ASSETS.videoAboutUs}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      controls
-                      style={{
-                        width: '100%',
-                        height: 'auto',
-                        maxHeight: '80vh',
-                        objectFit: 'cover',
-                        display: 'block',
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Inverted Black Frostline Chevron Mark (Static placement below content) */}
-              <div
-                style={{
-                  position: 'relative',
-                  marginTop: '6rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  pointerEvents: 'none',
-                }}
-              >
-                <img
-                  src={ASSETS.logoMark}
-                  alt="Frostline Chevron Mark"
-                  style={{
-                    width: 'auto',
-                    height: '60px',
-                    objectFit: 'contain',
-                    filter: 'brightness(0)',
-                  }}
-                />
             </div>
           </div>
+
+          {/* Inverted Black Frostline Chevron Mark */}
+          <div
+            style={{
+              position: 'relative',
+              marginTop: '6rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+            }}
+          >
+            <img
+              src={ASSETS.logoMark}
+              alt="Frostline Chevron Mark"
+              style={{
+                width: 'auto',
+                height: '60px',
+                objectFit: 'contain',
+                filter: 'brightness(0)',
+              }}
+            />
+          </div>
+        </div>
       </div>
 
       <style jsx global>{`
@@ -496,6 +383,194 @@ export function AboutUsModal({ isOpen, onClose }: AboutUsModalProps) {
         @keyframes heroRiseIn {
           from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+
+        .about-us-hero-zone {
+          position: relative;
+          background: #000000;
+          min-height: 83vh;
+          display: flex;
+          align-items: center;
+          padding: 10vh 8.5vw;
+        }
+        @media (max-width: 768px) {
+          .about-us-hero-zone {
+            min-height: auto;
+            padding: 5rem 1.25rem 3rem 1.25rem;
+            flex-direction: column;
+            align-items: flex-start;
+          }
+        }
+
+        .about-us-hero-grid {
+          display: grid;
+          grid-template-columns: 38vw 41.2vw;
+          column-gap: 3.8vw;
+          width: 100%;
+          align-items: start;
+        }
+        @media (max-width: 768px) {
+          .about-us-hero-grid {
+            grid-template-columns: 1fr;
+            row-gap: 1.75rem;
+          }
+        }
+
+        .about-us-headline {
+          font-family: var(--font-headline, "Antonio", "Anton", sans-serif);
+          font-size: clamp(1.4rem, 1.6vw, 2.5rem);
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+          line-height: 1.15;
+          color: #FFFFFF;
+          margin: 0;
+          white-space: pre-line;
+        }
+        @media (max-width: 768px) {
+          .about-us-headline {
+            font-size: 1.6rem;
+            line-height: 1.2;
+          }
+        }
+
+        .about-us-story-label {
+          font-family: var(--font-headline, "Antonio", "Anton", sans-serif);
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 0.15em;
+          color: rgba(255, 255, 255, 0.5);
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 0.75rem;
+        }
+
+        .about-us-story-p {
+          font-family: var(--font-body, "Times New Roman", serif);
+          font-size: clamp(12px, 0.85vw, 14px);
+          line-height: 1.65;
+          color: rgba(255, 255, 255, 0.92);
+          margin: 0;
+        }
+        @media (max-width: 768px) {
+          .about-us-story-p {
+            font-size: 0.875rem;
+            line-height: 1.6;
+          }
+        }
+
+        .about-us-photo-zone {
+          position: relative;
+          width: 100vw;
+          height: 100vh;
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #000000;
+          overflow: hidden;
+        }
+        @media (max-width: 768px) {
+          .about-us-photo-zone {
+            height: 65vh;
+            min-height: 65vh;
+          }
+        }
+
+        .about-us-photo-captions {
+          position: absolute;
+          top: 44vh;
+          left: 0;
+          right: 0;
+          display: flex;
+          justify-content: space-between;
+          padding: 0 4vw;
+          font-family: var(--font-body, "Times New Roman", serif);
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #FFFFFF;
+          text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+          z-index: 10;
+        }
+        @media (max-width: 768px) {
+          .about-us-photo-captions {
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0 1rem;
+            font-size: 8px;
+            letter-spacing: 0.12em;
+          }
+        }
+
+        .about-us-white-section {
+          position: relative;
+          background: #FFFFFF;
+          color: #000000;
+          min-height: 100vh;
+          padding-top: 6rem;
+          padding-bottom: 8rem;
+          z-index: 1;
+        }
+        @media (max-width: 768px) {
+          .about-us-white-section {
+            padding-top: 3rem;
+            padding-bottom: 5rem;
+            min-height: auto;
+          }
+        }
+
+        .about-us-white-grid {
+          display: grid;
+          grid-template-columns: 41.3vw 41.3vw;
+          column-gap: 0.4vw;
+          padding-left: 8.3vw;
+          padding-right: 8.8vw;
+          position: relative;
+        }
+        @media (max-width: 768px) {
+          .about-us-white-grid {
+            grid-template-columns: 1fr;
+            row-gap: 2rem;
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+          }
+        }
+
+        .about-us-left-img-wrapper {
+          position: sticky;
+          top: 2rem;
+          width: 41.3vw;
+          aspect-ratio: 1 / 1;
+          overflow: hidden;
+          border-radius: 2px;
+          border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        @media (max-width: 768px) {
+          .about-us-left-img-wrapper {
+            position: relative;
+            top: 0;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+          }
+        }
+
+        .about-us-video-wrapper {
+          position: sticky;
+          top: 2rem;
+          width: 41.3vw;
+          overflow: hidden;
+          border-radius: 2px;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+          background-color: #000000;
+        }
+        @media (max-width: 768px) {
+          .about-us-video-wrapper {
+            position: relative;
+            top: 0;
+            width: 100%;
+          }
         }
       `}</style>
     </div>

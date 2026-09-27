@@ -22,7 +22,7 @@ export function Footer({ onOpenAdmin }: FooterProps) {
             />
           </div>
           <p className="footer__tagline">
-            Wear Your Confidence
+            FROSTLINE PHILIPPINES — WEAR YOUR CONFIDENCE
           </p>
         </div>
 
@@ -36,12 +36,12 @@ export function Footer({ onOpenAdmin }: FooterProps) {
           </div>
           <div className="footer__col">
             <p className="head">Social</p>
-            <a href="#">Instagram</a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
           </div>
           <div className="footer__col">
             <p className="head">Get In Touch</p>
-            <a href="mailto:hello@oddritualgolf.com">hello@oddritualgolf.com</a>
-            <a href="tel:+27762073387">+27 76 207 33 87</a>
+            <a href="mailto:officialfrostline@gmail.com">officialfrostline@gmail.com</a>
+            <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Philippines</span>
           </div>
           <div className="footer__col">
             <p className="head">Legal</p>

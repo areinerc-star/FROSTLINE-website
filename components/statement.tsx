@@ -34,7 +34,7 @@ export function Statement() {
           }}
         />
       </div>
-      <h2 className="statement__text reveal" data-delay="1" style={{ position: 'relative', zIndex: 2 }}>
+      <h2 className="statement__text reveal" data-delay="1" style={{ position: 'relative', zIndex: 2, color: '#0A0A0A' }}>
         Crafted for dreamers, built for believers. Born from the relentless chase of the personal record, rooted in a vision of faith, discipline, and purpose expressed through what we wear. For us, it's about showing up when it's hard, trusting the process, and wearing your confidence every single mile along the way.
       </h2>
     </section>

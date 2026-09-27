@@ -290,7 +290,7 @@ body {
 .statement__mark { width: 84px; height: 84px; margin-bottom: 2.5rem; }
 .statement__text {
   font-size: clamp(1.5rem, 3.6vw, 3rem); font-weight: 600; letter-spacing: -0.02em;
-  line-height: 1.25; max-width: 24ch; text-wrap: balance; color: #FFFFFF;
+  line-height: 1.25; max-width: 24ch; text-wrap: balance; color: #0A0A0A;
 }
 @media (min-width: 900px) {
   .statement { display: grid; grid-template-columns: 1fr 2fr; gap: var(--gutter); align-items: start; }
