@@ -108,9 +108,91 @@ export function ProductModal({
     }
   }, [product])
 
+  const getSwatchCandidates = (product: GridProduct | null, color: string): string[] => {
+    if (!product) return []
+
+    const colorKey = color.trim()
+    const sku = product.sku || ''
+    const name = product.name?.toLowerCase() || ''
+
+    let mappedFiles: string[] = []
+
+    if (sku === 'FRL-PH-TNK' || name.includes('pilipinas')) {
+      if (colorKey === 'Blue') mappedFiles = ['PILIPINAS blue.png']
+      else if (colorKey === 'Black') mappedFiles = ['PILIPINAS black.png']
+      else if (colorKey === 'White') mappedFiles = ['PILIPINAS white.png']
+      else if (colorKey === 'Red') mappedFiles = ['PILIPINAS red.png']
+    } else if (sku === 'FRL-PJ-SGL' || name.includes('racerback') || name.includes('singlet')) {
+      if (colorKey === 'Black') mappedFiles = ['PR PROJECT black  singlet (front).png', 'PR PROJECT black singlet (front).png']
+      else if (colorKey === 'White') mappedFiles = ['PR PROJECT white singlet (front).png']
+      else if (colorKey === 'Red') mappedFiles = ['PR PROJECT red singlet (front).png']
+    } else if (sku === 'FRL-PJ-SPD' || name.includes('speed suit')) {
+      if (colorKey === 'Black') mappedFiles = ['PR PROJECT black speed suit (front).png']
+      else if (colorKey === 'White') mappedFiles = ['PR PROJECT white speed suit (front).png']
+      else if (colorKey === 'Red') mappedFiles = ['PR PROJECT red speed suit (front).png']
+    } else if (sku === 'FRL-PJ-TEE' || name.includes('t-shirt') || name.includes('crew')) {
+      if (colorKey === 'Black') mappedFiles = ['PR PROJECT black tshirt (front).png']
+      else if (colorKey === 'White') mappedFiles = ['PR PROJECT white tshirt (front).png']
+      else if (colorKey === 'Red') mappedFiles = ['PR PROJECT red tshirt (front).png']
+    } else if (sku === 'FRL-PJ-MDF' || name.includes('midriff') || name.includes('crop')) {
+      if (colorKey === 'Black') mappedFiles = ['PR PROJECT black midriff (front).png']
+      else if (colorKey === 'White') mappedFiles = ['PR PROJECT white midriff (front).png']
+      else if (colorKey === 'Red') mappedFiles = ['PR PROJECT red midriff (front).png']
+    }
+
+    const slug = color.toLowerCase().replace(/\s+/g, '-')
+    const genericFiles = [`${slug}.jpg`, `${slug}.png`]
+
+    const allFilenames = [...mappedFiles, ...genericFiles]
+    const paths: string[] = []
+
+    for (const fn of allFilenames) {
+      paths.push(`/images/${fn}`)
+      if (fn.includes(' ')) {
+        paths.push(`/images/${encodeURIComponent(fn)}`)
+      }
+      paths.push(`/${fn}`)
+      if (fn.includes(' ')) {
+        paths.push(`/${encodeURIComponent(fn)}`)
+      }
+    }
+
+    // Determine fallback image from product details so preview is never empty
+    const colorsList = product.colors || ['Black', 'White', 'Red']
+    const colorIndex = colorsList.findIndex((c) => c.toLowerCase() === colorKey.toLowerCase())
+    const detailImg =
+      product.detailImages && colorIndex >= 0 && colorIndex < product.detailImages.length
+        ? product.detailImages[colorIndex]
+        : null
+
+    const productFallbacks = [
+      detailImg,
+      product.flatImg,
+      product.lifestyleImg,
+      product.img,
+    ].filter(Boolean) as string[]
+
+    for (const fb of productFallbacks) {
+      paths.push(fb)
+    }
+
+    return Array.from(new Set(paths))
+  }
+
+  const getSwatchImageSrc = (color: string): string | null => {
+    const candidates = getSwatchCandidates(activeProduct, color)
+    for (const path of candidates) {
+      if (!failedImages[path]) {
+        return path
+      }
+    }
+    return null
+  }
+
   // Derived values for image lists
   const currentProduct = activeProduct
-  const heroImage = currentProduct ? (currentProduct.flatImg || currentProduct.lifestyleImg) : ''
+  const selectedColorImage = selectedColor ? getSwatchImageSrc(selectedColor) : null
+  const heroImage = selectedColorImage || (currentProduct ? (currentProduct.flatImg || currentProduct.lifestyleImg) : '')
   const detailGridImages = currentProduct
     ? (currentProduct.detailImages && currentProduct.detailImages.length > 0
         ? currentProduct.detailImages
@@ -207,87 +289,6 @@ export function ProductModal({
   const handleAdd = () => {
     onAddToCart(activeProduct)
     onClose()
-  }
-
-  const getSwatchCandidates = (product: GridProduct | null, color: string): string[] => {
-    if (!product) return []
-
-    const colorKey = color.trim()
-    const sku = product.sku || ''
-    const name = product.name?.toLowerCase() || ''
-
-    let mappedFiles: string[] = []
-
-    if (sku === 'FRL-PH-TNK' || name.includes('pilipinas')) {
-      if (colorKey === 'Blue') mappedFiles = ['PILIPINAS blue.png']
-      else if (colorKey === 'Black') mappedFiles = ['PILIPINAS black.png']
-      else if (colorKey === 'White') mappedFiles = ['PILIPINAS white.png']
-      else if (colorKey === 'Red') mappedFiles = ['PILIPINAS red.png']
-    } else if (sku === 'FRL-PJ-SGL' || name.includes('racerback') || name.includes('singlet')) {
-      if (colorKey === 'Black') mappedFiles = ['PR PROJECT black  singlet (front).png', 'PR PROJECT black singlet (front).png']
-      else if (colorKey === 'White') mappedFiles = ['PR PROJECT white singlet (front).png']
-      else if (colorKey === 'Red') mappedFiles = ['PR PROJECT red singlet (front).png']
-    } else if (sku === 'FRL-PJ-SPD' || name.includes('speed suit')) {
-      if (colorKey === 'Black') mappedFiles = ['PR PROJECT black speed suit (front).png']
-      else if (colorKey === 'White') mappedFiles = ['PR PROJECT white speed suit (front).png']
-      else if (colorKey === 'Red') mappedFiles = ['PR PROJECT red speed suit (front).png']
-    } else if (sku === 'FRL-PJ-TEE' || name.includes('t-shirt') || name.includes('crew')) {
-      if (colorKey === 'Black') mappedFiles = ['PR PROJECT black tshirt (front).png']
-      else if (colorKey === 'White') mappedFiles = ['PR PROJECT white tshirt (front).png']
-      else if (colorKey === 'Red') mappedFiles = ['PR PROJECT red tshirt (front).png']
-    } else if (sku === 'FRL-PJ-MDF' || name.includes('midriff') || name.includes('crop')) {
-      if (colorKey === 'Black') mappedFiles = ['PR PROJECT black midriff (front).png']
-      else if (colorKey === 'White') mappedFiles = ['PR PROJECT white midriff (front).png']
-      else if (colorKey === 'Red') mappedFiles = ['PR PROJECT red midriff (front).png']
-    }
-
-    const slug = color.toLowerCase().replace(/\s+/g, '-')
-    const genericFiles = [`${slug}.jpg`, `${slug}.png`]
-
-    const allFilenames = [...mappedFiles, ...genericFiles]
-    const paths: string[] = []
-
-    for (const fn of allFilenames) {
-      paths.push(`/images/${fn}`)
-      if (fn.includes(' ')) {
-        paths.push(`/images/${encodeURIComponent(fn)}`)
-      }
-      paths.push(`/${fn}`)
-      if (fn.includes(' ')) {
-        paths.push(`/${encodeURIComponent(fn)}`)
-      }
-    }
-
-    // Determine fallback image from product details so preview is never empty
-    const colorsList = product.colors || ['Black', 'White', 'Red']
-    const colorIndex = colorsList.findIndex((c) => c.toLowerCase() === colorKey.toLowerCase())
-    const detailImg =
-      product.detailImages && colorIndex >= 0 && colorIndex < product.detailImages.length
-        ? product.detailImages[colorIndex]
-        : null
-
-    const productFallbacks = [
-      detailImg,
-      product.flatImg,
-      product.lifestyleImg,
-      product.img,
-    ].filter(Boolean) as string[]
-
-    for (const fb of productFallbacks) {
-      paths.push(fb)
-    }
-
-    return Array.from(new Set(paths))
-  }
-
-  const getSwatchImageSrc = (color: string): string | null => {
-    const candidates = getSwatchCandidates(activeProduct, color)
-    for (const path of candidates) {
-      if (!failedImages[path]) {
-        return path
-      }
-    }
-    return null
   }
 
   const handleSwatchMouseEnter = (col: string, e: React.MouseEvent<HTMLButtonElement>) => {
