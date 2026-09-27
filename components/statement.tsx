@@ -1,6 +1,15 @@
 export function Statement() {
   return (
-    <section className="statement" aria-label="About Frostline" style={{ position: 'relative', overflow: 'hidden' }}>
+    <section
+      className="statement"
+      aria-label="About Frostline"
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        backgroundColor: '#000000',
+        color: '#FFFFFF',
+      }}
+    >
       {/* Scaling Translucent Brand Mark Watermark behind text */}
       <div
         className="statement__watermark reveal"
@@ -8,7 +17,9 @@ export function Statement() {
           position: 'absolute',
           top: '50%',
           left: '50%',
+          transform: 'translate(-50%, -50%)',
           width: 'clamp(320px, 55vw, 650px)',
+          opacity: 0.12,
           pointerEvents: 'none',
           zIndex: 1,
         }}
@@ -34,7 +45,7 @@ export function Statement() {
           }}
         />
       </div>
-      <h2 className="statement__text reveal" data-delay="1" style={{ position: 'relative', zIndex: 2, color: '#0A0A0A' }}>
+      <h2 className="statement__text reveal" data-delay="1" style={{ position: 'relative', zIndex: 2, color: '#FFFFFF' }}>
         Crafted for dreamers, built for believers. Born from the relentless chase of the personal record, rooted in a vision of faith, discipline, and purpose expressed through what we wear. For us, it's about showing up when it's hard, trusting the process, and wearing your confidence every single mile along the way.
       </h2>
     </section>
