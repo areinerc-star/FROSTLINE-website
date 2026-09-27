@@ -513,15 +513,17 @@ export function ProductModal({
                           className="color-swatch-tooltip"
                           style={{
                             position: 'absolute',
-                            bottom: 'calc(100% + 8px)',
+                            bottom: 'calc(100% + 10px)',
                             left: `${tooltipLeft}px`,
                             transform: 'translateX(-50%)',
-                            width: '160px',
-                            height: '160px',
+                            width: '210px',
+                            height: '210px',
+                            aspectRatio: '1 / 1',
+                            padding: '10px',
                             backgroundColor: '#FFFFFF',
-                            border: '1px solid rgba(0, 0, 0, 0.12)',
-                            borderRadius: '4px',
-                            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+                            border: '1px solid rgba(0, 0, 0, 0.14)',
+                            borderRadius: '8px',
+                            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.25)',
                             overflow: 'hidden',
                             pointerEvents: 'none',
                             zIndex: 9999,
@@ -533,7 +535,7 @@ export function ProductModal({
                           <img
                             src={currentSrc}
                             alt={`${activePreviewColor} color preview`}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                             onError={() => {
                               console.warn(`Color swatch preview image not found at: ${currentSrc}`)
                               setFailedImages((prev) => ({ ...prev, [currentSrc]: true }))
@@ -918,7 +920,7 @@ export function ProductModal({
         /* SECTION 1 & 2: Split 2-Column Layout */
         .product-modal-split {
           display: grid;
-          grid-template-columns: 58% 42%;
+          grid-template-columns: 60% 40%;
           align-items: start;
           width: 100%;
         }
@@ -938,18 +940,18 @@ export function ProductModal({
 
         .product-modal-hero-wrap {
           width: 100%;
-          min-height: clamp(400px, 70vh, 750px);
+          min-height: clamp(500px, 80vh, 900px);
           background: #f7f8f9;
           overflow: hidden;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 2rem;
+          padding: 2.5rem 2rem;
         }
 
         .product-modal-hero-img {
           max-width: 100%;
-          max-height: calc(100vh - 120px);
+          max-height: calc(100vh - 90px);
           width: auto;
           height: auto;
           object-fit: contain;
