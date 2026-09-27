@@ -198,17 +198,16 @@ export function CheckoutModal({
               style={{
                 width: '64px',
                 height: '64px',
-                background: 'var(--blue)',
+                background: '#FF2E00',
                 color: '#fff',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '2rem',
                 margin: '0 auto 1.5rem',
               }}
             >
-              ✓
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 700, textTransform: 'uppercase' }}>
               Thank You For Your Order
@@ -693,7 +692,7 @@ export function CheckoutModal({
                       letterSpacing: '0.05em',
                     }}
                   >
-                    Open GCash App directly ↗
+                    Open GCash App directly <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
                   </a>
 
                   <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.6rem', textAlign: 'left' }}>

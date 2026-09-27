@@ -38,7 +38,7 @@ export function AdminDashboard({
 
     // Trigger simulated email notification popover
     setEmailNotification(
-      `📧 EMAIL SENT to ${order.customerEmail}:\n\n"Subject: Order #${order.id} Status Update\nDear ${order.customerName}, your FROSTLINE order status has been updated to: ${nextStatus.toUpperCase()}."`
+      `[EMAIL SENT] to ${order.customerEmail}:\n\n"Subject: Order #${order.id} Status Update\nDear ${order.customerName}, your FROSTLINE order status has been updated to: ${nextStatus.toUpperCase()}."`
     )
 
     setTimeout(() => {

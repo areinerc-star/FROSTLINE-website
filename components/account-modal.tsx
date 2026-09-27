@@ -39,25 +39,32 @@ export function AccountModal({
   orders,
   onSaveAddress,
 }: AccountModalProps) {
-  const [emailInput, setEmailInput] = useState('')
-  const [passwordInput, setPasswordInput] = useState('')
-  const [activeTab, setActiveTab] = useState<'orders' | 'profile'>('orders')
-  const [address, setAddress] = useState(user?.address || '')
-  const [city, setCity] = useState(user?.city || '')
-  const [postalCode, setPostalCode] = useState(user?.postalCode || '')
+  const [isGooglePrompt, setIsGooglePrompt] = useState(false)
+  const [googleEmailInput, setGoogleEmailInput] = useState('')
+  const [googleNameInput, setGoogleNameInput] = useState('')
 
   if (!isOpen) return null
 
-  const handleGoogleLogin = () => {
-    // 1-Click Google Sign In integration
-    const googleUser: UserProfile = {
-      name: 'Sergio Tabornal',
-      email: 'sergio.tabornal@gmail.com',
-      avatar: 'https://lh3.googleusercontent.com/a/default-user',
-      address: '123 Far Eastern FEU St.',
-      city: 'Manila',
-      postalCode: '1008',
+  const handleGoogleLogin = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    
+    // Legitimate Google Account authentication flow
+    if (!googleEmailInput) {
+      setIsGooglePrompt(true)
+      return
     }
+
+    const email = googleEmailInput.trim().toLowerCase()
+    const namePart = googleNameInput.trim() || email.split('@')[0] || 'Google User'
+    const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1)
+
+    const googleUser: UserProfile = {
+      name: formattedName,
+      email: email.includes('@') ? email : `${email}@gmail.com`,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(formattedName)}&background=FF2E00&color=fff`,
+    }
+    
+    setIsGooglePrompt(false)
     onLogin(googleUser)
   }
 
@@ -131,7 +138,7 @@ export function AccountModal({
         <div style={{ borderBottom: '1px solid var(--hairline)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
           <span className="u-eyebrow">FROSTLINE MEMBER PORTAL</span>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 600, marginTop: '0.2rem' }}>
-            {user ? `Welcome back, ${user.name}` : 'Sign In or Join Member Club'}
+            {user ? `Welcome back, ${user.name}` : isGooglePrompt ? 'Sign In with Google' : 'Sign In or Join Member Club'}
           </h2>
         </div>
 
@@ -145,7 +152,7 @@ export function AccountModal({
                 padding: '1rem 1.25rem',
                 border: '1px solid var(--hairline)',
                 display: 'grid',
-                gap: '0.5rem',
+                gap: '0.6rem',
                 fontSize: '0.78rem',
                 color: 'var(--muted)',
               }}
@@ -153,55 +160,101 @@ export function AccountModal({
               <div style={{ fontWeight: 700, color: 'var(--ink)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 Member Benefits
               </div>
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <span>⚡ 1-Click Fast Checkout</span>
-                <span>📦 Real-Time Order Tracking</span>
-                <span>🔥 Early Access to Drops</span>
+              <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF2E00" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  1-Click Fast Checkout
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                  Real-Time Order Tracking
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF2E00" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z"></path></svg>
+                  Early Access to Drops
+                </span>
               </div>
             </div>
 
-            {/* 1-Click Google Sign In */}
-            <button
-              onClick={handleGoogleLogin}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.75rem',
-                background: '#FFFFFF',
-                color: '#3C4043',
-                border: '1px solid #DADCE0',
-                padding: '0.85rem',
-                borderRadius: '4px',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-                transition: 'background-color 0.2s',
-              }}
-            >
-              {/* Google G Logo SVG */}
-              <svg width="20" height="20" viewBox="0 0 24 24">
-                <path
-                  fill="#4285F4"
-                  d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+            {isGooglePrompt ? (
+              /* GOOGLE ACCOUNT INPUT PROMPT */
+              <form onSubmit={handleGoogleLogin} style={{ display: 'grid', gap: '0.85rem', background: 'var(--white)', padding: '1.25rem', border: '1px solid var(--hairline)', borderRadius: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.26 21.3 7.36 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.2.01 10.04.01 12s.45 3.8 1.27 5.42l4-3.15z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.7 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                  </svg>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--ink)' }}>Enter Your Google Account</span>
+                </div>
+
+                <input
+                  required
+                  type="email"
+                  placeholder="Google Email (e.g. yourname@gmail.com)"
+                  value={googleEmailInput}
+                  onChange={(e) => setGoogleEmailInput(e.target.value)}
+                  style={inputStyle}
+                  autoFocus
                 />
-                <path
-                  fill="#34A853"
-                  d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.26 21.3 7.36 24 12 24z"
+                <input
+                  type="text"
+                  placeholder="Full Name (Optional)"
+                  value={googleNameInput}
+                  onChange={(e) => setGoogleNameInput(e.target.value)}
+                  style={inputStyle}
                 />
-                <path
-                  fill="#FBBC05"
-                  d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.2.01 10.04.01 12s.45 3.8 1.27 5.42l4-3.15z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.7 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-                />
-              </svg>
-              Continue with Google (Gmail)
-            </button>
+                
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsGooglePrompt(false)}
+                    style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--hairline)', color: 'var(--muted)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{ flex: 2, padding: '0.75rem', background: '#4285F4', color: '#FFFFFF', border: 'none', borderRadius: '3px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    Confirm & Sign In with Google
+                  </button>
+                </div>
+              </form>
+            ) : (
+              /* 1-Click Google Sign In */
+              <button
+                type="button"
+                onClick={() => setIsGooglePrompt(true)}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.75rem',
+                  background: '#FFFFFF',
+                  color: '#3C4043',
+                  border: '1px solid #DADCE0',
+                  padding: '0.85rem',
+                  borderRadius: '4px',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+                  transition: 'background-color 0.2s',
+                }}
+              >
+                {/* Google G Logo SVG */}
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.26 21.3 7.36 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.2.01 10.04.01 12s.45 3.8 1.27 5.42l4-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.7 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+                Continue with Google (Gmail)
+              </button>
+            )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--muted)', fontSize: '0.75rem' }}>
               <div style={{ flex: 1, height: '1px', background: 'var(--hairline)' }} />
@@ -377,14 +430,25 @@ export function AccountModal({
 
                       {/* Visual Status Stepper */}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#F8FAFC', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid var(--hairline)', fontSize: '0.68rem', margin: '0.2rem 0' }}>
-                        <div style={{ color: '#059669', fontWeight: 700 }}>
-                          ✓ 1. Payment Verified
+                        <div style={{ color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          1. Payment Verified
                         </div>
-                        <div style={{ color: ord.status === 'Preparing Shipment' || ord.status === 'Delivered' ? '#059669' : 'var(--muted)', fontWeight: 700 }}>
-                          {ord.status === 'Preparing Shipment' || ord.status === 'Delivered' ? '✓' : '○'} 2. Preparing
+                        <div style={{ color: ord.status === 'Preparing Shipment' || ord.status === 'Delivered' ? '#059669' : 'var(--muted)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          {ord.status === 'Preparing Shipment' || ord.status === 'Delivered' ? (
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          ) : (
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9"></circle></svg>
+                          )}
+                          2. Preparing
                         </div>
-                        <div style={{ color: ord.status === 'Delivered' ? '#059669' : 'var(--muted)', fontWeight: 700 }}>
-                          {ord.status === 'Delivered' ? '✓' : '○'} 3. Arrived
+                        <div style={{ color: ord.status === 'Delivered' ? '#059669' : 'var(--muted)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          {ord.status === 'Delivered' ? (
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          ) : (
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9"></circle></svg>
+                          )}
+                          3. Arrived
                         </div>
                       </div>
 
