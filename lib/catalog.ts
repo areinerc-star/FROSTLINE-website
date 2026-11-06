@@ -30,7 +30,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/FL_red-singlet-THI.webp',
+    flatImg: '/images/products/FROSTLINE-Red-singlet-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Singlet-crimson_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -61,7 +61,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/FL_red-tshirt-THI.webp',
+    flatImg: '/images/products/FROSTLINE-Red-tshirt-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Tshirt-crimson_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -92,7 +92,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/FL_red-cyclings-THI.webp',
+    flatImg: '/images/products/FROSTLINE-Red-cyclings-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Cyclings-crimson_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -123,7 +123,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/FL_red-midriff-THI.webp',
+    flatImg: '/images/products/FROSTLINE-Red-midriff-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Midriff-crimson_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -154,7 +154,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 550,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/FL_red-warmer-THI.webp',
+    flatImg: '/images/products/FROSTLINE-Red-warmer-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Warmer-crimson_Pulling_Hood_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -185,7 +185,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/FL_red-cropped-THI.webp',
+    flatImg: '/images/products/FROSTLINE-Red-cropped-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Cropped-crimson_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -216,7 +216,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 499,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/FL_red-longsleeves-THI.webp',
+    flatImg: '/images/products/FROSTLINE-Red-longsleeve-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Longsleeves-crimson_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -247,7 +247,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 450,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/FL_red-chino-THI.webp',
+    flatImg: '/images/products/FROSTLINE-Red-chino-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Chino-crimson_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -278,7 +278,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 450,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/FL_red-poloshirt-THI.webp',
+    flatImg: '/images/products/FROSTLINE-Red-polo-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Polo-crimson_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -309,7 +309,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 999,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/FL_red-speedsuit-THI.webp',
+    flatImg: '/images/products/FROSTLINE-Red-speedsuit-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Speedsuit-crimson_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -341,7 +341,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/PR_black-singlet-THI.webp',
+    flatImg: '/images/products/PR-PROJECT-black-singlet-front.webp',
     lifestyleImg: '/images/products/PRPROJECT_Singlet-black_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -381,7 +381,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/PR_black-tshirt-THI.webp',
+    flatImg: '/images/products/PR-PROJECT-black-tshirt-front.webp',
     lifestyleImg: '/images/products/PRPROJECT_Tshirt-black_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -421,7 +421,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/PR_black-cyclings-THI.webp',
+    flatImg: '/images/products/PR-PROJECT-black-cycling-front.webp',
     lifestyleImg: '/images/products/PRPROJECT_Cyclings-black_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -461,7 +461,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/PR_black-Midriff-THI.webp',
+    flatImg: '/images/products/PR-PROJECT-black-midriff-front.webp',
     lifestyleImg: '/images/products/PRPROJECT_Midriff-black_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
@@ -501,7 +501,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     price: 999,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/products/PR_black-speedsuit-THI.webp',
+    flatImg: '/images/products/PR-PROJECT-black-speed-suit-front.webp',
     lifestyleImg: '/images/products/PRPROJECT_Speedsuit-black_Front-Hero_1.webp',
     // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
     colorVariations: {
