@@ -32,7 +32,7 @@ export function CheckoutModal({
   onOpenAccount,
 }: CheckoutModalProps) {
   const [step, setStep] = useState<'checkout' | 'processing' | 'success'>('checkout')
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'gcash'>('card')
+  const [paymentMethod, setPaymentMethod] = useState<'bank' | 'gcash'>('gcash')
   const [receiptName, setReceiptName] = useState<string>('')
   const [formData, setFormData] = useState({
     fullName: '',
@@ -40,9 +40,6 @@ export function CheckoutModal({
     address: '',
     city: '',
     postalCode: '',
-    cardNumber: '',
-    cardExpiry: '',
-    cardCvc: '',
     referenceNumber: '',
   })
   const [orderId, setOrderId] = useState<string>('')
@@ -135,14 +132,6 @@ export function CheckoutModal({
   const total = quote?.total ?? Math.max(0, subtotal + shipping - discount)
   const appliedCode = quote?.voucherCode ?? null
 
-  const getCardBrand = (num: string): 'VISA' | 'MASTERCARD' | null => {
-    const clean = num.replace(/\D/g, '')
-    if (clean.startsWith('4')) return 'VISA'
-    if (/^5[1-5]/.test(clean) || /^(222[1-9]|22[3-9]\d|2[3-6]\d{2}|27[0-1]\d|2720)/.test(clean)) return 'MASTERCARD'
-    return null
-  }
-
-  const cardBrand = getCardBrand(formData.cardNumber)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -159,7 +148,6 @@ export function CheckoutModal({
     setSubmitError('')
     setStep('processing')
     try {
-      // Card details are NOT sent anywhere — only the order, contact details and payment reference.
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -190,7 +178,7 @@ export function CheckoutModal({
           date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
           items: cart.map((c) => ({ name: formatPicks(c) ? `${c.name} (${formatPicks(c)})` : c.name, price: c.price })),
           total: data.total,
-          paymentMethod: paymentMethod === 'card' ? 'Credit / Debit Card' : paymentMethod === 'bank' ? 'Bank Transfer' : 'GCash',
+          paymentMethod: paymentMethod === 'bank' ? 'Bank Transfer' : 'GCash',
           status: 'Processing',
         })
       }
@@ -341,7 +329,7 @@ export function CheckoutModal({
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem' }}>
-                <span>Paid via {paymentMethod === 'card' ? 'Credit / Debit Card' : paymentMethod === 'bank' ? 'Bank Transfer' : 'GCash'}</span>
+                <span>Paid via {paymentMethod === 'bank' ? 'Bank Transfer' : 'GCash'}</span>
                 <span>{formatPrice(paidTotal ?? total)}</span>
               </div>
               {formData.referenceNumber && (
@@ -627,25 +615,6 @@ export function CheckoutModal({
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod('card')}
-                  style={{
-                    flex: 1,
-                    minWidth: '130px',
-                    padding: '0.75rem 0.5rem',
-                    background: paymentMethod === 'card' ? 'var(--ink)' : 'transparent',
-                    color: paymentMethod === 'card' ? 'var(--white)' : 'var(--ink)',
-                    border: '1px solid var(--ink)',
-                    fontSize: '0.72rem',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Credit / Debit Card
-                </button>
-                <button
-                  type="button"
                   onClick={() => setPaymentMethod('bank')}
                   style={{
                     flex: 1,
@@ -683,62 +652,6 @@ export function CheckoutModal({
                   GCash
                 </button>
               </div>
-
-              {paymentMethod === 'card' && (
-                <div style={{ display: 'grid', gap: '0.75rem', gridTemplateColumns: '2fr 1fr 1fr' }}>
-                  <div style={{ position: 'relative', gridColumn: 'span 3' }}>
-                    <input
-                      required={paymentMethod === 'card'}
-                      type="text"
-                      name="cardNumber"
-                      placeholder="Card Number"
-                      value={formData.cardNumber}
-                      onChange={handleChange}
-                      maxLength={19}
-                      style={{ ...inputStyle, paddingRight: cardBrand ? '95px' : '0.85rem' }}
-                    />
-                    {cardBrand && (
-                      <span
-                        style={{
-                          position: 'absolute',
-                          right: '10px',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          fontSize: '0.68rem',
-                          fontWeight: 800,
-                          letterSpacing: '0.08em',
-                          padding: '3px 8px',
-                          borderRadius: '3px',
-                          background: cardBrand === 'VISA' ? '#1A1F71' : '#EB001B',
-                          color: '#FFFFFF',
-                        }}
-                      >
-                        {cardBrand}
-                      </span>
-                    )}
-                  </div>
-                  <input
-                    required={paymentMethod === 'card'}
-                    type="text"
-                    name="cardExpiry"
-                    placeholder="MM / YY"
-                    value={formData.cardExpiry}
-                    onChange={handleChange}
-                    maxLength={5}
-                    style={inputStyle}
-                  />
-                  <input
-                    required={paymentMethod === 'card'}
-                    type="text"
-                    name="cardCvc"
-                    placeholder="CVC"
-                    value={formData.cardCvc}
-                    onChange={handleChange}
-                    maxLength={4}
-                    style={{ ...inputStyle, gridColumn: 'span 2' }}
-                  />
-                </div>
-              )}
 
               {paymentMethod === 'bank' && (
                 <div

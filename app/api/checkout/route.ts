@@ -4,8 +4,8 @@ import { kvConfigured } from '@/lib/server/kv'
 import { consumeVoucher, holdVoucher } from '@/lib/server/vouchers'
 import { newOrderId, saveOrder, type StoredOrder } from '@/lib/server/orders'
 
+// Card payments are switched off until PayMongo is connected.
 const PAYMENT_LABELS: Record<string, string> = {
-  card: 'Credit / Debit Card',
   bank: 'Bank Transfer',
   gcash: 'GCash',
 }
