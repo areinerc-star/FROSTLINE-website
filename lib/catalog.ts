@@ -338,7 +338,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'PR PROJECT Singlet',
     id: 'FRL-PJ-SGL',
     sku: 'FRL-PJ-SGL',
-    price: 450,
+    price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/PR_black-singlet-THI.webp',
@@ -378,7 +378,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'PR PROJECT Tshirt',
     id: 'FRL-PJ-TEE',
     sku: 'FRL-PJ-TEE',
-    price: 550,
+    price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/PR_black-tshirt-THI.webp',
@@ -539,7 +539,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'PILIPINAS Singlet',
     id: 'FRL-PH-TNK',
     sku: 'FRL-PH-TNK',
-    price: 450,
+    price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/PH_black-singlet-THI.webp',
