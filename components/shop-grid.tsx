@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { PRODUCTS, Product, formatPrice } from '@/lib/products'
+import { Product, formatPrice } from '@/lib/products'
+import { FROSTLINE_PRODUCTS } from '@/lib/catalog'
 import { ProductModal } from './product-modal'
 import { Footer } from './footer'
 
@@ -13,88 +14,21 @@ export interface GridProduct extends Product {
   breakoutImg?: string
 }
 
-export const GRID_PRODUCTS: GridProduct[] = [
-  {
-    id: 0,
-    name: 'FROSTLINE PILIPINAS singlet',
-    sku: 'FRL-PH-TNK',
-    price: 450,
-    img: '/images/pilipinas-flat.png',
-    flatImg: '/images/pilipinas-flat.png',
-    lifestyleImg: '/images/pilipinas-1.png',
-    detailImages: [
-      '/images/pilipinas-1.png',
-      '/images/pilipinas-2.png',
-      '/images/pilipinas-3.png',
-      '/images/pilipinas-4.png',
-    ],
-    colors: ['Blue', 'Black', 'White', 'Red'],
-  },
-  {
-    id: 1,
-    name: 'PR PROJECT Racerback Singlet',
-    sku: 'FRL-PJ-SGL',
-    price: 450,
-    img: '/images/singlet-flat.png',
-    flatImg: '/images/singlet-flat.png',
-    lifestyleImg: '/images/singlet-1.png',
-    detailImages: [
-      '/images/singlet-1.png',
-      '/images/singlet-2.png',
-      '/images/singlet-3.png',
-      '/images/singlet-1.png',
-    ],
-    colors: ['Black', 'White', 'Red'],
-  },
-  {
-    id: 2,
-    name: 'PR PROJECT Speed Suit',
-    sku: 'FRL-PJ-SPD',
-    price: 999,
-    img: '/images/speedsuit-flat.png',
-    flatImg: '/images/speedsuit-flat.png',
-    lifestyleImg: '/images/speedsuit-1.png',
-    detailImages: [
-      '/images/speedsuit-1.png',
-      '/images/speedsuit-2.png',
-      '/images/speedsuit-3.png',
-      '/images/speedsuit-4.png',
-    ],
-    colors: ['Black', 'White', 'Red'],
-  },
-  {
-    id: 3,
-    name: 'PR PROJECT Midriff Crop Top',
-    sku: 'FRL-PJ-MDF',
-    price: 399,
-    img: '/images/midriff-flat.png',
-    flatImg: '/images/midriff-flat.png',
-    lifestyleImg: '/images/midriff-1.png',
-    detailImages: [
-      '/images/midriff-1.png',
-      '/images/midriff-2.png',
-      '/images/midriff-3.png',
-      '/images/midriff-4.png',
-    ],
-    colors: ['Black', 'White', 'Red'],
-  },
-  {
-    id: 4,
-    name: 'PR PROJECT Crew T-Shirt',
-    sku: 'FRL-PJ-TEE',
-    price: 550,
-    img: '/images/tshirt-flat.png',
-    flatImg: '/images/tshirt-flat.png',
-    lifestyleImg: '/images/tshirt-1.png',
-    detailImages: [
-      '/images/tshirt-1.png',
-      '/images/tshirt-2.png',
-      '/images/tshirt-3.png',
-      '/images/tshirt-4.png',
-    ],
-    colors: ['Black', 'White', 'Red'],
-  },
-]
+// Built from the FROSTLINE catalog (lib/catalog.ts) — edit products there, not here.
+export const GRID_PRODUCTS: GridProduct[] = FROSTLINE_PRODUCTS.map((p, index) => {
+  const firstColor = Object.values(p.colorVariations)[0]
+  return {
+    id: index,
+    name: p.name,
+    sku: p.sku,
+    price: p.price,
+    img: p.flatImg,
+    flatImg: p.flatImg,
+    lifestyleImg: p.lifestyleImg,
+    detailImages: firstColor ? firstColor.modelPhotos : [],
+    colors: Object.keys(p.colorVariations),
+  }
+})
 
 interface ShopGridProps {
   onAddToCart: (product: Product) => void
@@ -445,7 +379,9 @@ export function ShopGrid({ onAddToCart, onClose, cartCount = 0, onOpenCart }: Sh
             inset: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            padding: 1.25rem;
+            background: #ffffff;
             opacity: 1;
             transform: scale(1);
             transition: opacity 450ms cubic-bezier(0.4, 0, 0.2, 1), transform 450ms cubic-bezier(0.4, 0, 0.2, 1);

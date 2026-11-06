@@ -4,6 +4,9 @@ import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { GridProduct, GRID_PRODUCTS } from './shop-grid'
 import { Product, formatPrice } from '@/lib/products'
+import { ColorVariation, findCatalogProduct } from '@/lib/catalog'
+
+export type { ColorVariation }
 
 // -------------------------------------------------------------
 // NEW PRODUCT DATA FORMAT
@@ -22,10 +25,6 @@ import { Product, formatPrice } from '@/lib/products'
 //   },
 // }
 // -------------------------------------------------------------
-export interface ColorVariation {
-  heroImg: string
-  modelPhotos: string[]
-}
 
 export type ProductWithVariations = GridProduct & {
   sizes?: string[]
@@ -33,596 +32,106 @@ export type ProductWithVariations = GridProduct & {
 }
 
 // -------------------------------------------------------------
-// FROSTLINE PRODUCT CATALOG (all items)
-// Images live in /public/images/ (flat). Paths are case-sensitive.
-// price: 0 = TODO — set real prices.
+// SIZE CHARTS (inches) — rows = measurement, columns = size
 // -------------------------------------------------------------
-export interface CatalogProduct {
-  id: string
-  name: string
-  sku: string
-  price: number
+export interface SizeChart {
+  title: string
   sizes: string[]
-  flatImg: string
-  lifestyleImg: string
-  colorVariations: Record<string, ColorVariation>
+  rows: { label: string; guide: string; values: (string | number)[] }[]
 }
 
-export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
-  // ===== FROSTLINE =====
-  {
-    name: 'FROSTLINE Singlet',
-    id: 'FRL-CL-SGL',
-    sku: 'FRL-CL-SGL',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/FL_red-singlet-THI.png',
-    lifestyleImg: '/images/FROSTLINE_Singlet-crimson_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Red: {
-        heroImg: '/images/FL_red-singlet-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Singlet-crimson_Front-Hero_1.png',
-          '/images/FROSTLINE_Singlet-crimson_Three-Quarter Angle_2.png',
-          '/images/FROSTLINE_Singlet-crimson_Close-Up-Chest_3.png',
-          '/images/FROSTLINE_Singlet-crimson_Back-View_4.png',
-        ],
-      },
-      Teal: {
-        heroImg: '/images/FL_teal-singlet-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Singlet-teal_Front-Hero_1.png',
-          '/images/FROSTLINE_Singlet-teal_Three-Quarter Angle_2.png',
-          '/images/FROSTLINE_Singlet-teal_Close-Up-Chest_3.png',
-          '/images/FROSTLINE_Singlet-teal_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'FROSTLINE Tshirt',
-    id: 'FRL-CL-TEE',
-    sku: 'FRL-CL-TEE',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/FL_red-tshirt-THI.png',
-    lifestyleImg: '/images/FROSTLINE_Tshirt-crimson_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Red: {
-        heroImg: '/images/FL_red-tshirt-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Tshirt-crimson_Front-Hero_1.png',
-          '/images/FROSTLINE_Tshirt-crimson_Three-quarter back_2.png',
-          '/images/FROSTLINE_Tshirt-crimson_Three-quarter front_3.png',
-          '/images/FROSTLINE_Tshirt-crimson_Back-View_4.png',
-        ],
-      },
-      Teal: {
-        heroImg: '/images/FL_teal-tshirt-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Tshirt-teal_Front-Hero_1.png',
-          '/images/FROSTLINE_Tshirt-teal_Three-quarter back_2.png',
-          '/images/FROSTLINE_Tshirt-teal_Three-quarter front_3.png',
-          '/images/FROSTLINE_Tshirt-teal_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'FROSTLINE Cycling Short',
-    id: 'FRL-CL-CYC',
-    sku: 'FRL-CL-CYC',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/FL_red-cyclings-THI.png',
-    lifestyleImg: '/images/FROSTLINE_Cyclings-crimson_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Red: {
-        heroImg: '/images/FL_red-cyclings-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Cyclings-crimson_Front-Hero_1.png',
-          '/images/FROSTLINE_Cyclings-crimson_Quad-stretch_2.png',
-          '/images/FROSTLINE_Cyclings-crimson_Knee-sprint_3.png',
-          '/images/FROSTLINE_Cyclings-crimson_Back-View_4.png',
-        ],
-      },
-      Teal: {
-        heroImg: '/images/FL_teal-cyclings-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Cyclings-teal_Front-Hero_1.png',
-          '/images/FROSTLINE_Cyclings-teal_Quad-stretch_2.png',
-          '/images/FROSTLINE_Cyclings-teal_Knee-sprint_3.png',
-          '/images/FROSTLINE_Cyclings-teal_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'FROSTLINE Midriff',
-    id: 'FRL-CL-MDF',
-    sku: 'FRL-CL-MDF',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/FL_red-midriff-THI.png',
-    lifestyleImg: '/images/FROSTLINE_Midriff-crimson_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Red: {
-        heroImg: '/images/FL_red-midriff-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Midriff-crimson_Front-Hero_1.png',
-          '/images/FROSTLINE_Midriff-crimson_Back-Muscle_2.png',
-          '/images/FROSTLINE_Midriff-crimson_Close-Up-Chest_3.png',
-          '/images/FROSTLINE_Midriff-crimson_Back-View_4.png',
-        ],
-      },
-      Teal: {
-        heroImg: '/images/FL_teal-midriff-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Midriff-teal_Front-Hero_1.png',
-          '/images/FROSTLINE_Midriff-teal_Back-Muscle_2.png',
-          '/images/FROSTLINE_Midriff-teal_Close-Up-Chest_3.png',
-          '/images/FROSTLINE_Midriff-teal_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'FROSTLINE Warmer',
-    id: 'FRL-CL-WRM',
-    sku: 'FRL-CL-WRM',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/FL_red-warmer-THI.png',
-    lifestyleImg: '/images/FROSTLINE_Warmer-crimson_Pulling_Hood_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Red: {
-        heroImg: '/images/FL_red-warmer-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Warmer-crimson_Pulling_Hood_1.png',
-          '/images/FROSTLINE_Warmer-crimson_Squat_2.png',
-          '/images/FROSTLINE_Warmer-crimson_Three-Quarter Angle_3.png',
-          '/images/FROSTLINE_Warmer-crimson_Back-View_4.png',
-        ],
-      },
-      Teal: {
-        heroImg: '/images/FL_teal-warmer-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Warmer-teal_Pulling_Hood_1.png',
-          '/images/FROSTLINE_Warmer-teal_Squat_2.png',
-          '/images/FROSTLINE_Warmer-teal_Three-Quarter Angle_3.png',
-          '/images/FROSTLINE_Warmer-teal_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'FROSTLINE Cropped Singlet',
-    id: 'FRL-CL-CRP',
-    sku: 'FRL-CL-CRP',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/FL_red-cropped-THI.png',
-    lifestyleImg: '/images/FROSTLINE_Cropped-crimson_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Red: {
-        heroImg: '/images/FL_red-cropped-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Cropped-crimson_Front-Hero_1.png',
-          '/images/FROSTLINE_Cropped-crimson_Hand-Raise_2.png',
-          '/images/FROSTLINE_Cropped-crimson_Close-Up-Chest_3.png',
-          '/images/FROSTLINE_Cropped-crimson_Back-View_4.png',
-        ],
-      },
-      Teal: {
-        heroImg: '/images/FL_teal-cropped-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Cropped-teal_Front-Hero_1.png',
-          '/images/FROSTLINE_Cropped-teal_Hand-Raise_2.png',
-          '/images/FROSTLINE_Cropped-teal_Close-Up-Chest_3.png',
-          '/images/FROSTLINE_Cropped-teal_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'FROSTLINE Long Sleeve',
-    id: 'FRL-CL-LSV',
-    sku: 'FRL-CL-LSV',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/FL_red-longsleeves-THI.png',
-    lifestyleImg: '/images/FROSTLINE_Longsleeves-crimson_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Red: {
-        heroImg: '/images/FL_red-longsleeves-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Longsleeves-crimson_Front-Hero_1.png',
-          '/images/FROSTLINE_Longsleeves-crimson_Three-Quarter Angle_2.png',
-          '/images/FROSTLINE_Longsleeves-crimson_Run-Pose_3.png',
-          '/images/FROSTLINE_Longsleeves-crimson_Back-View_4.png',
-        ],
-      },
-      Teal: {
-        heroImg: '/images/FL_teal-longsleeves-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Longsleeves-teal_Front-Hero_1.png',
-          '/images/FROSTLINE_Longsleeves-teal_Three-Quarter Angle_2.png',
-          '/images/FROSTLINE_Longsleeves-teal_Run-pose_3.png',
-          '/images/FROSTLINE_Longsleeves-teal_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'FROSTLINE Chino-Collared Polo Shirt',
-    id: 'FRL-CL-CHN',
-    sku: 'FRL-CL-CHN',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/FL_red-chino-THI.png',
-    lifestyleImg: '/images/FROSTLINE_Chino-crimson_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Red: {
-        heroImg: '/images/FL_red-chino-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Chino-crimson_Front-Hero_1.png',
-          '/images/FROSTLINE_Chino-crimson_Three-Quarter Angle_2.png',
-          '/images/FROSTLINE_Chino-crimson_Hand-on-hips_3.png',
-          '/images/FROSTLINE_Chino-crimson_Swing-Back-View_4.png',
-        ],
-      },
-      Teal: {
-        heroImg: '/images/FL_teal-chino-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Chino-teal_Front-Hero_1.png',
-          '/images/FROSTLINE_Chino-teal_Three-Quarter Angle_2.png',
-          '/images/FROSTLINE_Chino-teal_Hand-on-hips_3.png',
-          '/images/FROSTLINE_Chino-teal_Swing-Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'FROSTLINE Polo Shirt',
-    id: 'FRL-CL-PLO',
-    sku: 'FRL-CL-PLO',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/FL_red-poloshirt-THI.png',
-    lifestyleImg: '/images/FROSTLINE_Polo-crimson_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Red: {
-        heroImg: '/images/FL_red-poloshirt-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Polo-crimson_Front-Hero_1.png',
-          '/images/FROSTLINE_Polo-crimson_Three-Quarter Back_2.png',
-          '/images/FROSTLINE_Polo-crimson_Three-Quarter Angle_3.png',
-          '/images/FROSTLINE_Polo-crimson_Back-View_4.png',
-        ],
-      },
-      Teal: {
-        heroImg: '/images/FL_teal-poloshirt-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Polo-teal_Front-Hero_1.png',
-          '/images/FROSTLINE_Polo-teal_Three-Quarter Back_2.png',
-          '/images/FROSTLINE_Polo-teal_Three-Quarter Angle_3.png',
-          '/images/FROSTLINE_Polo-teal_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'FROSTLINE Speedsuit',
-    id: 'FRL-CL-SPD',
-    sku: 'FRL-CL-SPD',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/FL_red-speedsuit-THI.png',
-    lifestyleImg: '/images/FROSTLINE_Speedsuit-crimson_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Red: {
-        heroImg: '/images/FL_red-speedsuit-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Speedsuit-crimson_Front-Hero_1.png',
-          '/images/FROSTLINE_Speedsuit-crimson_Back-View_2.png',
-          '/images/FROSTLINE_Speedsuit-crimson_Logo-detail_3.png',
-          '/images/FROSTLINE_Speedsuit-crimson_Three-Quarter Angle_4.png',
-        ],
-      },
-      Teal: {
-        heroImg: '/images/FL_teal-speedsuit-THI.png',
-        modelPhotos: [
-          '/images/FROSTLINE_Speedsuit-teal_Front-Hero_1.png',
-          '/images/FROSTLINE_Speedsuit-teal_Back-View_2.png',
-          '/images/FROSTLINE_Speedsuit-teal_Logo-detail_3.png',
-          '/images/FROSTLINE_Speedsuit-teal_Three-Quarter Angle_4.png',
-        ],
-      },
-    },
-  },
-  // ===== PR PROJECT =====
-  {
-    name: 'PR PROJECT Singlet',
-    id: 'FRL-PJ-SGL',
-    sku: 'FRL-PJ-SGL',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/PR_black-singlet-THI.png',
-    lifestyleImg: '/images/PRPROJECT_Singlet-black_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Black: {
-        heroImg: '/images/PR_black-singlet-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Singlet-black_Front-Hero_1.png',
-          '/images/PRPROJECT_Singlet-black_sprint_2.png',
-          '/images/PRPROJECT_Singlet-black_hem-shot_3.png',
-          '/images/PRPROJECT_Singlet-black_Back-View_4.png',
-        ],
-      },
-      White: {
-        heroImg: '/images/PR_white-singlet-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Singlet-white_Front-Hero_1.png',
-          '/images/PRPROJECT_Singlet-white_sprint_2.png',
-          '/images/PRPROJECT_Singlet-white_hem-shot_3.png',
-          '/images/PRPROJECT_Singlet-white_Back-View_4.png',
-        ],
-      },
-      Red: {
-        heroImg: '/images/PR_red-singlet-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Singlet-red_Front-Hero_1.png',
-          '/images/PRPROJECT_Singlet-red_sprint_2.png',
-          '/images/PRPROJECT_Singlet-red_hem-shot_3.png',
-          '/images/PRPROJECT_Singlet-red_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'PR PROJECT Tshirt',
-    id: 'FRL-PJ-TEE',
-    sku: 'FRL-PJ-TEE',
-    price: 550,
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/PR_black-tshirt-THI.png',
-    lifestyleImg: '/images/PRPROJECT_Tshirt-black_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Black: {
-        heroImg: '/images/PR_black-tshirt-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Tshirt-black_Front-Hero_1.png',
-          '/images/PRPROJECT_Tshirt-black_Hem-Text-shot_2.png',
-          '/images/PRPROJECT_Tshirt-black_Pull-Up_3.png',
-          '/images/PRPROJECT_Tshirt-black_Back-View_4.png',
-        ],
-      },
-      White: {
-        heroImg: '/images/PR_white-tshirt-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Tshirt-white_Front-Hero_1.png',
-          '/images/PRPROJECT_Tshirt-white_Hem-Text-shot_2.png',
-          '/images/PRPROJECT_Tshirt-white_Pull-Up_3.png',
-          '/images/PRPROJECT_Tshirt-white_Back-View_4.png',
-        ],
-      },
-      Red: {
-        heroImg: '/images/PR_red-tshirt-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Tshirt-red_Front-Hero_1.png',
-          '/images/PRPROJECT_Tshirt-red_Hem-Text-shot_2.png',
-          '/images/PRPROJECT_Tshirt-red_Pull-Up_3.png',
-          '/images/PRPROJECT_Tshirt-red_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'PR PROJECT Cycling Short',
-    id: 'FRL-PJ-CYC',
-    sku: 'FRL-PJ-CYC',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/PR_black-cyclings-THI.png',
-    lifestyleImg: '/images/PRPROJECT_Cyclings-black_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Black: {
-        heroImg: '/images/PR_black-cyclings-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Cyclings-black_Front-Hero_1.png',
-          '/images/PRPROJECT_Cyclings-black_Side-step_2.png',
-          '/images/PRPROJECT_Cyclings-black_Squat-pose_3.png',
-          '/images/PRPROJECT_Cyclings-black_Back-View_4.png',
-        ],
-      },
-      White: {
-        heroImg: '/images/PR_white-cyclings-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Cyclings-white_Front-Hero_1.png',
-          '/images/PRPROJECT_Cyclings-white_Side-step_2.png',
-          '/images/PRPROJECT_Cyclings-white_Squat-pose_3.png',
-          '/images/PRPROJECT_Cyclings-white_Back-View_4.png',
-        ],
-      },
-      Red: {
-        heroImg: '/images/PR_red-cyclings-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Cyclings-red_Front-Hero_1.png',
-          '/images/PRPROJECT_Cyclings-red_Side-step_2.png',
-          '/images/PRPROJECT_Cyclings-red_Squat-pose_3.png',
-          '/images/PRPROJECT_Cyclings-red_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'PR PROJECT Midriff',
-    id: 'FRL-PJ-MDF',
-    sku: 'FRL-PJ-MDF',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/PR_black-Midriff-THI.png',
-    lifestyleImg: '/images/PRPROJECT_Midriff-black_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Black: {
-        heroImg: '/images/PR_black-Midriff-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Midriff-black_Front-Hero_1.png',
-          '/images/PRPROJECT_Midriff-black_Side-Stretch_2.png',
-          '/images/PRPROJECT_Midriff-black_Close-Up-Chest_3.png',
-          '/images/PRPROJECT_Midriff-black_Back-View_4.png',
-        ],
-      },
-      White: {
-        heroImg: '/images/PR_white-Midriff-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Midriff-white_Front-Hero_1.png',
-          '/images/PRPROJECT_Midriff-white_Side-Stretch_2.png',
-          '/images/PRPROJECT_Midriff-white_Close-Up-Chest_3.png',
-          '/images/PRPROJECT_Midriff-white_Back-View_4.png',
-        ],
-      },
-      Red: {
-        heroImg: '/images/PR_red-Midriff-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Midriff-red_Front-Hero_1.png',
-          '/images/PRPROJECT_Midriff-red_Side-Stretch_2.png',
-          '/images/PRPROJECT_Midriff-red_Close-Up-Chest_3.png',
-          '/images/PRPROJECT_Midriff-red_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  {
-    name: 'PR PROJECT Speedsuit',
-    id: 'FRL-PJ-SPD',
-    sku: 'FRL-PJ-SPD',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/PR_black-speedsuit-THI.png',
-    lifestyleImg: '/images/PRPROJECT_Speedsuit-black_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Black: {
-        heroImg: '/images/PR_black-speedsuit-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Speedsuit-black_Front-Hero_1.png',
-          '/images/PRPROJECT_Speedsuit-black_Three-Quarter Angle_2.png',
-          '/images/PRPROJECT_Speedsuit-black_Close-Up-Chest_3.png.png',
-          '/images/PRPROJECT_Speedsuit-black_Back-View_4.png',
-        ],
-      },
-      White: {
-        heroImg: '/images/PR_white-speedsuit-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Speedsuit-white_Front-Hero_1.png',
-          '/images/PRPROJECT_Speedsuit-white_Three-Quarter Angle_2.png',
-          '/images/PRPROJECT_Speedsuit-white_Close-Up-Chest_3.png.png',
-          '/images/PRPROJECT_Speedsuit-white_Back-View_4.png',
-        ],
-      },
-      Red: {
-        heroImg: '/images/PR_red-speedsuit-THI.png',
-        modelPhotos: [
-          '/images/PRPROJECT_Speedsuit-red_Front-Hero_1.png',
-          '/images/PRPROJECT_Speedsuit-red_Three-Quarter Angle_2.png',
-          '/images/PRPROJECT_Speedsuit-red_Close-Up-Chest_3.png',
-          '/images/PRPROJECT_Speedsuit-red_Back-View_4.png',
-        ],
-      },
-    },
-  },
-  // ===== PILIPINAS =====
-  {
-    name: 'PILIPINAS Singlet',
-    id: 'FRL-PH-TNK',
-    sku: 'FRL-PH-TNK',
-    price: 0, // TODO: set price
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
-    flatImg: '/images/PH_black-singlet-THI.png',
-    lifestyleImg: '/images/PILIPINAS_Singlet-black_Front-Hero_1.png',
-    // 2. COLOR VARIATIONS (Clicking a color switches Top Hero Illustration + all 4 Model Photos below it)
-    colorVariations: {
-      Black: {
-        heroImg: '/images/PH_black-singlet-THI.png',
-        modelPhotos: [
-          '/images/PILIPINAS_Singlet-black_Front-Hero_1.png',
-          '/images/PILIPINAS_Singlet-black_Three-Quarter Angle_2.png',
-          '/images/PILIPINAS_Singlet-black_Close-Up-Chest_3.png',
-          '/images/PILIPINAS_Singlet-black_Back-View_4.png',
-        ],
-      },
-      Blue: {
-        heroImg: '/images/PH_blue-singlet-THI.png',
-        modelPhotos: [
-          '/images/PILIPINAS_Singlet-blue_Front-Hero_1.png',
-          '/images/PILIPINAS_Singlet-blue_Three-Quarter Angle_2.png',
-          '/images/PILIPINAS_Singlet-blue_Close-Up-Chest_3.png',
-          '/images/PILIPINAS_Singlet-blue_Back-View_4.png',
-        ],
-      },
-      Red: {
-        heroImg: '/images/PH_red-singlet-THI.png',
-        modelPhotos: [
-          '/images/PILIPINAS_Singlet-red_Front-Hero_1.png',
-          '/images/PILIPINAS_Singlet-red_Three-Quarter Angle_2.png',
-          '/images/PILIPINAS_Singlet-red_Close-Up-Chest_3.png',
-          '/images/PILIPINAS_Singlet-red_Back-View_4.png',
-        ],
-      },
-      White: {
-        heroImg: '/images/PH_white-singlet-THI.png',
-        modelPhotos: [
-          '/images/PILIPINAS_Singlet-white_Front-Hero_1.png',
-          '/images/PILIPINAS_Singlet-white_Three-Quarter Angle_2.png',
-          '/images/PILIPINAS_Singlet-white_Close-Up-Chest_3.png',
-          '/images/PILIPINAS_Singlet-white_Back-View_4.png',
-        ],
-      },
-    },
-  },
-]
+const ADULT_SIZES = ['2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL']
 
-// Find the catalog entry for a product (by sku, id, or exact name)
-function findCatalogProduct(p: { sku?: string; id?: unknown; name?: string } | null): CatalogProduct | undefined {
-  if (!p) return undefined
-  return FROSTLINE_PRODUCTS.find(
-    (c) =>
-      (p.sku && c.sku === p.sku) ||
-      (p.id !== undefined && String(p.id) === c.id) ||
-      (p.name && c.name.toLowerCase() === p.name.toLowerCase())
-  )
+export const SIZE_CHARTS: Record<string, SizeChart> = {
+  singlet: {
+    title: 'Singlet',
+    sizes: ADULT_SIZES,
+    rows: [
+      { label: 'Width', guide: 'Armpit to armpit (A)', values: [17.3, 18, 19, 20, 21, 22, 23, 24, 25] },
+      { label: 'Height', guide: 'Shoulder to hem (B)', values: [23, 24, 25.5, 26.8, 28, 29.5, 31, 32.5, 34] },
+    ],
+  },
+  tshirt: {
+    title: 'Tshirt',
+    sizes: ADULT_SIZES,
+    rows: [
+      { label: 'Width', guide: 'Armpit to armpit (A)', values: [16.8, 17.5, 18.3, 19, 20, 21, 22, 23.1, 24.2] },
+      { label: 'Height', guide: 'Shoulder to hem (B)', values: [24, 25, 26, 27.5, 28.5, 30, 31.3, 33.5, 34.5] },
+    ],
+  },
+  polo: {
+    title: 'Polo Shirt',
+    sizes: ADULT_SIZES,
+    rows: [
+      { label: 'Width', guide: 'Armpit to armpit (A)', values: [16.8, 17.5, 18.3, 19, 20, 21, 22, 23.1, 24.2] },
+      { label: 'Height', guide: 'Shoulder to hem (B)', values: [24, 25, 26, 27.5, 28.5, 30, 31.3, 33.5, 34.5] },
+    ],
+  },
+  midriff: {
+    title: 'Midriff',
+    sizes: ADULT_SIZES,
+    rows: [
+      { label: 'Width', guide: 'Armpit to armpit (A)', values: [14.3, 15, 16, 17, 18, 19, 20, 21, 22] },
+      { label: 'Height', guide: 'Shoulder to hem (B)', values: [14.3, 15, 16, 17, 18, 19, 20, 21, 22] },
+    ],
+  },
+  cycling: {
+    title: 'Cycling Short',
+    sizes: ADULT_SIZES,
+    rows: [
+      { label: 'Waist', guide: 'Across the waistband, laid flat (A)', values: [10.4, 11, 11.5, 12.1, 12.8, 13.4, 14, 14.7, 15.5] },
+      { label: 'Inseam', guide: 'Crotch to leg hem (B)', values: [5.7, 6, 6.4, 6.7, 7, 7.3, 7.6, 8.1, 8.5] },
+    ],
+  },
+  shorts: {
+    title: 'Shorts',
+    sizes: ADULT_SIZES,
+    rows: [
+      { label: 'Hips', guide: 'Around the hips (A)', values: [33.5, 35.5, 37, 39, 41, 43, 45, 47, 49] },
+      { label: 'Length', guide: 'Waistband to hem (B)', values: [16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5] },
+    ],
+  },
+  basketballSet: {
+    title: 'Basketball Jersey Set',
+    sizes: ADULT_SIZES,
+    rows: [
+      { label: 'Width', guide: 'Jersey, armpit to armpit (A)', values: [17.8, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5] },
+      { label: 'Height', guide: 'Jersey, shoulder to hem (B)', values: [25.5, 26.5, 28, 29, 30.5, 32, 33.5, 35, 36.5] },
+      { label: 'Hips', guide: 'Shorts, around the hips (C)', values: [33.5, 35.5, 37, 39, 41, 43, 45, 47, 49] },
+      { label: 'Length', guide: 'Shorts, waistband to hem (D)', values: [16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5] },
+    ],
+  },
+  kidsShirt: {
+    title: 'Kids Shirt',
+    sizes: ['Small Kids', 'Medium Kids', 'Large Kids'],
+    rows: [
+      { label: 'Width', guide: 'Armpit to armpit (A)', values: [15.8, 16.2, 16.8] },
+      { label: 'Height', guide: 'Shoulder to hem (B)', values: [22.1, 22.9, 23.5] },
+    ],
+  },
 }
+
+// Which chart each product uses (by SKU). Products not listed show no size chart.
+export const PRODUCT_SIZE_CHART: Record<string, keyof typeof SIZE_CHARTS> = {
+  'FRL-CL-SGL': 'singlet',
+  'FRL-PJ-SGL': 'singlet',
+  'FRL-PH-TNK': 'singlet',
+  'FRL-CL-TEE': 'tshirt',
+  'FRL-PJ-TEE': 'tshirt',
+  'FRL-CL-PLO': 'polo',
+  'FRL-CL-CHN': 'polo',
+  'FRL-CL-MDF': 'midriff',
+  'FRL-PJ-MDF': 'midriff',
+  'FRL-CL-CYC': 'cycling',
+  'FRL-PJ-CYC': 'cycling',
+}
+
+function getSizeChart(sku?: string): SizeChart | null {
+  if (!sku) return null
+  const key = PRODUCT_SIZE_CHART[sku]
+  return key ? SIZE_CHARTS[key] : null
+}
+
 
 const DEFAULT_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 const DEFAULT_COLORS = ['Black', 'White', 'Red']
@@ -667,7 +176,7 @@ export function ProductModal({
   // 1. State hooks
   const [selectedSize, setSelectedSize] = useState('M')
   const [selectedColor, setSelectedColor] = useState('')
-  const [activeAccordion, setActiveAccordion] = useState<'details' | 'care' | null>('details')
+  const [activeAccordion, setActiveAccordion] = useState<'details' | 'size' | 'care' | null>('details')
   const [mounted, setMounted] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [slideDirection, setSlideDirection] = useState<'next' | 'prev'>('next')
@@ -761,7 +270,7 @@ export function ProductModal({
             name: catalog.name,
             sku: catalog.sku,
             price: catalog.price,
-            sizes: catalog.sizes,
+            sizes: getSizeChart(catalog.sku)?.sizes ?? catalog.sizes,
             flatImg: catalog.flatImg,
             lifestyleImg: catalog.lifestyleImg,
             colorVariations: catalog.colorVariations,
@@ -981,13 +490,14 @@ export function ProductModal({
 
   const SIZES = activeProduct.sizes && activeProduct.sizes.length > 0 ? activeProduct.sizes : DEFAULT_SIZES
   const COLORS = getColorList(activeProduct)
-  // "Complete the look": 3 other catalog items from the same line first (FROSTLINE / PR PROJECT)
+  const sizeChart = getSizeChart(activeProduct.sku)
+  // "Complete the look": 3 other items from the same line first (FROSTLINE / PR PROJECT)
   const activeLine = activeProduct.name?.split(' ')[0] || ''
-  const otherItems = FROSTLINE_PRODUCTS.filter((p) => p.sku !== activeProduct.sku)
+  const otherItems = GRID_PRODUCTS.filter((p) => p.sku !== activeProduct.sku)
   const recommendations = [
     ...otherItems.filter((p) => p.name.startsWith(activeLine)),
     ...otherItems.filter((p) => !p.name.startsWith(activeLine)),
-  ].slice(0, 3) as unknown as GridProduct[]
+  ].slice(0, 3)
 
   const handleAdd = () => {
     onAddToCart(activeProduct)
@@ -1197,6 +707,56 @@ export function ProductModal({
                       </div>
                     )}
                   </div>
+
+                  {sizeChart && (
+                    <div className="accordion-item">
+                      <button
+                        className="accordion-header"
+                        onClick={() => setActiveAccordion(activeAccordion === 'size' ? null : 'size')}
+                      >
+                        <span>SIZE CHART</span>
+                        <span className="accordion-icon">{activeAccordion === 'size' ? '−' : '+'}</span>
+                      </button>
+                      {activeAccordion === 'size' && (
+                        <div className="size-chart">
+                          <div className="size-chart-title">{sizeChart.title} — measurements in inches</div>
+                          <div className="size-chart-scroll">
+                            <table className="size-chart-table">
+                              <thead>
+                                <tr>
+                                  <th className="size-chart-corner" />
+                                  {sizeChart.sizes.map((s) => (
+                                    <th key={s} className={s === selectedSize ? 'is-active' : ''}>
+                                      {s}
+                                    </th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {sizeChart.rows.map((row) => (
+                                  <tr key={row.label}>
+                                    <th scope="row">{row.label.toUpperCase()}</th>
+                                    {row.values.map((v, i) => (
+                                      <td key={i} className={sizeChart.sizes[i] === selectedSize ? 'is-active' : ''}>
+                                        {v}
+                                      </td>
+                                    ))}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                          <ul className="size-chart-guide">
+                            {sizeChart.rows.map((row) => (
+                              <li key={row.label}>
+                                <strong>{row.label}:</strong> {row.guide}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <div className="accordion-item">
                     <button
@@ -1836,6 +1396,69 @@ export function ProductModal({
 
         .accordion-body li {
           margin-bottom: 0.4rem;
+        }
+
+        /* SIZE CHART — measurements as rows, sizes as columns */
+        .size-chart {
+          padding-bottom: 1.25rem;
+        }
+
+        .size-chart-title {
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--muted);
+          margin-bottom: 0.6rem;
+        }
+
+        .size-chart-scroll {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .size-chart-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 0.8rem;
+          font-variant-numeric: tabular-nums;
+          color: #111111;
+          background: #ffffff;
+        }
+
+        .size-chart-table th,
+        .size-chart-table td {
+          border: 1px solid #111111;
+          padding: 0.55rem 0.5rem;
+          text-align: center;
+          white-space: nowrap;
+        }
+
+        .size-chart-table thead th {
+          font-weight: 800;
+        }
+
+        .size-chart-table tbody th {
+          font-weight: 800;
+          text-align: left;
+          letter-spacing: 0.04em;
+        }
+
+        .size-chart-corner {
+          background: #ffffff;
+        }
+
+        .size-chart-table .is-active {
+          background: #111111;
+          color: #ffffff;
+        }
+
+        .size-chart-guide {
+          margin: 0.75rem 0 0;
+          padding-left: 1rem;
+          font-size: 0.8rem;
+          line-height: 1.6;
+          color: var(--muted);
         }
 
         .product-modal-spacer {

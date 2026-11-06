@@ -14,48 +14,15 @@ export interface CarouselProduct {
   lifestyleImg: string
 }
 
-export const FEATURED_ITEMS: CarouselProduct[] = [
-  {
-    id: 0,
-    name: 'FROSTLINE PILIPINAS singlet',
-    sku: 'FRL-PH-TNK',
-    price: 450,
-    flatImg: '/images/pilipinas-flat.png',
-    lifestyleImg: '/images/pilipinas-1.png',
-  },
-  {
-    id: 1,
-    name: 'PR PROJECT Racerback Singlet',
-    sku: 'FRL-PJ-SGL',
-    price: 450,
-    flatImg: '/images/singlet-flat.png',
-    lifestyleImg: '/images/singlet-1.png',
-  },
-  {
-    id: 2,
-    name: 'PR PROJECT Speed Suit',
-    sku: 'FRL-PJ-SPD',
-    price: 999,
-    flatImg: '/images/speedsuit-flat.png',
-    lifestyleImg: '/images/speedsuit-1.png',
-  },
-  {
-    id: 3,
-    name: 'PR PROJECT Midriff Crop Top',
-    sku: 'FRL-PJ-MDF',
-    price: 399,
-    flatImg: '/images/midriff-flat.png',
-    lifestyleImg: '/images/midriff-1.png',
-  },
-  {
-    id: 4,
-    name: 'PR PROJECT Crew T-Shirt',
-    sku: 'FRL-PJ-TEE',
-    price: 550,
-    flatImg: '/images/tshirt-flat.png',
-    lifestyleImg: '/images/tshirt-1.png',
-  },
-]
+// Featured items come from the same catalog as the shop grid
+export const FEATURED_ITEMS: CarouselProduct[] = GRID_PRODUCTS.map((p) => ({
+  id: p.id,
+  name: p.name,
+  sku: p.sku,
+  price: p.price,
+  flatImg: p.flatImg,
+  lifestyleImg: p.lifestyleImg,
+}))
 
 // Duplicate list for infinite marquee looping
 const DISPLAY_ITEMS = [...FEATURED_ITEMS, ...FEATURED_ITEMS]
@@ -324,7 +291,9 @@ export function FeaturedCarousel({ onAddToCart }: FeaturedCarouselProps) {
             inset: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            padding: 1rem;
+            background: #ffffff;
             opacity: 1;
             transform: scale(1);
             transition: opacity 450ms cubic-bezier(0.4, 0, 0.2, 1), transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
