@@ -40,7 +40,7 @@ export function Footer({ onOpenAdmin }: FooterProps) {
           </div>
           <div className="footer__col">
             <p className="head">Get In Touch</p>
-            <a href="mailto:officialfrostline@gmail.com">officialfrostline@gmail.com</a>
+            <a href="mailto:admin.wearfrostline@gmail.com">admin.wearfrostline@gmail.com</a>
             <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Philippines</span>
           </div>
           <div className="footer__col">
