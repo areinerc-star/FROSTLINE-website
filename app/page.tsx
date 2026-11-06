@@ -14,7 +14,10 @@ import { CheckoutModal } from '@/components/checkout-modal'
 import { AccountModal, UserProfile, OrderRecord } from '@/components/account-modal'
 import { AdminDashboard, AdminOrderRecord } from '@/components/admin-dashboard'
 import { ScrollObserver } from '@/components/scroll-observer'
+import { ProductModal } from '@/components/product-modal'
+import { GRID_PRODUCTS, GridProduct } from '@/components/shop-grid'
 import { Product } from '@/lib/products'
+import { TEST_PRODUCTS } from '@/lib/catalog'
 
 export default function Page() {
   const [cart, setCart] = useState<Product[]>([])
@@ -23,6 +26,8 @@ export default function Page() {
   const [isAccountOpen, setIsAccountOpen] = useState(false)
   const [isAdminOpen, setIsAdminOpen] = useState(false)
   const [isCurtainOpen, setIsCurtainOpen] = useState(false)
+  // Product opened from a direct link: /?product=<SKU> (the only way to reach the test items)
+  const [linkedProduct, setLinkedProduct] = useState<GridProduct | null>(null)
 
   // Account & Order tracking state
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -39,6 +44,32 @@ export default function Page() {
     } catch (e) {
       console.error(e)
     }
+  }, [])
+
+  // Open /?product=<SKU> directly
+  useEffect(() => {
+    const sku = new URLSearchParams(window.location.search).get('product')
+    if (!sku) return
+    const real = GRID_PRODUCTS.find((p) => p.sku === sku)
+    if (real) {
+      setLinkedProduct(real)
+      return
+    }
+    const testIndex = TEST_PRODUCTS.findIndex((p) => p.sku === sku)
+    if (testIndex === -1) return
+    const t = TEST_PRODUCTS[testIndex]
+    const firstColor = Object.values(t.colorVariations)[0]
+    setLinkedProduct({
+      id: 9000 + testIndex, // outside the shop grid's ids so it never merges with a real product
+      name: t.name,
+      sku: t.sku,
+      price: t.price,
+      img: t.flatImg,
+      flatImg: t.flatImg,
+      lifestyleImg: t.lifestyleImg,
+      detailImages: firstColor?.modelPhotos ?? [],
+      colors: Object.keys(t.colorVariations),
+    })
   }, [])
 
   const handleLogin = (newUser: UserProfile) => {
@@ -149,6 +180,13 @@ export default function Page() {
         onUpdateOrderStatus={handleUpdateOrderStatus}
       />
       <ScrollObserver />
+      <ProductModal
+        product={linkedProduct}
+        isOpen={linkedProduct !== null}
+        onClose={() => setLinkedProduct(null)}
+        onAddToCart={handleAddToCart}
+        onSelectProduct={(p) => setLinkedProduct(p)}
+      />
 
       {/* Dim overlay over hero page */}
       <div

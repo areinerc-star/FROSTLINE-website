@@ -4,6 +4,10 @@ export interface Product {
   sku: string
   price: number
   img: string
+  // Picks made in the product modal (saved on the cart line and the order)
+  size?: string
+  color?: string
+  fabric?: string
 }
 
 export const PRODUCTS: Product[] = [
@@ -13,6 +17,9 @@ export const PRODUCTS: Product[] = [
   { name: "PR PROJECT Midriff Crop Top", sku: "FRL-PJ-MDF", price: 399, img: "/images/midriff-flat.png" },
   { name: "PR PROJECT Crew T-Shirt", sku: "FRL-PJ-TEE", price: 550, img: "/images/tshirt-flat.png" },
 ].map((p, id) => ({ ...p, id }))
+
+// "Red · M · Quianna" — the picks saved on a cart line
+export const formatPicks = (p: Product) => [p.color, p.size, p.fabric].filter(Boolean).join(' · ')
 
 export const formatPrice = (n: number) =>
   "₱" + n.toLocaleString("en-PH", { minimumFractionDigits: 2 })

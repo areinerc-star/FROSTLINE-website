@@ -29,6 +29,8 @@ export type { ColorVariation }
 export type ProductWithVariations = GridProduct & {
   sizes?: string[]
   colorVariations?: Record<string, ColorVariation>
+  description?: string
+  fabrics?: string[]
 }
 
 // -------------------------------------------------------------
@@ -176,12 +178,9 @@ export function ProductModal({
   // 1. State hooks
   const [selectedSize, setSelectedSize] = useState('M')
   const [selectedColor, setSelectedColor] = useState('')
+  const [selectedFabric, setSelectedFabric] = useState('')
   const [activeAccordion, setActiveAccordion] = useState<'details' | 'size' | 'care' | null>('details')
   const [mounted, setMounted] = useState(false)
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
-  const [slideDirection, setSlideDirection] = useState<'next' | 'prev'>('next')
-  const [isSlideAnimating, setIsSlideAnimating] = useState(false)
-  const [outgoingIndex, setOutgoingIndex] = useState<number | null>(null)
   const [activeProduct, setActiveProduct] = useState<ProductWithVariations | null>(
     product as ProductWithVariations | null
   )
@@ -220,9 +219,6 @@ export function ProductModal({
       }
     } else {
       document.body.style.overflow = ''
-      setLightboxIndex(null)
-      setIsSlideAnimating(false)
-      setOutgoingIndex(null)
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current)
       setActivePreviewColor(null)
     }
@@ -274,6 +270,8 @@ export function ProductModal({
             flatImg: catalog.flatImg,
             lifestyleImg: catalog.lifestyleImg,
             colorVariations: catalog.colorVariations,
+            description: catalog.description,
+            fabrics: catalog.fabrics,
           } as ProductWithVariations)
         : merged
 
@@ -286,6 +284,9 @@ export function ProductModal({
       // Default size: M if offered, else first available
       const sizes = fullProduct.sizes && fullProduct.sizes.length > 0 ? fullProduct.sizes : DEFAULT_SIZES
       setSelectedSize(sizes.includes('M') ? 'M' : sizes[0])
+
+      // Default fabric: the first option (Quianna) when the item offers a fabric choice
+      setSelectedFabric(fullProduct.fabrics?.[0] || '')
 
       if (containerRef.current) {
         containerRef.current.scrollTop = 0
@@ -409,77 +410,6 @@ export function ProductModal({
     : []
 
   const breakoutImage = currentProduct?.breakoutImg || null
-  const allImages = [
-    heroImage,
-    ...detailGridImages,
-    ...(breakoutImage ? [breakoutImage] : []),
-  ].filter(Boolean)
-
-  const handleLightboxNext = () => {
-    if (lightboxIndex === null || isSlideAnimating || allImages.length === 0) return
-
-    const prefersReduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    const nextIdx = (lightboxIndex + 1) % allImages.length
-
-    if (prefersReduced) {
-      setLightboxIndex(nextIdx)
-      return
-    }
-
-    setOutgoingIndex(lightboxIndex)
-    setSlideDirection('next')
-    setIsSlideAnimating(true)
-    setLightboxIndex(nextIdx)
-
-    setTimeout(() => {
-      setOutgoingIndex(null)
-      setIsSlideAnimating(false)
-    }, 650)
-  }
-
-  const handleLightboxPrev = () => {
-    if (lightboxIndex === null || isSlideAnimating || allImages.length === 0) return
-
-    const prefersReduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    const prevIdx = (lightboxIndex - 1 + allImages.length) % allImages.length
-
-    if (prefersReduced) {
-      setLightboxIndex(prevIdx)
-      return
-    }
-
-    setOutgoingIndex(lightboxIndex)
-    setSlideDirection('prev')
-    setIsSlideAnimating(true)
-    setLightboxIndex(prevIdx)
-
-    setTimeout(() => {
-      setOutgoingIndex(null)
-      setIsSlideAnimating(false)
-    }, 650)
-  }
-
-  // Handle keyboard events (Escape to close, Arrow keys for vertical slide navigation)
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (lightboxIndex === null) return
-      if (e.key === 'Escape') {
-        setLightboxIndex(null)
-      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        handleLightboxNext()
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        handleLightboxPrev()
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [lightboxIndex, isSlideAnimating, allImages.length])
 
   // -------------------------------------------------------------
   // ALL HOOKS ARE UNCONDITIONALLY EXECUTED BEFORE ANY RETURN!
@@ -490,6 +420,7 @@ export function ProductModal({
 
   const SIZES = activeProduct.sizes && activeProduct.sizes.length > 0 ? activeProduct.sizes : DEFAULT_SIZES
   const COLORS = getColorList(activeProduct)
+  const FABRICS = activeProduct.fabrics ?? []
   const sizeChart = getSizeChart(activeProduct.sku)
   // "Complete the look": 3 other items from the same line first (FROSTLINE / PR PROJECT)
   const activeLine = activeProduct.name?.split(' ')[0] || ''
@@ -500,7 +431,16 @@ export function ProductModal({
   ].slice(0, 3)
 
   const handleAdd = () => {
-    onAddToCart(activeProduct)
+    onAddToCart({
+      id: activeProduct.id,
+      name: activeProduct.name,
+      sku: activeProduct.sku,
+      price: activeProduct.price,
+      img: activeProduct.img,
+      size: selectedSize,
+      color: selectedColor,
+      ...(FABRICS.length > 0 ? { fabric: selectedFabric || FABRICS[0] } : {}),
+    })
     onClose()
   }
 
@@ -530,11 +470,10 @@ export function ProductModal({
     setActivePreviewColor(null)
   }
 
-  // Clicking a color swaps the hero + all 4 model photos, and closes the lightbox if open
+  // Clicking a color swaps the hero + all 4 model photos
   const handleColorSelect = (col: string) => {
     setSelectedColor(col)
     setActivePreviewColor(col)
-    setLightboxIndex(null)
   }
 
   const markFailed = (src: string) => {
@@ -635,12 +574,9 @@ export function ProductModal({
           <div className="product-modal-split">
             {/* Left Column: Hero Image + 2-Column Model Photo Grid */}
             <div className="product-modal-left-col">
-              {/* Hero product image for the selected color (click opens lightbox index 0) */}
+              {/* Hero product image for the selected color */}
               <div
                 className="product-modal-hero-wrap"
-                onClick={() => setLightboxIndex(0)}
-                style={{ cursor: 'pointer' }}
-                title="Click to view full image lightbox"
               >
                 <img
                   key={`hero-${selectedColor}-${heroImage}`}
@@ -651,15 +587,12 @@ export function ProductModal({
                 />
               </div>
 
-              {/* 4 model photos for the selected color (click opens lightbox) */}
+              {/* 4 model photos for the selected color */}
               <div className="product-modal-detail-grid">
                 {detailGridImages.map((src, idx) => (
                   <div
                     key={`${selectedColor}-${idx}-${src}`}
                     className="product-modal-grid-cell"
-                    onClick={() => setLightboxIndex(idx + 1)}
-                    style={{ cursor: 'pointer' }}
-                    title="Click to view full image lightbox"
                   >
                     <img
                       src={src}
@@ -680,33 +613,35 @@ export function ProductModal({
                 </div>
                 <span className="product-modal-sku">({activeProduct.sku})</span>
 
-                <p className="product-modal-desc">
-                  Crafted from heavyweight organic cotton with a refined vintage silhouette. Designed with heritage craftsmanship and tailored for effortless style on and off the course.
-                </p>
+                {activeProduct.description && (
+                  <p className="product-modal-desc">{activeProduct.description}</p>
+                )}
 
                 <div className="product-modal-divider" />
 
                 {/* Collapsed Accordions */}
                 <div className="product-modal-accordions">
-                  <div className="accordion-item">
-                    <button
-                      className="accordion-header"
-                      onClick={() => setActiveAccordion(activeAccordion === 'details' ? null : 'details')}
-                    >
-                      <span>GARMENT DETAILS</span>
-                      <span className="accordion-icon">{activeAccordion === 'details' ? '−' : '+'}</span>
-                    </button>
-                    {activeAccordion === 'details' && (
-                      <div className="accordion-body">
-                        <ul>
-                          <li>100% Premium Heavyweight Organic Cotton (400gsm)</li>
-                          <li>Custom tonal embroidery on left chest</li>
-                          <li>Reinforced ribbed collar & cuffs for longevity</li>
-                          <li>Designed & ethically produced in South Africa</li>
-                        </ul>
-                      </div>
-                    )}
-                  </div>
+                  {FABRICS.length > 0 && (
+                    <div className="accordion-item">
+                      <button
+                        className="accordion-header"
+                        onClick={() => setActiveAccordion(activeAccordion === 'details' ? null : 'details')}
+                      >
+                        <span>GARMENT DETAILS</span>
+                        <span className="accordion-icon">{activeAccordion === 'details' ? '−' : '+'}</span>
+                      </button>
+                      {activeAccordion === 'details' && (
+                        <div className="accordion-body">
+                          <ul>
+                            <li>
+                              Fabric: {FABRICS[0]} (standard)
+                              {FABRICS.length > 1 && <>, or choose {FABRICS.slice(1).join(' or ')}</>}
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {sizeChart && (
                     <div className="accordion-item">
@@ -861,6 +796,25 @@ export function ProductModal({
                     </div>
                   </div>
 
+                  {FABRICS.length > 0 && (
+                    <div className="product-modal-size-row">
+                      <span className="product-modal-size-label">FABRIC:</span>
+                      <div className="product-modal-sizes" style={{ gap: '0.4rem', flexWrap: 'wrap' }}>
+                        {FABRICS.map((fab) => (
+                          <button
+                            key={fab}
+                            className={`size-btn ${selectedFabric === fab ? 'is-selected' : ''}`}
+                            onClick={() => setSelectedFabric(fab)}
+                            aria-pressed={selectedFabric === fab}
+                            style={{ minWidth: 'auto', width: 'auto', paddingInline: '0.75rem', fontSize: '0.75rem' }}
+                          >
+                            {fab}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <button className="product-modal-add-btn" onClick={handleAdd}>
                     ADD TO CART — {formatPrice(activeProduct.price)}
                   </button>
@@ -869,13 +823,10 @@ export function ProductModal({
             </div>
           </div>
 
-          {/* SECTION 3: Full-Width Breakout Image (click opens lightbox) */}
+          {/* SECTION 3: Full-Width Breakout Image */}
           {breakoutImage && (
             <div
               className="product-modal-breakout-section"
-              onClick={() => setLightboxIndex(allImages.length - 1)}
-              style={{ cursor: 'pointer' }}
-              title="Click to view full image lightbox"
             >
               <img src={breakoutImage} alt={`${activeProduct.name} lifestyle breakout`} className="product-modal-breakout-img" />
             </div>
@@ -918,251 +869,7 @@ export function ProductModal({
         </div>
       </div>
 
-      {/* Full-Viewport Full-Bleed Lightbox Viewport matching IDEALREFERENCE.mp4 */}
-      {lightboxIndex !== null && (
-        <div
-          className="modal-lightbox-overlay"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: '100vw',
-            height: '100vh',
-            zIndex: 999999,
-            backgroundColor: '#000000',
-            color: '#FFFFFF',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Top sticky header bar visually overlapping the sliding image track */}
-          <div
-            className="product-modal-topbar"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 30,
-              background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 100%)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              borderBottom: 'none',
-              minHeight: '60px',
-              padding: '1rem var(--gutter)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <a
-              href="#top"
-              className="nav__logo"
-              aria-label="Frostline home"
-              onClick={(e) => {
-                e.preventDefault()
-                setLightboxIndex(null)
-                onClose()
-              }}
-              style={{ display: 'flex', alignItems: 'center', height: '44px' }}
-            >
-              <img
-                src="/FROSTLINE_Website_Logo_black.png"
-                alt="FROSTLINE Logo"
-                className="nav__logo-img"
-                style={{
-                  height: '44px',
-                  maxHeight: '44px',
-                  minHeight: '44px',
-                  width: 'auto',
-                  objectFit: 'contain',
-                  display: 'block',
-                  filter: 'brightness(0) invert(1)',
-                }}
-              />
-            </a>
-            <button
-              onClick={() => setLightboxIndex(null)}
-              className="product-modal-close-btn"
-              aria-label="Close lightbox"
-              style={{
-                color: '#FFFFFF',
-                borderColor: 'rgba(255, 255, 255, 0.4)',
-                background: 'rgba(0, 0, 0, 0.25)',
-              }}
-            >
-              CLOSE ✕
-            </button>
-          </div>
-
-          {/* Main Full-Bleed Image Viewport with Directional Vertical Slide Transition */}
-          <div
-            className="lightbox-main-viewport"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100vw',
-              height: '100vh',
-              overflow: 'hidden',
-              backgroundColor: '#0a0a0a',
-            }}
-            onClick={() => setLightboxIndex(null)}
-          >
-            {/* Outgoing Image sliding out (UP on next, DOWN on prev) */}
-            {isSlideAnimating && outgoingIndex !== null && (
-              <img
-                key={`outgoing-${outgoingIndex}`}
-                src={allImages[outgoingIndex]}
-                alt="Outgoing slide"
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                  zIndex: 1,
-                  animation: `${slideDirection === 'next' ? 'lightboxSlideOutUp' : 'lightboxSlideOutDown'} 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards`,
-                }}
-              />
-            )}
-
-            {/* Incoming / Active Image sliding in (UP from bottom on next, DOWN from top on prev) */}
-            <img
-              key={`active-${lightboxIndex}`}
-              src={allImages[lightboxIndex]}
-              alt={`${activeProduct.name} lightbox view ${lightboxIndex + 1}`}
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                display: 'block',
-                zIndex: 2,
-                animation: isSlideAnimating
-                  ? `${slideDirection === 'next' ? 'lightboxSlideInUp' : 'lightboxSlideInDown'} 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards`
-                  : 'none',
-              }}
-            />
-
-            {/* Center PREV / NEXT Nav Buttons */}
-            <div
-              className="lightbox-nav-controls"
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: 0,
-                right: 0,
-                transform: 'translateY(-50%)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '0 var(--gutter)',
-                pointerEvents: 'none',
-                zIndex: 20,
-              }}
-            >
-              <button
-                onClick={handleLightboxPrev}
-                style={{
-                  pointerEvents: 'auto',
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  color: '#111111',
-                  border: '1px solid var(--hairline)',
-                  padding: '0.65rem 1.4rem',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
-                }}
-              >
-                ‹ PREV
-              </button>
-              <button
-                onClick={handleLightboxNext}
-                style={{
-                  pointerEvents: 'auto',
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  color: '#111111',
-                  border: '1px solid var(--hairline)',
-                  padding: '0.65rem 1.4rem',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
-                }}
-              >
-                NEXT ›
-              </button>
-            </div>
-
-            {/* Bottom-Right Numbered Counter (e.g. 01 / 06) */}
-            <div
-              className="lightbox-counter"
-              style={{
-                position: 'absolute',
-                bottom: '2rem',
-                right: 'var(--gutter)',
-                background: 'rgba(255, 255, 255, 0.95)',
-                color: '#111111',
-                padding: '0.45rem 1rem',
-                fontSize: '0.78rem',
-                fontWeight: 800,
-                letterSpacing: '0.1em',
-                border: '1px solid var(--hairline)',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
-                zIndex: 20,
-              }}
-            >
-              {String(lightboxIndex + 1).padStart(2, '0')} / {String(allImages.length).padStart(2, '0')}
-            </div>
-          </div>
-        </div>
-      )}
-
       <style jsx>{`
-        @keyframes lightboxSlideOutUp {
-          from {
-            transform: translateY(0);
-          }
-          to {
-            transform: translateY(-100%);
-          }
-        }
-
-        @keyframes lightboxSlideOutDown {
-          from {
-            transform: translateY(0);
-          }
-          to {
-            transform: translateY(100%);
-          }
-        }
-
-        @keyframes lightboxSlideInUp {
-          from {
-            transform: translateY(100%);
-          }
-          to {
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes lightboxSlideInDown {
-          from {
-            transform: translateY(-100%);
-          }
-          to {
-            transform: translateY(0);
-          }
-        }
-
         .product-modal-topbar {
           display: flex;
           justify-content: space-between;
@@ -1629,7 +1336,6 @@ export function ProductModal({
 
         .complete-look-tile:hover .complete-look-lifestyle-img {
           opacity: 1;
-          transform: scale(1.02);
         }
 
         .complete-look-sku-overlay {

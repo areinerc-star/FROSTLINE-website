@@ -211,7 +211,7 @@ export function FeaturedCarousel({ onAddToCart }: FeaturedCarouselProps) {
                       loading="lazy"
                       style={{
                         transform: isHoveredOrActive
-                          ? `scale(1.02) translate3d(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px, 0)`
+                          ? `scale(1.00) translate3d(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px, 0)`
                           : 'scale(1.00) translate3d(0, 0, 0)',
                       }}
                     />

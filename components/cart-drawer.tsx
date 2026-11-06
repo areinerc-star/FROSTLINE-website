@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Product, formatPrice } from '@/lib/products'
+import { Product, formatPrice, formatPicks } from '@/lib/products'
 
 interface CartDrawerProps {
   isOpen: boolean
@@ -55,7 +55,12 @@ export function CartDrawer({ isOpen, onClose, cart, onCheckout }: CartDrawerProp
           ) : (
             cart.map((item, idx) => (
               <div key={`${item.id}-${idx}`} className="drawer__item">
-                <span>{item.name}</span>
+                <span>
+                  {item.name}
+                  {formatPicks(item) && (
+                    <span style={{ display: 'block', fontSize: '0.75em', opacity: 0.7 }}>{formatPicks(item)}</span>
+                  )}
+                </span>
                 <span>{formatPrice(item.price)}</span>
               </div>
             ))

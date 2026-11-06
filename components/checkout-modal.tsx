@@ -1,8 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Product, formatPrice } from '@/lib/products'
+import { Product, formatPrice, formatPicks } from '@/lib/products'
 import { UserProfile, OrderRecord } from './account-modal'
+
+interface Quote {
+  subtotal: number
+  shipping: number
+  discount: number
+  total: number
+  voucherCode: string | null
+}
 
 interface CheckoutModalProps {
   isOpen: boolean
@@ -39,6 +47,72 @@ export function CheckoutModal({
   })
   const [orderId, setOrderId] = useState<string>('')
 
+  // Voucher + server-calculated totals (the server is the source of truth for prices and discounts)
+  const [voucherInput, setVoucherInput] = useState('')
+  const [voucherError, setVoucherError] = useState('')
+  const [isApplying, setIsApplying] = useState(false)
+  const [quote, setQuote] = useState<Quote | null>(null)
+  const [submitError, setSubmitError] = useState('')
+  const [paidTotal, setPaidTotal] = useState<number | null>(null)
+
+  const cartItems = cart.map((c) => ({ sku: c.sku, size: c.size, color: c.color, fabric: c.fabric }))
+  const cartKey = JSON.stringify(cartItems)
+
+  // Fresh server total (no voucher) whenever checkout opens or the cart changes
+  useEffect(() => {
+    if (!isOpen || cart.length === 0) return
+    let cancelled = false
+    setQuote(null)
+    setVoucherError('')
+    fetch('/api/voucher', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: cartItems }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (!cancelled && data.success) setQuote(data)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, cartKey])
+
+  const handleApplyVoucher = async () => {
+    const code = voucherInput.trim()
+    if (!code) {
+      setVoucherError('Enter a voucher code.')
+      return
+    }
+    setIsApplying(true)
+    setVoucherError('')
+    try {
+      const res = await fetch('/api/voucher', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: cartItems, code }),
+      })
+      const data = await res.json()
+      if (data.success && data.voucherCode) {
+        setQuote(data)
+        setVoucherInput('')
+      } else {
+        setVoucherError(data.error || 'That voucher code is not valid.')
+      }
+    } catch {
+      setVoucherError('Could not check that code. Please try again.')
+    } finally {
+      setIsApplying(false)
+    }
+  }
+
+  const handleRemoveVoucher = () => {
+    if (quote) setQuote({ ...quote, discount: 0, total: quote.subtotal + quote.shipping, voucherCode: null })
+    setVoucherError('')
+  }
+
   // Auto-fill logged-in user profile details
   useEffect(() => {
     if (user && isOpen) {
@@ -55,9 +129,11 @@ export function CheckoutModal({
 
   if (!isOpen) return null
 
-  const subtotal = cart.reduce((sum, p) => sum + p.price, 0)
-  const shipping = subtotal > 0 ? 150 : 0
-  const total = subtotal + shipping
+  const subtotal = quote?.subtotal ?? cart.reduce((sum, p) => sum + p.price, 0)
+  const shipping = quote?.shipping ?? (subtotal > 0 ? 150 : 0)
+  const discount = quote?.discount ?? 0
+  const total = quote?.total ?? Math.max(0, subtotal + shipping - discount)
+  const appliedCode = quote?.voucherCode ?? null
 
   const getCardBrand = (num: string): 'VISA' | 'MASTERCARD' | null => {
     const clean = num.replace(/\D/g, '')
@@ -78,31 +154,67 @@ export function CheckoutModal({
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitError('')
     setStep('processing')
-    setTimeout(() => {
-      const generatedId = 'FRL-' + Math.floor(100000 + Math.random() * 900000)
-      setOrderId(generatedId)
-      setStep('success')
+    try {
+      // Card details are NOT sent anywhere — only the order, contact details and payment reference.
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cartItems,
+          voucherCode: appliedCode,
+          paymentMethod,
+          fullName: formData.fullName,
+          email: formData.email,
+          address: formData.address,
+          city: formData.city,
+          postalCode: formData.postalCode,
+          referenceNumber: formData.referenceNumber,
+        }),
+      })
+      const data = await res.json()
+      if (!data.success) {
+        if (appliedCode) handleRemoveVoucher()
+        setSubmitError(data.error || 'Checkout failed. Please try again.')
+        setStep('checkout')
+        return
+      }
 
       // Record order history
       if (onRecordOrder) {
         onRecordOrder({
-          id: generatedId,
+          id: data.orderId,
           date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-          items: cart.map((c) => ({ name: c.name, price: c.price })),
-          total,
+          items: cart.map((c) => ({ name: formatPicks(c) ? `${c.name} (${formatPicks(c)})` : c.name, price: c.price })),
+          total: data.total,
           paymentMethod: paymentMethod === 'card' ? 'Credit / Debit Card' : paymentMethod === 'bank' ? 'Bank Transfer' : 'GCash',
           status: 'Processing',
         })
       }
-    }, 2000)
+
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl
+        return
+      }
+      setOrderId(data.orderId)
+      setPaidTotal(data.total)
+      setStep('success')
+    } catch {
+      setSubmitError('Checkout failed. Please check your connection and try again.')
+      setStep('checkout')
+    }
   }
 
   const handleFinish = () => {
     setStep('checkout')
     setReceiptName('')
+    setQuote(null)
+    setPaidTotal(null)
+    setVoucherInput('')
+    setVoucherError('')
     onSuccess()
     onClose()
   }
@@ -230,7 +342,7 @@ export function CheckoutModal({
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem' }}>
                 <span>Paid via {paymentMethod === 'card' ? 'Credit / Debit Card' : paymentMethod === 'bank' ? 'Bank Transfer' : 'GCash'}</span>
-                <span>{formatPrice(total)}</span>
+                <span>{formatPrice(paidTotal ?? total)}</span>
               </div>
               {formData.referenceNumber && (
                 <div style={{ fontSize: '0.78rem', color: 'var(--ink)', fontWeight: 600, marginBottom: '0.3rem' }}>
@@ -363,10 +475,79 @@ export function CheckoutModal({
               >
                 {cart.map((item, idx) => (
                   <div key={idx} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ textTransform: 'uppercase' }}>{item.name}</span>
+                    <span style={{ textTransform: 'uppercase' }}>
+                      {item.name}
+                      {formatPicks(item) && (
+                        <span style={{ color: 'var(--muted)', textTransform: 'none' }}> — {formatPicks(item)}</span>
+                      )}
+                    </span>
                     <span>{formatPrice(item.price)}</span>
                   </div>
                 ))}
+              </div>
+              {/* Voucher code (checked on the server) */}
+              <div style={{ borderTop: '1px solid var(--hairline)', marginTop: '0.75rem', paddingTop: '0.75rem' }}>
+                {appliedCode ? (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem' }}>
+                    <span>
+                      Voucher <strong style={{ fontFamily: 'monospace' }}>{appliedCode}</strong>{' '}
+                      <button
+                        type="button"
+                        onClick={handleRemoveVoucher}
+                        style={{ background: 'none', border: 'none', padding: 0, color: 'var(--muted)', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.75rem' }}
+                      >
+                        Remove
+                      </button>
+                    </span>
+                    <span>−{formatPrice(discount)}</span>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <input
+                      type="text"
+                      name="voucherCode"
+                      placeholder="Voucher Code"
+                      aria-label="Voucher code"
+                      value={voucherInput}
+                      onChange={(e) => {
+                        setVoucherInput(e.target.value)
+                        if (voucherError) setVoucherError('')
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleApplyVoucher()
+                        }
+                      }}
+                      autoComplete="off"
+                      style={inputStyle}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyVoucher}
+                      disabled={isApplying}
+                      style={{
+                        background: 'var(--ink)',
+                        color: 'var(--white)',
+                        padding: '0 1.25rem',
+                        fontSize: '0.72rem',
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
+                        fontWeight: 600,
+                        border: 'none',
+                        cursor: isApplying ? 'wait' : 'pointer',
+                        opacity: isApplying ? 0.6 : 1,
+                      }}
+                    >
+                      {isApplying ? 'Checking…' : 'Apply'}
+                    </button>
+                  </div>
+                )}
+                {voucherError && (
+                  <p role="alert" style={{ color: '#C8102E', fontSize: '0.75rem', marginTop: '0.4rem' }}>
+                    {voucherError}
+                  </p>
+                )}
               </div>
               <div
                 style={{
@@ -746,6 +927,12 @@ export function CheckoutModal({
                 </div>
               )}
             </div>
+
+            {submitError && (
+              <p role="alert" style={{ color: '#C8102E', fontSize: '0.8rem', margin: 0 }}>
+                {submitError}
+              </p>
+            )}
 
             <button
               type="submit"

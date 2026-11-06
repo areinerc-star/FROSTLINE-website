@@ -19,7 +19,14 @@ export interface CatalogProduct {
   flatImg: string
   lifestyleImg: string
   colorVariations: Record<string, ColorVariation>
+  description: string
+  // Fabric choices (first = default). Not offered on Cycling Shorts, Speedsuits, Polo or Chino.
+  fabrics?: string[]
+  // Test items: hidden from the shop grid, homepage and recommendations; reachable only by /?product=<SKU>
+  isTest?: boolean
 }
+
+export const FABRIC_OPTIONS = ['Quianna', 'Ripstop', 'Pineapple Mesh']
 
 export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
   // ===== FROSTLINE =====
@@ -29,6 +36,8 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-CL-SGL',
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'BUILT FOR THE ONES WHO SHOW UP. A singlet for the early miles and the last rep. In Red or Teal. WEAR YOUR CONFIDENCE.',
+    fabrics: FABRIC_OPTIONS,
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FROSTLINE-Red-singlet-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Singlet-crimson_Front-Hero_1.webp',
@@ -60,6 +69,8 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-CL-TEE',
     price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'TRAIN WITH PURPOSE. A tee for every session, from the warm-up to the cooldown. In Red or Teal. WEAR YOUR CONFIDENCE.',
+    fabrics: FABRIC_OPTIONS,
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FROSTLINE-Red-tshirt-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Tshirt-crimson_Front-Hero_1.webp',
@@ -91,6 +102,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-CL-CYC',
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'NO SHORTCUTS. Cycling shorts for the work that builds your next PR. In Red or Teal. WEAR YOUR CONFIDENCE.',
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FROSTLINE-Red-cyclings-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Cyclings-crimson_Front-Hero_1.webp',
@@ -122,6 +134,8 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-CL-MDF',
     price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'MOVE WITH CONFIDENCE. A midriff top for training days and race days alike. In Red or Teal. WEAR YOUR CONFIDENCE.',
+    fabrics: FABRIC_OPTIONS,
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FROSTLINE-Red-midriff-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Midriff-crimson_Front-Hero_1.webp',
@@ -153,6 +167,8 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-CL-WRM',
     price: 550,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'THE WORK STARTS BEFORE THE GUN. A warmer for the minutes before you race. In Red or Teal. WEAR YOUR CONFIDENCE.',
+    fabrics: FABRIC_OPTIONS,
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FROSTLINE-Red-warmer-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Warmer-crimson_Pulling_Hood_1.webp',
@@ -184,6 +200,8 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-CL-CRP',
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'WALK YOUR OWN PATH. A cropped singlet for the athlete who trains on their own terms. In Red or Teal. WEAR YOUR CONFIDENCE.',
+    fabrics: FABRIC_OPTIONS,
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FROSTLINE-Red-cropped-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Cropped-crimson_Front-Hero_1.webp',
@@ -215,6 +233,8 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-CL-LSV',
     price: 499,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'KEEP SHOWING UP. A long sleeve for the sessions that test you most. In Red or Teal. WEAR YOUR CONFIDENCE.',
+    fabrics: FABRIC_OPTIONS,
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FROSTLINE-Red-longsleeve-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Longsleeves-crimson_Front-Hero_1.webp',
@@ -246,6 +266,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-CL-CHN',
     price: 450,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: "DISCIPLINE DOESN'T CLOCK OUT. A chino-collared polo for the days between races. In Red or Teal. WEAR YOUR CONFIDENCE.",
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FROSTLINE-Red-chino-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Chino-crimson_Front-Hero_1.webp',
@@ -277,6 +298,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-CL-PLO',
     price: 450,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'CARRY THE STANDARD. A polo that takes FROSTLINE off the track. In Red or Teal. WEAR YOUR CONFIDENCE.',
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FROSTLINE-Red-polo-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Polo-crimson_Front-Hero_1.webp',
@@ -308,6 +330,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-CL-SPD',
     price: 999,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'RACE DAY IS EARNED. A one-piece speedsuit for the moment the work pays off. In Red or Teal. WEAR YOUR CONFIDENCE.',
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FROSTLINE-Red-speedsuit-FRONT.webp',
     lifestyleImg: '/images/products/FROSTLINE_Speedsuit-crimson_Front-Hero_1.webp',
@@ -340,6 +363,8 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-PJ-SGL',
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'BREAK YOUR PR. A singlet for the PR PROJECT community chasing its next mark. In Black, White or Red. WEAR YOUR CONFIDENCE.',
+    fabrics: FABRIC_OPTIONS,
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/PR-PROJECT-black-singlet-front.webp',
     lifestyleImg: '/images/products/PRPROJECT_Singlet-black_Front-Hero_1.webp',
@@ -380,6 +405,8 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-PJ-TEE',
     price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'THE PROJECT IS YOU. A tee for every session that moves you forward. In Black, White or Red. WEAR YOUR CONFIDENCE.',
+    fabrics: FABRIC_OPTIONS,
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/PR-PROJECT-black-tshirt-front.webp',
     lifestyleImg: '/images/products/PRPROJECT_Tshirt-black_Front-Hero_1.webp',
@@ -420,6 +447,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-PJ-CYC',
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'EVERY RECORD IS BUILT. Cycling shorts for the training no one sees. In Black, White or Red. WEAR YOUR CONFIDENCE.',
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/PR-PROJECT-black-cycling-front.webp',
     lifestyleImg: '/images/products/PRPROJECT_Cyclings-black_Front-Hero_1.webp',
@@ -460,6 +488,8 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-PJ-MDF',
     price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'TRAIN WITH PURPOSE. A midriff top for the work behind every PR. In Black, White or Red. WEAR YOUR CONFIDENCE.',
+    fabrics: FABRIC_OPTIONS,
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/PR-PROJECT-black-midriff-front.webp',
     lifestyleImg: '/images/products/PRPROJECT_Midriff-black_Front-Hero_1.webp',
@@ -500,6 +530,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-PJ-SPD',
     price: 999,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'EVERY PR STARTS SOMEWHERE. A one-piece speedsuit for race day, made for the PR PROJECT community. In Black, White or Red. WEAR YOUR CONFIDENCE.',
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/PR-PROJECT-black-speed-suit-front.webp',
     lifestyleImg: '/images/products/PRPROJECT_Speedsuit-black_Front-Hero_1.webp',
@@ -541,6 +572,8 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     sku: 'FRL-PH-TNK',
     price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'REPRESENT WITH PRIDE. A singlet for the athletes who carry the country with them. In Black, Blue, Red or White. WEAR YOUR CONFIDENCE.',
+    fabrics: FABRIC_OPTIONS,
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/PH_black-singlet-THI.webp',
     lifestyleImg: '/images/products/PILIPINAS_Singlet-black_Front-Hero_1.webp',
@@ -586,10 +619,46 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
   },
 ]
 
-// Find the catalog entry for a product (by sku or exact name)
+// -------------------------------------------------------------
+// TEST PRODUCTS — for checking the payment flow only. NOT in FROSTLINE_PRODUCTS,
+// so they never appear in the shop grid, homepage carousel or recommendations.
+// Open directly: /?product=FRL-TEST-A or /?product=FRL-TEST-B. Remove before launch.
+// -------------------------------------------------------------
+const TEST_VARIATION: Record<string, ColorVariation> = {
+  Test: { heroImg: '/placeholder.jpg', modelPhotos: ['/placeholder.jpg', '/placeholder.jpg', '/placeholder.jpg', '/placeholder.jpg'] },
+}
+
+export const TEST_PRODUCTS: CatalogProduct[] = [
+  {
+    name: 'TEST ITEM A',
+    id: 'FRL-TEST-A',
+    sku: 'FRL-TEST-A',
+    price: 0,
+    sizes: ['One Size'],
+    description: 'Test item for checking checkout. Not for sale.',
+    flatImg: '/placeholder.jpg',
+    lifestyleImg: '/placeholder.jpg',
+    colorVariations: TEST_VARIATION,
+    isTest: true,
+  },
+  {
+    name: 'TEST ITEM B',
+    id: 'FRL-TEST-B',
+    sku: 'FRL-TEST-B',
+    price: 500,
+    sizes: ['One Size'],
+    description: 'Test item for checking checkout. Not for sale.',
+    flatImg: '/placeholder.jpg',
+    lifestyleImg: '/placeholder.jpg',
+    colorVariations: TEST_VARIATION,
+    isTest: true,
+  },
+]
+
+// Find the catalog entry for a product (by sku or exact name) — real and test items
 export function findCatalogProduct(p: { sku?: string; name?: string } | null): CatalogProduct | undefined {
   if (!p) return undefined
-  return FROSTLINE_PRODUCTS.find(
+  return [...FROSTLINE_PRODUCTS, ...TEST_PRODUCTS].find(
     (c) =>
       (p.sku && c.sku === p.sku) ||
       (p.name && c.name.toLowerCase() === p.name.toLowerCase())

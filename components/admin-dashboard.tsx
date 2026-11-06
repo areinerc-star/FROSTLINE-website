@@ -10,6 +10,10 @@ export interface AdminOrderRecord extends OrderRecord {
   city: string
   referenceNumber?: string
   receiptName?: string
+  // Set on orders saved by the server checkout
+  voucherCode?: string
+  discount?: number
+  paymentVerified?: boolean
 }
 
 interface AdminDashboardProps {
@@ -281,6 +285,16 @@ export function AdminDashboard({
                     <div style={{ color: '#666666', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.2rem' }}>Total Amount</div>
                     <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#FFFFFF' }}>₱{ord.total.toLocaleString()}</div>
                     <div style={{ color: '#888888', fontSize: '0.75rem' }}>{ord.items.length} item(s)</div>
+                    {ord.voucherCode && (
+                      <div style={{ color: '#AAAAAA', fontSize: '0.75rem', marginTop: '0.2rem' }}>
+                        Voucher <span style={{ fontFamily: 'monospace' }}>{ord.voucherCode}</span> −₱{(ord.discount ?? 0).toLocaleString()}
+                      </div>
+                    )}
+                    {ord.paymentVerified !== undefined && (
+                      <div style={{ color: ord.paymentVerified ? '#FFFFFF' : '#FF2E00', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: '0.2rem' }}>
+                        {ord.paymentVerified ? 'Payment verified' : 'Awaiting payment'}
+                      </div>
+                    )}
                   </div>
                 </div>
 
