@@ -9,7 +9,6 @@ export interface ColorVariation {
 // -------------------------------------------------------------
 // FROSTLINE PRODUCT CATALOG (all items)
 // Images live in /public/images/products/ (optimized .webp). Paths are case-sensitive.
-// price: 0 = TODO — set real prices.
 // -------------------------------------------------------------
 export interface CatalogProduct {
   id: string
@@ -28,7 +27,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'FROSTLINE Singlet',
     id: 'FRL-CL-SGL',
     sku: 'FRL-CL-SGL',
-    price: 0, // TODO: set price
+    price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FL_red-singlet-THI.webp',
@@ -59,7 +58,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'FROSTLINE Tshirt',
     id: 'FRL-CL-TEE',
     sku: 'FRL-CL-TEE',
-    price: 0, // TODO: set price
+    price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FL_red-tshirt-THI.webp',
@@ -90,7 +89,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'FROSTLINE Cycling Short',
     id: 'FRL-CL-CYC',
     sku: 'FRL-CL-CYC',
-    price: 0, // TODO: set price
+    price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FL_red-cyclings-THI.webp',
@@ -121,7 +120,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'FROSTLINE Midriff',
     id: 'FRL-CL-MDF',
     sku: 'FRL-CL-MDF',
-    price: 0, // TODO: set price
+    price: 399,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FL_red-midriff-THI.webp',
@@ -152,7 +151,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'FROSTLINE Warmer',
     id: 'FRL-CL-WRM',
     sku: 'FRL-CL-WRM',
-    price: 0, // TODO: set price
+    price: 550,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FL_red-warmer-THI.webp',
@@ -183,7 +182,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'FROSTLINE Cropped Singlet',
     id: 'FRL-CL-CRP',
     sku: 'FRL-CL-CRP',
-    price: 0, // TODO: set price
+    price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FL_red-cropped-THI.webp',
@@ -214,7 +213,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'FROSTLINE Long Sleeve',
     id: 'FRL-CL-LSV',
     sku: 'FRL-CL-LSV',
-    price: 0, // TODO: set price
+    price: 499,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FL_red-longsleeves-THI.webp',
@@ -245,7 +244,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'FROSTLINE Chino-Collared Polo Shirt',
     id: 'FRL-CL-CHN',
     sku: 'FRL-CL-CHN',
-    price: 0, // TODO: set price
+    price: 450,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FL_red-chino-THI.webp',
@@ -276,7 +275,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'FROSTLINE Polo Shirt',
     id: 'FRL-CL-PLO',
     sku: 'FRL-CL-PLO',
-    price: 0, // TODO: set price
+    price: 450,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FL_red-poloshirt-THI.webp',
@@ -307,7 +306,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'FROSTLINE Speedsuit',
     id: 'FRL-CL-SPD',
     sku: 'FRL-CL-SPD',
-    price: 0, // TODO: set price
+    price: 999,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/FL_red-speedsuit-THI.webp',
@@ -419,7 +418,7 @@ export const FROSTLINE_PRODUCTS: CatalogProduct[] = [
     name: 'PR PROJECT Cycling Short',
     id: 'FRL-PJ-CYC',
     sku: 'FRL-PJ-CYC',
-    price: 0, // TODO: set price
+    price: 350,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     // 1. SHOPLIST CARD THUMBNAIL (Shown on Shop Grid & Featured Carousel)
     flatImg: '/images/products/PR_black-cyclings-THI.webp',
