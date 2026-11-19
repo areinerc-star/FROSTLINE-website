@@ -12,7 +12,7 @@
   "bankHeading": "PAY VIA MARIBANK",
   "bankMessage": "Scan the InstaPay QR in your banking app. Before paying, check that the MariBank account ends in 8790.",
   "gcashHeading": "PAY VIA GCASH",
-  "gcashMessage": "Scan the GCash QR to pay the amount due.",
+  "gcashMessage": "Open GCash and scan the MariBank InstaPay QR. Check that the receiving account ends in 8790 before confirming your payment.",
   "receipt": "After paying, reply with your transfer receipt and order number so we can verify your payment.",
   "signOff": "WEAR YOUR CONFIDENCE"
 }

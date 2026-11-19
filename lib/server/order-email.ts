@@ -20,7 +20,7 @@ export async function sendOrderReceived(order: StoredOrder): Promise<boolean> {
   const bank = order.paymentMethod === 'Bank Transfer'
   const paymentHeading = order.paymentVerified ? copy.paidHeading : bank ? copy.bankHeading : copy.gcashHeading
   const paymentMessage = order.paymentVerified ? copy.paidMessage : bank ? copy.bankMessage : copy.gcashMessage
-  const qr = bank ? 'cid:bank-qr@frostline' : shop + '/images/gcash-qr.png'
+  const qr = 'cid:bank-qr@frostline'
   const items = order.items.map((item) => {
     const product = findCatalogProduct({ sku: item.sku })
     const image = (item.color && product?.colorVariations[item.color]?.heroImg) || product?.flatImg
@@ -36,7 +36,7 @@ export async function sendOrderReceived(order: StoredOrder): Promise<boolean> {
 ${items}${row(copy.subtotal, order.subtotal)}${row(copy.shipping, order.shipping)}
 ${order.voucherCode ? row(`${copy.voucher} · ${order.voucherCode}`, -order.discount) : ''}${row(copy.total, order.total)}</table>
 <div style="background:#f5f5f5;margin-top:20px;padding:18px"><h2 style="margin:0;${heading}">${escape(paymentHeading)}</h2><p>${escape(paymentMessage)}</p>
-${order.paymentVerified ? '' : `<img src="${qr}" alt="${bank ? 'MariBank InstaPay' : 'GCash'} QR" width="260" style="display:block;max-width:100%;height:auto;margin:auto"><p>${escape(copy.receipt)}</p>`}</div>
+${order.paymentVerified ? '' : `<img src="${qr}" alt="MariBank InstaPay QR" width="260" style="display:block;max-width:100%;height:auto;margin:auto"><p>${escape(copy.receipt)}</p>`}</div>
 </td></tr><tr><td bgcolor="#202020" style="padding:25px;color:white;background-image:linear-gradient(120deg,#080808,#525252)">
 <img src="cid:logo@frostline" alt="" width="92" align="right" style="opacity:.21"><strong style="${heading};font-size:24px"><img src="cid:logo@frostline" alt="" width="33" style="vertical-align:middle;margin-right:6px">FROSTLINE</strong>
 <p><a href="tel:+639606716680" style="color:white">+63 960 671 6680</a><br><a href="mailto:${mailbox}" style="color:white">${mailbox}</a></p>
@@ -60,7 +60,7 @@ ${order.paymentVerified ? '' : `<img src="${qr}" alt="${bank ? 'MariBank InstaPa
       html,
       attachments: [
         { filename: 'frostline.png', path: 'public/FROSTLINEwhiteLOGOonly.png', cid: 'logo@frostline' },
-        ...(!order.paymentVerified && bank ? [{ filename: 'maribank.png', path: 'public/images/email-maribank-qr.png', cid: 'bank-qr@frostline' }] : []),
+        ...(!order.paymentVerified ? [{ filename: 'maribank.png', path: 'public/images/email-maribank-qr.png', cid: 'bank-qr@frostline' }] : []),
       ],
     })
     return result.accepted.length > 0

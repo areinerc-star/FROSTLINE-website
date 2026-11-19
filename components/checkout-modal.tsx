@@ -720,7 +720,7 @@ export function CheckoutModal({
                   }}
                 >
                   <div style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#005CE6' }}>
-                    GCash QR Code
+                    MariBank InstaPay QR for GCash
                   </div>
                   <div
                     style={{
@@ -738,8 +738,8 @@ export function CheckoutModal({
                     }}
                   >
                     <img
-                      src="/images/gcash-qr.png"
-                      alt="GCash QR Code"
+                      src="/images/email-maribank-qr.png"
+                      alt="MariBank InstaPay QR for GCash"
                       style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                       onError={(e) => {
                         (e.currentTarget as HTMLElement).style.display = 'none'
@@ -748,7 +748,7 @@ export function CheckoutModal({
                           const fallback = document.createElement('div')
                           fallback.className = 'qr-fallback'
                           fallback.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:0.4rem;color:#005CE6;font-size:0.75rem;text-align:center;'
-                          fallback.innerHTML = '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h3v3h-3zM18 18h3v3h-3zM18 15h3v3h-3zM15 18h3v3h-3z"/></svg><span>Scan GCash QR Code</span><span style="font-size:0.65rem;opacity:0.7">(Upload /images/gcash-qr.png)</span>'
+                          fallback.innerHTML = '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h3v3h-3zM18 18h3v3h-3zM18 15h3v3h-3zM15 18h3v3h-3z"/></svg><span>Scan MariBank InstaPay QR for GCash</span><span style="font-size:0.65rem;opacity:0.7">(Upload /images/email-maribank-qr.png)</span>'
                           parent.appendChild(fallback)
                         }
                       }}
