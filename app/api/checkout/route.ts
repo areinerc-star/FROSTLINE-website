@@ -4,7 +4,7 @@ import { buildQuote } from '@/lib/server/pricing'
 import { kvConfigured } from '@/lib/server/kv'
 import { consumeVoucher, holdVoucher } from '@/lib/server/vouchers'
 import { newOrderId, saveOrder, type StoredOrder } from '@/lib/server/orders'
-import { sendOrderReceived } from '@/lib/server/order-email'
+import { sendOrderEmail } from '@/lib/server/order-email'
 
 // Card payments are switched off until PayMongo is connected.
 const PAYMENT_LABELS: Record<string, string> = {
@@ -118,7 +118,9 @@ export async function POST(req: Request) {
       }
     }
 
-    const confirmationEmailSent = storeReady && await sendOrderReceived(order)
+    const [confirmationEmailSent] = storeReady
+      ? await Promise.all([sendOrderEmail(order, 'received'), sendOrderEmail(order, 'admin')])
+      : [false]
     return NextResponse.json({ ...response, confirmationEmailSent })
   } catch (error) {
     console.error('Checkout API error:', error)

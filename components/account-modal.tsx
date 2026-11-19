@@ -17,7 +17,7 @@ export interface OrderRecord {
   items: { name: string; price: number }[]
   total: number
   paymentMethod: string
-  status: 'Processing' | 'Preparing Shipment' | 'Delivered'
+  status: 'Processing' | 'Preparing Shipment' | 'Shipped' | 'Delivered'
 }
 
 interface AccountModalProps {

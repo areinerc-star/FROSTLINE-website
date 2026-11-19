@@ -4,7 +4,7 @@ import { randomInt, timingSafeEqual } from 'crypto'
 import { kv } from './kv'
 import type { QuoteLine } from './pricing'
 
-export type OrderStatus = 'Processing' | 'Preparing Shipment' | 'Delivered'
+export type OrderStatus = 'Processing' | 'Preparing Shipment' | 'Shipped' | 'Delivered'
 
 export interface StoredOrder {
   id: string

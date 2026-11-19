@@ -47,6 +47,7 @@ export default function AdminPage() {
         setError(data.error || 'Could not update the order.')
         return
       }
+      if (data.failedEmails?.length) setError('Order saved. Email failed. Repeat the same status action to retry.')
       setOrders((prev) => prev.map((o) => (o.id === orderId ? data.order : o)))
     } catch {
       setError('Could not reach the server.')

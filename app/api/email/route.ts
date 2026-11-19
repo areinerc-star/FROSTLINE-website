@@ -109,7 +109,7 @@ export async function POST(req: Request) {
               <!-- Footer -->
               <tr>
                 <td style="border-top:1px solid #1E293B;padding-top:24px;text-align:center;font-size:12px;color:#64748B;line-height:1.6;">
-                  If you have any questions, reply to this email or contact support at <a href="mailto:hello@oddritualgolf.com" style="color:#38BDF8;text-decoration:none;">hello@oddritualgolf.com</a>.<br>
+                  If you have any questions, reply to this email or contact support at <a href="mailto:admin.wearfrostline@gmail.com" style="color:#38BDF8;text-decoration:none;">admin.wearfrostline@gmail.com</a>.<br>
                   FROSTLINE © 2026. All rights reserved.
                 </td>
               </tr>

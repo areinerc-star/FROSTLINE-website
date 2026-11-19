@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   outputFileTracingIncludes: {
+    '/api/admin/orders': ['./public/FROSTLINEwhiteLOGOonly.png'],
     '/api/checkout': ['./public/FROSTLINEwhiteLOGOonly.png', './public/images/email-maribank-qr.png'],
   },
   images: {

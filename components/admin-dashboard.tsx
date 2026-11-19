@@ -29,25 +29,17 @@ export function AdminDashboard({
   orders,
   onUpdateOrderStatus,
 }: AdminDashboardProps) {
-  const [emailNotification, setEmailNotification] = useState<string | null>(null)
   const [filterStatus, setFilterStatus] = useState<string>('all')
 
   if (!isOpen) return null
 
   const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0)
-  const pendingCount = orders.filter((o) => o.status === 'Processing' || o.status === ('Payment Pending' as any)).length
+  const pendingCount = orders.filter((o) => !o.paymentVerified && (o.paymentVerified === false || o.status === 'Processing')).length
 
   const handleStatusChange = (order: AdminOrderRecord, nextStatus: OrderRecord['status']) => {
     onUpdateOrderStatus(order.id, nextStatus)
 
-    // Trigger simulated email notification popover
-    setEmailNotification(
-      `[EMAIL SENT] to ${order.customerEmail}:\n\n"Subject: Order #${order.id} Status Update\nDear ${order.customerName}, your FROSTLINE order status has been updated to: ${nextStatus.toUpperCase()}."`
-    )
 
-    setTimeout(() => {
-      setEmailNotification(null)
-    }, 4500)
   }
 
   const filteredOrders = orders.filter((o) => {
@@ -73,30 +65,6 @@ export function AdminDashboard({
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      {/* Toast Email Alert */}
-      {emailNotification && (
-        <div
-          style={{
-            position: 'fixed',
-            top: '24px',
-            right: '24px',
-            zIndex: 500,
-            background: '#111111',
-            color: '#FFFFFF',
-            border: '1px solid #FF2E00',
-            padding: '1.2rem 1.5rem',
-            borderRadius: '4px',
-            boxShadow: '0 12px 32px rgba(255, 46, 0, 0.25)',
-            maxWidth: '400px',
-            whiteSpace: 'pre-line',
-            fontSize: '0.82rem',
-            fontWeight: 600,
-            lineHeight: 1.5,
-          }}
-        >
-          {emailNotification}
-        </div>
-      )}
 
       <div
         style={{
@@ -172,8 +140,9 @@ export function AdminDashboard({
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             {[
               { id: 'all', label: 'All' },
-              { id: 'Processing', label: 'Pending Payment' },
+              { id: 'Processing', label: 'Processing' },
               { id: 'Preparing Shipment', label: 'Preparing' },
+              { id: 'Shipped', label: 'Shipped' },
               { id: 'Delivered', label: 'Delivered' },
             ].map((st) => (
               <button
@@ -317,11 +286,12 @@ export function AdminDashboard({
                     >
                       2. Mark Preparing
                     </button>
+                    <button onClick={() => handleStatusChange(ord, 'Shipped')} style={actionBtnStyle(ord.status === 'Shipped')}>3. Mark Shipped</button>
                     <button
                       onClick={() => handleStatusChange(ord, 'Delivered')}
                       style={actionBtnStyle(ord.status === 'Delivered')}
                     >
-                      3. Mark Shipped & Arrived
+                      4. Mark Delivered
                     </button>
                   </div>
                 </div>
