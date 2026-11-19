@@ -33,7 +33,6 @@ export function CheckoutModal({
 }: CheckoutModalProps) {
   const [step, setStep] = useState<'checkout' | 'processing' | 'success'>('checkout')
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'gcash'>('gcash')
-  const [receiptName, setReceiptName] = useState<string>('')
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -138,11 +137,6 @@ export function CheckoutModal({
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setReceiptName(e.target.files[0].name)
-    }
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -200,7 +194,6 @@ export function CheckoutModal({
 
   const handleFinish = () => {
     setStep('checkout')
-    setReceiptName('')
     setQuote(null)
     setPaidTotal(null)
     setVoucherInput('')
@@ -287,7 +280,7 @@ export function CheckoutModal({
               }}
             />
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 600 }}>Processing Payment...</h3>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 600 }}>Placing your order…</h3>
             <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginTop: '0.5rem' }}>
               Securing transaction & verifying order details
             </p>
@@ -332,17 +325,12 @@ export function CheckoutModal({
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem' }}>
-                <span>Paid via {paymentMethod === 'bank' ? 'Bank Transfer' : 'GCash'}</span>
+                <span>Payment method: {paymentMethod === 'bank' ? 'Bank Transfer' : 'GCash'}</span>
                 <span>{formatPrice(paidTotal ?? total)}</span>
               </div>
               {formData.referenceNumber && (
                 <div style={{ fontSize: '0.78rem', color: 'var(--ink)', fontWeight: 600, marginBottom: '0.3rem' }}>
                   Payment Ref No: <span style={{ fontFamily: 'monospace' }}>{formData.referenceNumber}</span>
-                </div>
-              )}
-              {receiptName && (
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: '0.3rem' }}>
-                  Attached Receipt: {receiptName}
                 </div>
               )}
               <div style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>
@@ -618,7 +606,7 @@ export function CheckoutModal({
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod('bank')}
+                  aria-pressed={paymentMethod === 'bank'} onClick={() => setPaymentMethod('bank')}
                   style={{
                     flex: 1,
                     minWidth: '130px',
@@ -633,11 +621,11 @@ export function CheckoutModal({
                     cursor: 'pointer',
                   }}
                 >
-                  Bank Transfer
+                  {paymentMethod === 'bank' && '✓ '}Bank Transfer · MariBank
                 </button>
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod('gcash')}
+                  aria-pressed={paymentMethod === 'gcash'} onClick={() => setPaymentMethod('gcash')}
                   style={{
                     flex: 1,
                     minWidth: '130px',
@@ -652,11 +640,12 @@ export function CheckoutModal({
                     cursor: 'pointer',
                   }}
                 >
-                  GCash
+                  {paymentMethod === 'gcash' && '✓ '}GCash · Wallet
                 </button>
               </div>
 
-              {paymentMethod === 'bank' && (
+              {total > 0 && <p>Scan the QR to pay now, or place your order and pay using the instructions in your email. Already paid? Enter your reference below and reply to the order email with your receipt.</p>}
+              {total > 0 && paymentMethod === 'bank' && (
                 <div
                   style={{
                     background: 'var(--white)',
@@ -670,7 +659,7 @@ export function CheckoutModal({
                   }}
                 >
                   <div style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                    Bank Transfer QR Code
+                    MariBank InstaPay QR
                   </div>
                   <div
                     style={{
@@ -688,8 +677,8 @@ export function CheckoutModal({
                     }}
                   >
                     <img
-                      src="/images/bank-qr.png"
-                      alt="Bank Transfer QR Code"
+                      src="/images/email-maribank-qr.png"
+                      alt="MariBank InstaPay QR"
                       style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                       onError={(e) => {
                         (e.currentTarget as HTMLElement).style.display = 'none'
@@ -698,7 +687,7 @@ export function CheckoutModal({
                           const fallback = document.createElement('div')
                           fallback.className = 'qr-fallback'
                           fallback.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:0.4rem;color:var(--muted);font-size:0.75rem;text-align:center;'
-                          fallback.innerHTML = '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h3v3h-3zM18 18h3v3h-3zM18 15h3v3h-3zM15 18h3v3h-3z"/></svg><span>Scan Bank QR Code</span><span style="font-size:0.65rem;opacity:0.7">(Upload /images/bank-qr.png)</span>'
+                          fallback.innerHTML = '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h3v3h-3zM18 18h3v3h-3zM18 15h3v3h-3zM15 18h3v3h-3z"/></svg><span>Scan Bank QR Code</span><span style="font-size:0.65rem;opacity:0.7">(Upload /images/email-maribank-qr.png)</span>'
                           parent.appendChild(fallback)
                         }
                       }}
@@ -708,23 +697,16 @@ export function CheckoutModal({
                     <input
                       type="text"
                       name="referenceNumber"
-                      placeholder="Bank Reference / Transaction No."
+                      placeholder="Bank transaction reference (optional)"
                       value={formData.referenceNumber}
                       onChange={handleChange}
                       style={inputStyle}
                     />
-                    <label style={{ fontSize: '0.75rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                      <span style={{ padding: '0.4rem 0.75rem', background: '#eeeeee', border: '1px solid var(--hairline)', borderRadius: '3px', color: 'var(--ink)' }}>
-                        {receiptName ? 'Change Receipt' : 'Attach Proof of Payment (Optional)'}
-                      </span>
-                      <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
-                      {receiptName && <span style={{ fontSize: '0.72rem', color: 'var(--ink)' }}>{receiptName}</span>}
-                    </label>
                   </div>
                 </div>
               )}
 
-              {paymentMethod === 'gcash' && (
+              {total > 0 && paymentMethod === 'gcash' && (
                 <div
                   style={{
                     background: 'var(--white)',
@@ -816,7 +798,7 @@ export function CheckoutModal({
                       boxShadow: '0 2px 6px rgba(0, 92, 230, 0.25)',
                     }}
                   >
-                    Open GCash / Proceed to Payment <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                    Open GCash <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
                   </button>
                   <span style={{ fontSize: '0.68rem', color: 'var(--muted)', marginTop: '-0.3rem' }}>
                     (Opens GCash app on mobile or GCash portal on PC)
@@ -826,19 +808,12 @@ export function CheckoutModal({
                     <input
                       type="text"
                       name="referenceNumber"
-                      placeholder="GCash Reference No. (13 digits)"
+                      placeholder="GCash reference (optional)"
                       value={formData.referenceNumber}
                       onChange={handleChange}
                       maxLength={20}
                       style={inputStyle}
                     />
-                    <label style={{ fontSize: '0.75rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                      <span style={{ padding: '0.4rem 0.75rem', background: '#eeeeee', border: '1px solid var(--hairline)', borderRadius: '3px', color: 'var(--ink)' }}>
-                        {receiptName ? 'Change Receipt' : 'Attach Receipt Screenshot (Optional)'}
-                      </span>
-                      <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
-                      {receiptName && <span style={{ fontSize: '0.72rem', color: 'var(--ink)' }}>{receiptName}</span>}
-                    </label>
                   </div>
                 </div>
               )}
@@ -867,7 +842,7 @@ export function CheckoutModal({
                 marginTop: '0.5rem',
               }}
             >
-              Pay {formatPrice(total)}
+              Place order · {formatPrice(total)}
             </button>
           </form>
         )}
