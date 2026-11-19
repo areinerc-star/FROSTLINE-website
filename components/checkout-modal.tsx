@@ -1,5 +1,6 @@
 'use client'
 
+import { referenceError } from '@/lib/payment-reference'
 import { useEffect, useState } from 'react'
 import { Product, formatPrice, formatPicks } from '@/lib/products'
 import { UserProfile, OrderRecord } from './account-modal'
@@ -138,8 +139,11 @@ export function CheckoutModal({
   }
 
 
+  const referenceIssue = total > 0 ? referenceError(paymentMethod, formData.referenceNumber) : ''
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (referenceIssue) { setSubmitError(referenceIssue); return }
     setSubmitError('')
     setStep('processing')
     try {
@@ -155,7 +159,7 @@ export function CheckoutModal({
           address: formData.address,
           city: formData.city,
           postalCode: formData.postalCode,
-          referenceNumber: formData.referenceNumber,
+          referenceNumber: total > 0 ? formData.referenceNumber.trim() : '',
         }),
       })
       const data = await res.json()
@@ -694,14 +698,20 @@ export function CheckoutModal({
                     />
                   </div>
                   <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.6rem', textAlign: 'left' }}>
+                    <label htmlFor="bank-reference" style={{ fontWeight: 600 }}>Bank reference / transaction number</label>
+                    <small>Already paid? Enter the reference from your receipt. Leave blank to pay later.</small>
                     <input
+                      id="bank-reference"
+                      aria-invalid={Boolean(referenceIssue)}
+                      aria-describedby={referenceIssue ? 'bank-reference-error' : undefined}
                       type="text"
                       name="referenceNumber"
-                      placeholder="Bank transaction reference (optional)"
+                      placeholder="As printed on your bank receipt"
                       value={formData.referenceNumber}
                       onChange={handleChange}
                       style={inputStyle}
                     />
+                    {referenceIssue && <small id="bank-reference-error" style={{color:'#C8102E'}}>{referenceIssue}</small>}
                   </div>
                 </div>
               )}
@@ -805,15 +815,21 @@ export function CheckoutModal({
                   </span>
 
                   <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.6rem', textAlign: 'left' }}>
+                    <label htmlFor="gcash-reference" style={{ fontWeight: 600 }}>GCash transaction reference number</label>
+                    <small>Already paid? Enter the reference from your receipt. Leave blank to pay later.</small>
                     <input
+                      id="gcash-reference"
+                      aria-invalid={Boolean(referenceIssue)}
+                      aria-describedby={referenceIssue ? 'gcash-reference-error' : undefined}
                       type="text"
                       name="referenceNumber"
-                      placeholder="GCash reference (optional)"
+                      placeholder="13 digits"
                       value={formData.referenceNumber}
                       onChange={handleChange}
                       maxLength={20}
                       style={inputStyle}
                     />
+                    {referenceIssue && <small id="gcash-reference-error" style={{color:'#C8102E'}}>{referenceIssue}</small>}
                   </div>
                 </div>
               )}

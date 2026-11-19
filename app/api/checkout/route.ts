@@ -1,3 +1,4 @@
+import { referenceError } from '@/lib/payment-reference'
 import { NextResponse } from 'next/server'
 import { buildQuote } from '@/lib/server/pricing'
 import { kvConfigured } from '@/lib/server/kv'
@@ -31,6 +32,11 @@ export async function POST(req: Request) {
     if (!result.ok) return NextResponse.json({ success: false, error: result.error }, { status: result.status })
     const quote = result.quote
 
+    const reference = quote.total > 0 ? (body.referenceNumber ?? '') : ''
+    if (typeof reference !== 'string') return NextResponse.json({ success: false, error: 'Invalid transaction reference.' }, { status: 400 })
+    const issue = referenceError(paymentMethod, reference)
+    if (issue) return NextResponse.json({ success: false, error: issue }, { status: 400 })
+
     const storeReady = kvConfigured()
     const orderId = storeReady ? await newOrderId() : 'FRL-' + Math.floor(100000 + Math.random() * 900000)
 
@@ -59,7 +65,7 @@ export async function POST(req: Request) {
       city: field(body.city),
       postalCode: field(body.postalCode, 20),
       paymentMethod: PAYMENT_LABELS[paymentMethod],
-      referenceNumber: field(body.referenceNumber, 40) || undefined,
+      referenceNumber: reference.trim() || undefined,
       items: quote.lines,
       subtotal: quote.subtotal,
       shipping: quote.shipping,
