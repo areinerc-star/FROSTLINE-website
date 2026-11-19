@@ -31,5 +31,10 @@
     "message": "{customerName} placed order #{orderId}. Payment method: {method}. Payment status: {status}."
   },
   "verified": "Verified",
-  "pending": "Pending verification"
+  "pending": "Pending verification",
+  "delivered": {
+    "subject": "ORDER DELIVERED | #{orderId}",
+    "greeting": "YOUR GEAR HAS ARRIVED, {firstName}.",
+    "message": "Your FROSTLINE order #{orderId} has been marked delivered. If your package hasn’t arrived or you need help with your order, reply to this email."
+  }
 }

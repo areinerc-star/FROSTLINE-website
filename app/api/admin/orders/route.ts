@@ -58,7 +58,7 @@ export async function PATCH(req: Request) {
     order.status = status
     await saveOrder(order)
     const failedEmails: string[] = []
-    for (const [kind, changed] of [['payment', newlyPaid], ['shipped', newlyShipped]] as const) {
+    for (const [kind, changed] of [['payment', newlyPaid], ['shipped', newlyShipped], ['delivered', status === 'Delivered']] as const) {
       const key = `order:${order.id}:email:${kind}`
       if (changed) await kv(['SET', key, 'pending', 'NX'])
       if (await kv(['GET', key]) !== 'pending') continue

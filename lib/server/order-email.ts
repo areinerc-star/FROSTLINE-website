@@ -11,7 +11,7 @@ const escape = (value: string) => value.replace(/[&<>"']/g, (character) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
 }[character] ?? character))
 
-export async function sendOrderEmail(order: StoredOrder, kind: 'received' | 'admin' | 'payment' | 'shipped'): Promise<boolean> {
+export async function sendOrderEmail(order: StoredOrder, kind: 'received' | 'admin' | 'payment' | 'shipped' | 'delivered'): Promise<boolean> {
   const password = process.env.GMAIL_APP_PASSWORD?.replace(/\s/g, '')
   const recipient = kind === 'admin' ? mailbox : order.customerEmail
   const wording = kind === 'received' ? copy : copy[kind]
