@@ -43,6 +43,7 @@ export function CheckoutModal({
     referenceNumber: '',
   })
   const [orderId, setOrderId] = useState<string>('')
+  const [confirmationEmailSent, setConfirmationEmailSent] = useState(false)
 
   // Voucher + server-calculated totals (the server is the source of truth for prices and discounts)
   const [voucherInput, setVoucherInput] = useState('')
@@ -188,6 +189,7 @@ export function CheckoutModal({
         return
       }
       setOrderId(data.orderId)
+      setConfirmationEmailSent(data.confirmationEmailSent === true)
       setPaidTotal(data.total)
       setStep('success')
     } catch {
@@ -316,7 +318,8 @@ export function CheckoutModal({
               Order Reference: <strong style={{ color: 'var(--ink)' }}>#{orderId}</strong>
             </p>
             <p style={{ marginTop: '1rem', fontSize: '0.85rem', lineHeight: '1.6', maxWidth: '420px', marginInline: 'auto' }}>
-              We have sent a confirmation email to <strong>{formData.email || 'your email'}</strong>. Your gear will be prepared and shipped within 2-3 business days.
+              {confirmationEmailSent && <>We have sent a confirmation email to <strong>{formData.email}</strong>. </>}
+              Your gear will be prepared and shipped within 2-3 business days.
             </p>
 
             <div

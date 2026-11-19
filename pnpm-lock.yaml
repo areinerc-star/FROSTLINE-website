@@ -26,6 +26,9 @@ importers:
       lucide-react:
         specifier: ^1.16.0
         version: 1.17.0(react@19.2.4)
+      nodemailer:
+        specifier: 10.6.0
+        version: 10.6.0
       next:
         specifier: 16.3.0
         version: 16.3.0(@babel/core@7.29.7)(@types/node@24.10.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -51,6 +54,9 @@ importers:
       '@types/node':
         specifier: ^24
         version: 24.10.4
+      '@types/nodemailer':
+        specifier: 8.0.2
+        version: 8.0.2
       '@types/react':
         specifier: ^19
         version: 19.2.14
@@ -68,6 +74,13 @@ importers:
         version: 5.7.3
 
 packages:
+
+  '@types/nodemailer@8.0.2':
+    resolution: {integrity: sha512-c7M5ox8p0nEOfbJ2E9Qcmt8/QCu/VzsiAhzBiZbvky2PhKZDHpKB3sQHBM5MEZNkCfBOaS6S9//AGPRTNB7IaA==}
+
+  nodemailer@10.6.0:
+    resolution: {integrity: sha512-jWanL7D9GD3jvUDYKmoC5rWTiG8MnBgnN2yV68bgMKip1zUJhiSTyz7Eg+18y8sk5OvdVDzws5nZK5arSI4f5Q==}
+    engines: {node: '>=20.0.0'}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -2066,6 +2079,12 @@ packages:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
 snapshots:
+
+  '@types/nodemailer@8.0.2':
+    dependencies:
+      '@types/node': 24.10.4
+
+  nodemailer@10.6.0: {}
 
   '@alloc/quick-lru@5.2.0': {}
 

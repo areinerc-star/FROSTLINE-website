@@ -1,0 +1,18 @@
+{
+  "subject": "ORDER RECEIVED | #{orderId}",
+  "greeting": "YOU’RE IN, {firstName}.",
+  "message": "We received your FROSTLINE order #{orderId}. Here’s what you ordered.",
+  "summary": "ORDER SUMMARY",
+  "subtotal": "Subtotal",
+  "shipping": "Shipping",
+  "voucher": "Voucher",
+  "total": "Order total",
+  "paidHeading": "PAID IN FULL",
+  "paidMessage": "We’ll email you when your order ships.",
+  "bankHeading": "PAY VIA MARIBANK",
+  "bankMessage": "Scan the InstaPay QR in your banking app. Before paying, check that the MariBank account ends in 8790.",
+  "gcashHeading": "PAY VIA GCASH",
+  "gcashMessage": "Scan the GCash QR to pay the amount due.",
+  "receipt": "After paying, reply with your transfer receipt and order number so we can verify your payment.",
+  "signOff": "WEAR YOUR CONFIDENCE"
+}
